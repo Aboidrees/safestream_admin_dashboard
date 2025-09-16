@@ -70,87 +70,76 @@
 
 @layer components {
   .touch-target {
-    min-height: 44px;
-    min-width: 44px;
+    @apply min-h-11 min-w-11;
   }
 
   .mobile-padding {
-    padding-left: 1rem;
-    padding-right: 1rem;
+    @apply px-4;
   }
 
   @media (min-width: 640px) {
     .mobile-padding {
-      padding-left: 1.5rem;
-      padding-right: 1.5rem;
+      @apply px-6;
     }
   }
 
   @media (min-width: 1024px) {
     .mobile-padding {
-      padding-left: 2rem;
-      padding-right: 2rem;
+      @apply px-8;
     }
   }
 
   .mobile-text {
-    font-size: 0.875rem;
-    line-height: 1.25rem;
+    @apply text-sm leading-5;
   }
 
   @media (min-width: 640px) {
     .mobile-text {
-      font-size: 1rem;
-      line-height: 1.5rem;
+      @apply text-base leading-6;
     }
   }
 
   .mobile-heading {
-    font-size: 1.125rem;
-    line-height: 1.75rem;
+    @apply text-lg leading-7;
   }
 
   @media (min-width: 640px) {
     .mobile-heading {
-      font-size: 1.25rem;
-      line-height: 1.75rem;
+      @apply text-xl leading-7;
     }
   }
 
   @media (min-width: 1024px) {
     .mobile-heading {
-      font-size: 1.5rem;
-      line-height: 2rem;
+      @apply text-2xl leading-8;
     }
   }
 
   .mobile-container {
-    max-width: 24rem;
-    margin-left: auto;
-    margin-right: auto;
+    @apply max-w-sm mx-auto;
   }
 
   @media (min-width: 640px) {
     .mobile-container {
-      max-width: 28rem;
+      @apply max-w-md;
     }
   }
 
   @media (min-width: 768px) {
     .mobile-container {
-      max-width: 32rem;
+      @apply max-w-lg;
     }
   }
 
   @media (min-width: 1024px) {
     .mobile-container {
-      max-width: 56rem;
+      @apply max-w-4xl;
     }
   }
 
   @media (min-width: 1280px) {
     .mobile-container {
-      max-width: 72rem;
+      @apply max-w-6xl;
     }
   }
 
@@ -192,19 +181,19 @@
 @layer utilities {
   @media (max-width: 640px) {
     .mobile-full-width {
-      width: 100%;
+      @apply w-full;
     }
 
     .mobile-stack {
-      flex-direction: column;
+      @apply flex-col;
     }
 
     .mobile-stack > * + * {
-      margin-top: 0.5rem;
+      @apply mt-2;
     }
 
     .mobile-hide {
-      display: none;
+      @apply hidden;
     }
   }
 }
