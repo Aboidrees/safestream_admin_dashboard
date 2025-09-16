@@ -2,15 +2,15 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
-import { SupabaseProvider } from "@/lib/supabase/provider"
 import { ThemeProvider } from "@/components/theme-provider"
+import { SupabaseProvider } from "@/lib/supabase/provider"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "SafeStream - Family-Friendly Video Streaming",
-  description: "Create a safe streaming environment for your children with curated content and parental controls.",
-    generator: 'v0.dev'
+  description: "Create a safe viewing experience for your children with curated content and parental controls.",
+    generator: 'v0.app'
 }
 
 export default function RootLayout({
@@ -20,8 +20,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <style>{`
+          html {
+            scroll-behavior: smooth;
+          }
+        `}</style>
+      </head>
       <body className={inter.className}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
           <SupabaseProvider>{children}</SupabaseProvider>
         </ThemeProvider>
       </body>

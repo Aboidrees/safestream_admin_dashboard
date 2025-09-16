@@ -3,33 +3,143 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 export interface Database {
   public: {
     Tables: {
-      users: {
+      admins: {
         Row: {
           id: string
-          email: string
-          name: string
-          plan_id: string | null
-          plan_status: string | null
+          user_id: string
+          role: string
           created_at: string
           updated_at: string
         }
         Insert: {
-          id: string
-          email: string
-          name: string
-          plan_id?: string | null
-          plan_status?: string | null
+          id?: string
+          user_id: string
+          role: string
           created_at?: string
           updated_at?: string
         }
         Update: {
           id?: string
-          email?: string
-          name?: string
-          plan_id?: string | null
-          plan_status?: string | null
+          user_id?: string
+          role?: string
           created_at?: string
           updated_at?: string
+        }
+      }
+      api_credentials: {
+        Row: {
+          id: string
+          service_name: string
+          api_key: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          service_name: string
+          api_key: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          service_name?: string
+          api_key?: string
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      collections: {
+        Row: {
+          id: string
+          title: string
+          description: string
+          thumbnail: string | null
+          age_restriction: string
+          created_by: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          description: string
+          thumbnail?: string | null
+          age_restriction: string
+          created_by: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          description?: string
+          thumbnail?: string | null
+          age_restriction?: string
+          created_by?: string
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      plans: {
+        Row: {
+          id: string
+          name: string
+          description: string
+          price: number
+          interval: string
+          max_profiles: number
+          max_collections: number
+          features: Json
+          is_active: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          description: string
+          price: number
+          interval: string
+          max_profiles: number
+          max_collections: number
+          features?: Json
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          description?: string
+          price?: number
+          interval?: string
+          max_profiles?: number
+          max_collections?: number
+          features?: Json
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      profile_collections: {
+        Row: {
+          id: string
+          profile_id: string
+          collection_id: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          profile_id: string
+          collection_id: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          profile_id?: string
+          collection_id?: string
+          created_at?: string
         }
       }
       profiles: {
@@ -67,97 +177,36 @@ export interface Database {
           updated_at?: string
         }
       }
-      collections: {
+      subscriptions: {
         Row: {
           id: string
-          title: string
-          description: string
-          thumbnail: string | null
-          age_restriction: string
-          created_by: string
+          user_id: string
+          plan_id: string
+          status: string
+          current_period_start: string
+          current_period_end: string
           created_at: string
           updated_at: string
         }
         Insert: {
           id?: string
-          title: string
-          description: string
-          thumbnail?: string | null
-          age_restriction: string
-          created_by: string
+          user_id: string
+          plan_id: string
+          status: string
+          current_period_start: string
+          current_period_end: string
           created_at?: string
           updated_at?: string
         }
         Update: {
           id?: string
-          title?: string
-          description?: string
-          thumbnail?: string | null
-          age_restriction?: string
-          created_by?: string
+          user_id?: string
+          plan_id?: string
+          status?: string
+          current_period_start?: string
+          current_period_end?: string
           created_at?: string
           updated_at?: string
-        }
-      }
-      videos: {
-        Row: {
-          id: string
-          collection_id: string
-          title: string
-          description: string
-          url: string
-          thumbnail: string | null
-          duration: number
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          collection_id: string
-          title: string
-          description: string
-          url: string
-          thumbnail?: string | null
-          duration: number
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          collection_id?: string
-          title?: string
-          description?: string
-          url?: string
-          thumbnail?: string | null
-          duration?: number
-          created_at?: string
-          updated_at?: string
-        }
-      }
-      watch_history: {
-        Row: {
-          id: string
-          profile_id: string
-          video_id: string
-          watched_at: string
-          duration_watched: number
-          completed: boolean
-        }
-        Insert: {
-          id?: string
-          profile_id: string
-          video_id: string
-          watched_at?: string
-          duration_watched: number
-          completed?: boolean
-        }
-        Update: {
-          id?: string
-          profile_id?: string
-          video_id?: string
-          watched_at?: string
-          duration_watched?: number
-          completed?: boolean
         }
       }
       time_controls: {
@@ -231,143 +280,94 @@ export interface Database {
           updated_at?: string
         }
       }
-      api_credentials: {
+      users: {
         Row: {
           id: string
-          service_name: string
-          api_key: string
+          email: string
+          name: string
+          plan_id: string | null
+          plan_status: string | null
           created_at: string
           updated_at: string
         }
         Insert: {
-          id?: string
-          service_name: string
-          api_key: string
+          id: string
+          email: string
+          name: string
+          plan_id?: string | null
+          plan_status?: string | null
           created_at?: string
           updated_at?: string
         }
         Update: {
           id?: string
-          service_name?: string
-          api_key?: string
+          email?: string
+          name?: string
+          plan_id?: string | null
+          plan_status?: string | null
           created_at?: string
           updated_at?: string
         }
       }
-      profile_collections: {
+      videos: {
+        Row: {
+          id: string
+          collection_id: string
+          title: string
+          description: string
+          url: string
+          thumbnail: string | null
+          duration: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          collection_id: string
+          title: string
+          description: string
+          url: string
+          thumbnail?: string | null
+          duration: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          collection_id?: string
+          title?: string
+          description?: string
+          url?: string
+          thumbnail?: string | null
+          duration?: number
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      watch_history: {
         Row: {
           id: string
           profile_id: string
-          collection_id: string
-          created_at: string
+          video_id: string
+          watched_at: string
+          duration_watched: number
+          completed: boolean
         }
         Insert: {
           id?: string
           profile_id: string
-          collection_id: string
-          created_at?: string
+          video_id: string
+          watched_at?: string
+          duration_watched: number
+          completed?: boolean
         }
         Update: {
           id?: string
           profile_id?: string
-          collection_id?: string
-          created_at?: string
-        }
-      }
-      plans: {
-        Row: {
-          id: string
-          name: string
-          description: string
-          price: number
-          interval: string
-          max_profiles: number
-          max_collections: number
-          features: Json
-          is_active: boolean
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          name: string
-          description: string
-          price: number
-          interval: string
-          max_profiles: number
-          max_collections: number
-          features?: Json
-          is_active?: boolean
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          name?: string
-          description?: string
-          price?: number
-          interval?: string
-          max_profiles?: number
-          max_collections?: number
-          features?: Json
-          is_active?: boolean
-          created_at?: string
-          updated_at?: string
-        }
-      }
-      subscriptions: {
-        Row: {
-          id: string
-          user_id: string
-          plan_id: string
-          status: string
-          current_period_start: string
-          current_period_end: string
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          user_id: string
-          plan_id: string
-          status: string
-          current_period_start: string
-          current_period_end: string
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          user_id?: string
-          plan_id?: string
-          status?: string
-          current_period_start?: string
-          current_period_end?: string
-          created_at?: string
-          updated_at?: string
-        }
-      }
-      admins: {
-        Row: {
-          id: string
-          user_id: string
-          role: string
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          user_id: string
-          role: string
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          user_id?: string
-          role?: string
-          created_at?: string
-          updated_at?: string
+          video_id?: string
+          watched_at?: string
+          duration_watched?: number
+          completed?: boolean
         }
       }
     }

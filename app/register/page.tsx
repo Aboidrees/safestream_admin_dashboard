@@ -1,29 +1,30 @@
 "use client"
 
 import type React from "react"
+
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { createClient } from "@/lib/supabase/client"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import Link from "next/link"
+import { createClient } from "@/lib/supabase/client"
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [name, setName] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
   const [success, setSuccess] = useState(false)
   const router = useRouter()
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(true)
-    setError(null)
+    setLoading(true)
+    setError("")
 
     try {
       const supabase = createClient()
@@ -44,8 +45,18 @@ export default function RegisterPage() {
       }
 
       if (data.user) {
+        // Create user profile in our users table
+        const { error: profileError } = await supabase.from("users").insert({
+          id: data.user.id,
+          email: data.user.email!,
+          name,
+        })
+
+        if (profileError) {
+          console.error("Error creating user profile:", profileError)
+        }
+
         setSuccess(true)
-        // Redirect to login after successful registration
         setTimeout(() => {
           router.push("/login")
         }, 2000)
@@ -53,18 +64,18 @@ export default function RegisterPage() {
     } catch (err) {
       setError("An unexpected error occurred")
     } finally {
-      setIsLoading(false)
+      setLoading(false)
     }
   }
 
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 mobile-padding">
         <Card className="w-full max-w-md">
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold text-center text-green-600">Registration Successful!</CardTitle>
-            <CardDescription className="text-center">
-              Please check your email to confirm your account. You will be redirected to the login page shortly.
+          <CardHeader className="space-y-1 text-center">
+            <CardTitle className="mobile-heading font-bold text-green-600">Registration Successful!</CardTitle>
+            <CardDescription className="mobile-text">
+              Please check your email to confirm your account. You'll be redirected to the login page shortly.
             </CardDescription>
           </CardHeader>
         </Card>
@@ -73,22 +84,24 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 mobile-padding">
       <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Create your SafeStream account</CardTitle>
-          <CardDescription className="text-center">Enter your information to get started</CardDescription>
+        <CardHeader className="space-y-1 text-center">
+          <CardTitle className="mobile-heading font-bold">Create your SafeStream account</CardTitle>
+          <CardDescription className="mobile-text">Enter your information to get started</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleRegister} className="space-y-4">
+          <form onSubmit={handleRegister} className="space-y-6">
             {error && (
               <Alert variant="destructive">
-                <AlertDescription>{error}</AlertDescription>
+                <AlertDescription className="mobile-text">{error}</AlertDescription>
               </Alert>
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="name">Full Name</Label>
+              <Label htmlFor="name" className="mobile-text font-medium">
+                Full Name
+              </Label>
               <Input
                 id="name"
                 type="text"
@@ -96,12 +109,14 @@ export default function RegisterPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                disabled={isLoading}
+                className="touch-target mobile-text"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="mobile-text font-medium">
+                Email
+              </Label>
               <Input
                 id="email"
                 type="email"
@@ -109,12 +124,14 @@ export default function RegisterPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                disabled={isLoading}
+                className="touch-target mobile-text"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password" className="mobile-text font-medium">
+                Password
+              </Label>
               <Input
                 id="password"
                 type="password"
@@ -122,21 +139,23 @@ export default function RegisterPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                disabled={isLoading}
                 minLength={6}
+                className="touch-target mobile-text"
               />
             </div>
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Creating account..." : "Create account"}
+            <Button type="submit" className="w-full touch-target mobile-text" disabled={loading}>
+              {loading ? "Creating account..." : "Create account"}
             </Button>
           </form>
 
-          <div className="mt-4 text-center text-sm">
-            {"Already have an account? "}
-            <Link href="/login" className="text-blue-600 hover:underline">
-              Sign in
-            </Link>
+          <div className="mt-6 text-center">
+            <p className="mobile-text text-muted-foreground">
+              Already have an account?{" "}
+              <Link href="/login" className="text-blue-600 hover:underline font-medium">
+                Sign in
+              </Link>
+            </p>
           </div>
         </CardContent>
       </Card>
