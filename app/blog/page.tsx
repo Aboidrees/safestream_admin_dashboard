@@ -302,32 +302,76 @@ export default function BlogPage() {
             <div>
               <h4 className="font-semibold mb-6 text-lg">Quick Links</h4>
               <ul className="space-y-3 text-gray-400">
-                {["About Us", "Blog", "Privacy Policy", "Terms of Service"].map((link, index) => (
-                  <li key={index}>
-                    <Link
-                      href={`/${link.toLowerCase().replace(/\s+/g, "-")}`}
-                      className="hover:text-white transition-all duration-500 hover:translate-x-1 transform inline-block"
-                    >
-                      {link}
-                    </Link>
-                  </li>
-                ))}
+                <li>
+                  <Link
+                    href="/about"
+                    className="hover:text-white transition-all duration-500 hover:translate-x-1 transform inline-block"
+                  >
+                    About Us
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/blog"
+                    className="hover:text-white transition-all duration-500 hover:translate-x-1 transform inline-block"
+                  >
+                    Blog
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/privacy-policy"
+                    className="hover:text-white transition-all duration-500 hover:translate-x-1 transform inline-block"
+                  >
+                    Privacy Policy
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/terms-of-service"
+                    className="hover:text-white transition-all duration-500 hover:translate-x-1 transform inline-block"
+                  >
+                    Terms of Service
+                  </Link>
+                </li>
               </ul>
             </div>
 
             <div>
               <h4 className="font-semibold mb-6 text-lg">Support</h4>
               <ul className="space-y-3 text-gray-400">
-                {["FAQ", "Help Center", "Contact Us", "Community"].map((link, index) => (
-                  <li key={index}>
-                    <Link
-                      href={`/${link.toLowerCase().replace(/\s+/g, "-")}`}
-                      className="hover:text-white transition-all duration-500 hover:translate-x-1 transform inline-block"
-                    >
-                      {link}
-                    </Link>
-                  </li>
-                ))}
+                <li>
+                  <Link
+                    href="/faq"
+                    className="hover:text-white transition-all duration-500 hover:translate-x-1 transform inline-block"
+                  >
+                    FAQ
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/help-center"
+                    className="hover:text-white transition-all duration-500 hover:translate-x-1 transform inline-block"
+                  >
+                    Help Center
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/contact-us"
+                    className="hover:text-white transition-all duration-500 hover:translate-x-1 transform inline-block"
+                  >
+                    Contact Us
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/community"
+                    className="hover:text-white transition-all duration-500 hover:translate-x-1 transform inline-block"
+                  >
+                    Community
+                  </Link>
+                </li>
               </ul>
             </div>
           </div>
