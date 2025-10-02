@@ -145,28 +145,34 @@ export interface Database {
       profiles: {
         Row: {
           id: string
-          email: string
-          full_name: string | null
-          avatar_url: string | null
-          role: "user" | "admin" | "superadmin"
+          parent_id: string
+          name: string
+          age: number
+          avatar: string | null
+          content_rating: string
+          login_code: string
           created_at: string
           updated_at: string
         }
         Insert: {
-          id: string
-          email: string
-          full_name?: string | null
-          avatar_url?: string | null
-          role?: "user" | "admin" | "superadmin"
+          id?: string
+          parent_id: string
+          name: string
+          age: number
+          avatar?: string | null
+          content_rating: string
+          login_code: string
           created_at?: string
           updated_at?: string
         }
         Update: {
           id?: string
-          email?: string
-          full_name?: string | null
-          avatar_url?: string | null
-          role?: "user" | "admin" | "superadmin"
+          parent_id?: string
+          name?: string
+          age?: number
+          avatar?: string | null
+          content_rating?: string
+          login_code?: string
           created_at?: string
           updated_at?: string
         }
@@ -364,64 +370,6 @@ export interface Database {
           completed?: boolean
         }
       }
-      child_profiles: {
-        Row: {
-          id: string
-          parent_id: string
-          name: string
-          age: number
-          avatar_url: string | null
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          parent_id: string
-          name: string
-          age: number
-          avatar_url?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          parent_id?: string
-          name?: string
-          age?: number
-          avatar_url?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-      }
-      video_collections: {
-        Row: {
-          id: string
-          parent_id: string
-          child_id: string
-          name: string
-          description: string | null
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          parent_id: string
-          child_id: string
-          name: string
-          description?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          parent_id?: string
-          child_id?: string
-          name?: string
-          description?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-      }
     }
     Views: {
       [_ in never]: never
@@ -430,7 +378,7 @@ export interface Database {
       [_ in never]: never
     }
     Enums: {
-      user_role: "user" | "admin" | "superadmin"
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never

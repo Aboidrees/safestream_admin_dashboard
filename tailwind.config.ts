@@ -19,6 +19,9 @@ const config: Config = {
       },
     },
     extend: {
+      screens: {
+        xs: "475px",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -72,6 +75,16 @@ const config: Config = {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+      },
+      spacing: {
+        "18": "4.5rem",
+        "88": "22rem",
+      },
+      minHeight: {
+        "44": "44px", // Minimum touch target size
+      },
+      minWidth: {
+        "44": "44px", // Minimum touch target size
       },
     },
   },

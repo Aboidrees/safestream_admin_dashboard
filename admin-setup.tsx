@@ -25,10 +25,6 @@ export default function AdminSetup() {
 
       if (data && !error) {
         setIsAdmin(true)
-        // Auto-redirect to admin dashboard after 2 seconds
-        setTimeout(() => {
-          window.location.href = "/my-management-office/dashboard"
-        }, 2000)
       }
     }
 
@@ -58,11 +54,6 @@ export default function AdminSetup() {
 
       message.success("Successfully added as a superadmin!")
       setIsAdmin(true)
-
-      // Redirect after success
-      setTimeout(() => {
-        window.location.href = "/my-management-office/dashboard"
-      }, 1500)
     } catch (error: any) {
       console.error("Error creating admin:", error)
       message.error(`Failed to create admin: ${error.message}`)
@@ -76,7 +67,7 @@ export default function AdminSetup() {
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <Card className="w-full max-w-md">
           <div className="text-center">
-            <h1 className="text-2xl font-bold mb-4">Management Office Setup</h1>
+            <h1 className="text-2xl font-bold mb-4">Admin Setup</h1>
             <p className="mb-4">Please log in to continue.</p>
             <Button type="primary" href="/login">
               Log In
@@ -91,7 +82,7 @@ export default function AdminSetup() {
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <Card className="w-full max-w-md">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Management Office Setup</h1>
+          <h1 className="text-2xl font-bold mb-4">Admin Setup</h1>
 
           {loading ? (
             <div className="flex justify-center my-8">
@@ -100,11 +91,11 @@ export default function AdminSetup() {
           ) : isAdmin ? (
             <div>
               <div className="mb-6 p-4 bg-green-100 text-green-700 rounded-md">
-                <p className="font-bold">✅ You are already a superadmin!</p>
-                <p>Redirecting to management dashboard in 2 seconds...</p>
+                <p className="font-bold">You are a superadmin!</p>
+                <p>You can now access the admin dashboard.</p>
               </div>
-              <Button type="primary" href="/my-management-office/dashboard">
-                Go to Management Dashboard Now
+              <Button type="primary" href="/admin">
+                Go to Admin Dashboard
               </Button>
             </div>
           ) : (
@@ -115,7 +106,7 @@ export default function AdminSetup() {
                 <Input value={userId || ""} disabled />
               </div>
               <Button type="primary" onClick={handleCreateAdmin} loading={loading}>
-                Grant Management Access
+                Make Me a Superadmin
               </Button>
             </div>
           )}

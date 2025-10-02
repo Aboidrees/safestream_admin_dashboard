@@ -1,455 +1,471 @@
 import { NavigationHeader } from "@/components/navigation-header"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Shield, Clock, Users, CheckCircle, Star, Play, Smartphone, Tv, Monitor } from "lucide-react"
 import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import {
+  Check,
+  Sparkles,
+  Shield,
+  Zap,
+  Video,
+  Users,
+  Clock,
+  BarChart3,
+  Smartphone,
+  UserPlus,
+  Target,
+  QrCode,
+} from "lucide-react"
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-red-50 via-white to-pink-50">
+    <div className="min-h-screen bg-white overflow-hidden">
       <NavigationHeader />
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto text-center">
-          <div className="inline-block mb-6">
-            <div className="flex items-center gap-2 px-4 py-2 bg-red-100 rounded-full">
-              <Shield className="w-4 h-4 text-red-600" />
-              <span className="text-sm font-medium text-red-600">Trusted by 10,000+ families</span>
+      <section className="py-20 bg-gradient-to-br from-gray-50 via-white to-blue-50 relative overflow-hidden">
+        {/* Background decorations */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-red-200 to-pink-200 rounded-full opacity-20 float"></div>
+          <div
+            className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-blue-200 to-purple-200 rounded-full opacity-20 float"
+            style={{ animationDelay: "2s" }}
+          ></div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div className="slide-in-left">
+              <div className="flex items-center space-x-2 mb-4">
+                <Sparkles className="h-5 w-5 text-red-500" />
+                <span className="text-red-500 font-medium text-sm">Family-Safe Streaming</span>
+              </div>
+              <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+                Safe Content for Your{" "}
+                <span className="bg-gradient-to-r from-red-500 via-pink-500 to-purple-500 bg-clip-text text-transparent">
+                  Children
+                </span>
+              </h1>
+              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+                Create a curated, safe viewing experience with parent-controlled streaming that grows with your family.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Link href="/register">
+                  <Button className="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-700 transform hover:scale-105 pulse-glow">
+                    Get Started Free
+                  </Button>
+                </Link>
+                <Link href="/about">
+                  <Button
+                    variant="outline"
+                    className="border-2 border-gray-300 hover:border-red-500 hover:text-red-500 px-8 py-4 text-lg font-semibold transition-all duration-700 transform hover:scale-105 bg-white/80 backdrop-blur-sm"
+                  >
+                    Learn More
+                  </Button>
+                </Link>
+              </div>
+              <div className="flex items-center space-x-6 mt-8 text-sm text-gray-500">
+                <div className="flex items-center space-x-2">
+                  <Check className="h-4 w-4 text-green-500" />
+                  <span>No credit card required</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Check className="h-4 w-4 text-green-500" />
+                  <span>Setup in 2 minutes</span>
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-center slide-in-right">
+              <div className="relative">
+                <div className="w-64 h-[500px] gradient-shift rounded-[3rem] border-8 border-gray-800 shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-1000"></div>
+                <div className="absolute inset-0 w-64 h-[500px] bg-white/10 rounded-[3rem] border-8 border-transparent backdrop-blur-sm"></div>
+                {/* Floating elements */}
+                <div className="absolute -top-4 -left-4 w-8 h-8 bg-red-500 rounded-full shadow-lg float"></div>
+                <div
+                  className="absolute -bottom-4 -right-4 w-6 h-6 bg-blue-500 rounded-full shadow-lg float"
+                  style={{ animationDelay: "1s" }}
+                ></div>
+                <div
+                  className="absolute top-1/2 -right-8 w-4 h-4 bg-purple-500 rounded-full shadow-lg float"
+                  style={{ animationDelay: "2s" }}
+                ></div>
+              </div>
             </div>
           </div>
+        </div>
+      </section>
 
-          <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight">
-            Safe Streaming for
-            <span className="block bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">
-              Your Family
-            </span>
-          </h1>
-
-          <p className="text-xl text-gray-600 mb-10 max-w-3xl mx-auto leading-relaxed">
-            Create a worry-free viewing experience with age-appropriate content, smart parental controls, and real-time
-            monitoring for your children.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link href="/register">
-              <Button
-                size="lg"
-                className="bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white px-8 py-6 text-lg shadow-lg hover:shadow-xl transition-all"
+      {/* Features Parents Love */}
+      <section id="features" className="py-20 bg-white relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16 fade-in">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Features Parents Love</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Everything you need to create a safe, controlled, and enjoyable viewing experience for your children.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                icon: Video,
+                title: "Content Curation",
+                description: "Create custom collections of videos from YouTube, Vimeo, or other trusted sources.",
+                color: "from-purple-500 to-purple-600",
+                delay: "stagger-1",
+              },
+              {
+                icon: Users,
+                title: "Multiple Profiles",
+                description: "Manage multiple child accounts with customized content for each child.",
+                color: "from-orange-500 to-orange-600",
+                delay: "stagger-2",
+              },
+              {
+                icon: Clock,
+                title: "Time Controls",
+                description: "Set daily screen time limits that automatically pause viewing when time is up.",
+                color: "from-red-500 to-red-600",
+                delay: "stagger-3",
+              },
+              {
+                icon: BarChart3,
+                title: "Watch History",
+                description: "Monitor what your children are watching and track viewing habits.",
+                color: "from-blue-500 to-blue-600",
+                delay: "stagger-4",
+              },
+              {
+                icon: QrCode,
+                title: "QR Login",
+                description: "Children scan simple QR codes for easy, password-free login.",
+                color: "from-indigo-500 to-indigo-600",
+                delay: "stagger-5",
+              },
+              {
+                icon: Zap,
+                title: "Real-time Controls",
+                description: "Pause, monitor, and manage content remotely for all devices.",
+                color: "from-yellow-500 to-yellow-600",
+                delay: "stagger-6",
+              },
+            ].map((feature, index) => (
+              <Card
+                key={index}
+                className={`border-0 shadow-lg hover:shadow-2xl transition-all duration-700 transform hover:scale-105 hover:-translate-y-2 scale-in ${feature.delay} group cursor-pointer`}
               >
-                Start Free Trial
-              </Button>
-            </Link>
-            <Button
-              size="lg"
-              variant="outline"
-              className="border-2 border-gray-300 px-8 py-6 text-lg hover:bg-gray-50 bg-transparent"
-            >
-              <Play className="w-5 h-5 mr-2" />
-              See How It Works
-            </Button>
-          </div>
-
-          <div className="mt-12 flex items-center justify-center gap-8 text-sm text-gray-600">
-            <div className="flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-green-600" />
-              <span>No credit card required</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-green-600" />
-              <span>Cancel anytime</span>
-            </div>
+                <CardHeader className="text-center pb-4">
+                  <div
+                    className={`mx-auto w-16 h-16 bg-gradient-to-r ${feature.color} rounded-2xl flex items-center justify-center mb-4 shadow-lg group-hover:shadow-xl transition-all duration-500`}
+                  >
+                    <feature.icon className="h-8 w-8 text-white" />
+                  </div>
+                  <CardTitle className="text-xl font-bold text-gray-900 group-hover:text-gray-700 transition-colors duration-500">
+                    {feature.title}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-600 text-center leading-relaxed">{feature.description}</p>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section id="features" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Features Parents Love</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Everything you need to keep your children safe while they enjoy quality content
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Card className="border-2 hover:border-red-200 transition-all hover:shadow-lg">
-              <CardContent className="pt-6">
-                <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
-                  <Shield className="w-6 h-6 text-red-600" />
-                </div>
-                <h3 className="text-xl font-bold mb-3 text-gray-900">Age-Appropriate Content</h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Curated library filtered by age groups with content ratings and educational value indicators.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2 hover:border-red-200 transition-all hover:shadow-lg">
-              <CardContent className="pt-6">
-                <div className="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center mb-4">
-                  <Clock className="w-6 h-6 text-pink-600" />
-                </div>
-                <h3 className="text-xl font-bold mb-3 text-gray-900">Screen Time Management</h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Set daily limits, schedule viewing times, and receive notifications when limits are reached.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2 hover:border-red-200 transition-all hover:shadow-lg">
-              <CardContent className="pt-6">
-                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
-                  <Users className="w-6 h-6 text-purple-600" />
-                </div>
-                <h3 className="text-xl font-bold mb-3 text-gray-900">Multiple Profiles</h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Create separate profiles for each child with personalized content recommendations and settings.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2 hover:border-red-200 transition-all hover:shadow-lg">
-              <CardContent className="pt-6">
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                  <Star className="w-6 h-6 text-blue-600" />
-                </div>
-                <h3 className="text-xl font-bold mb-3 text-gray-900">Content Rating System</h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Clear ratings for violence, language, and themes so you know exactly what your kids watch.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2 hover:border-red-200 transition-all hover:shadow-lg">
-              <CardContent className="pt-6">
-                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
-                  <CheckCircle className="w-6 h-6 text-green-600" />
-                </div>
-                <h3 className="text-xl font-bold mb-3 text-gray-900">Real-Time Monitoring</h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Track viewing history and receive instant alerts for any concerning content attempts.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2 hover:border-red-200 transition-all hover:shadow-lg">
-              <CardContent className="pt-6">
-                <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4">
-                  <Play className="w-6 h-6 text-orange-600" />
-                </div>
-                <h3 className="text-xl font-bold mb-3 text-gray-900">Educational Content</h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Access to thousands of educational videos that make learning fun and engaging.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
+      {/* How SafeStream Works */}
+      <section id="how-it-works" className="py-20 bg-gradient-to-br from-gray-50 to-blue-50 relative overflow-hidden">
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-20 right-20 w-32 h-32 bg-gradient-to-br from-red-200 to-pink-200 rounded-full opacity-30 float"></div>
+          <div
+            className="absolute bottom-20 left-20 w-24 h-24 bg-gradient-to-br from-blue-200 to-purple-200 rounded-full opacity-30 float"
+            style={{ animationDelay: "3s" }}
+          ></div>
         </div>
-      </section>
 
-      {/* How It Works Section */}
-      <section id="how-it-works" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-red-50">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">How SafeStream Works</h2>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <div className="text-center mb-16 fade-in">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">How SafeStream Works</h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Get started in minutes with our simple three-step process
+              Get started in minutes with our simple 4-step process designed for busy parents.
             </p>
           </div>
-
-          <div className="grid md:grid-cols-3 gap-12">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-red-600 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-2xl font-bold shadow-lg">
-                1
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              {
+                step: "1",
+                title: "Create Your Account",
+                description: "Sign up in a minute and set up your parent dashboard.",
+                icon: UserPlus,
+              },
+              {
+                step: "2",
+                title: "Add Child Profiles",
+                description: "Create profiles for each of your children with age-appropriate settings.",
+                icon: Users,
+              },
+              {
+                step: "3",
+                title: "Curate Content",
+                description: "Add videos to collections and assign them to your children's profiles.",
+                icon: Target,
+              },
+              {
+                step: "4",
+                title: "Connect Devices",
+                description: "Securely connect child's devices using our simple QR code system.",
+                icon: Smartphone,
+              },
+            ].map((item, index) => (
+              <div key={index} className={`text-center slide-up stagger-${index + 1} group`}>
+                <div className="relative mb-6">
+                  <div className="w-20 h-20 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto shadow-lg group-hover:shadow-xl transition-all duration-700 transform group-hover:scale-110 pulse-glow">
+                    {item.step}
+                  </div>
+                  <div className="absolute -top-2 -right-2 w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center">
+                    <item.icon className="h-4 w-4 text-red-500" />
+                  </div>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-red-500 transition-colors duration-500">
+                  {item.title}
+                </h3>
+                <p className="text-gray-600 leading-relaxed">{item.description}</p>
               </div>
-              <h3 className="text-2xl font-bold mb-4 text-gray-900">Create Profiles</h3>
-              <p className="text-gray-600 leading-relaxed">
-                Set up individual profiles for each child with their age, interests, and viewing preferences.
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-pink-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-2xl font-bold shadow-lg">
-                2
-              </div>
-              <h3 className="text-2xl font-bold mb-4 text-gray-900">Set Controls</h3>
-              <p className="text-gray-600 leading-relaxed">
-                Configure screen time limits, content filters, and notification preferences for each profile.
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-2xl font-bold shadow-lg">
-                3
-              </div>
-              <h3 className="text-2xl font-bold mb-4 text-gray-900">Watch Safely</h3>
-              <p className="text-gray-600 leading-relaxed">
-                Let your children explore age-appropriate content while you monitor their activity in real-time.
-              </p>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Simple, Transparent Pricing</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">Choose the plan that works best for your family</p>
+      <section id="pricing" className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16 fade-in">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Simple, Transparent Pricing</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Choose the perfect plan for your family. Start free, upgrade anytime.
+            </p>
           </div>
-
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <Card className="border-2 hover:border-red-200 transition-all">
-              <CardContent className="pt-6">
-                <h3 className="text-2xl font-bold mb-2 text-gray-900">Basic</h3>
-                <div className="mb-6">
-                  <span className="text-4xl font-bold text-gray-900">$9.99</span>
-                  <span className="text-gray-600">/month</span>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {/* Basic Plan */}
+            <Card className="border-2 border-gray-200 hover:border-gray-300 transition-all duration-700 transform hover:scale-105 scale-in stagger-1">
+              <CardHeader className="text-center pb-8">
+                <CardTitle className="text-2xl font-bold text-gray-900">Basic</CardTitle>
+                <div className="mt-4">
+                  <span className="text-5xl font-bold text-gray-900">Free</span>
                 </div>
-                <ul className="space-y-3 mb-8">
-                  <li className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-600">Up to 2 child profiles</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-600">Basic content filtering</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-600">Screen time controls</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-600">Viewing history</span>
-                  </li>
-                </ul>
-                <Button className="w-full bg-transparent" variant="outline">
+                <p className="text-gray-500 mt-2">Perfect for trying out SafeStream</p>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-4">
+                  {["1 Child Profile", "5 Collections", "Basic Content Filtering", "30 Min Daily Limit"].map(
+                    (feature, index) => (
+                      <div key={index} className="flex items-center">
+                        <Check className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
+                        <span className="text-gray-600">{feature}</span>
+                      </div>
+                    ),
+                  )}
+                </div>
+                <Button
+                  variant="outline"
+                  className="w-full mt-8 bg-transparent hover:bg-gray-50 transition-all duration-500"
+                >
                   Get Started
                 </Button>
               </CardContent>
             </Card>
 
-            <Card className="border-4 border-red-600 shadow-xl relative">
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                <span className="bg-gradient-to-r from-red-600 to-pink-600 text-white px-4 py-1 rounded-full text-sm font-bold">
-                  Most Popular
-                </span>
+            {/* Family Plan */}
+            <Card className="border-2 border-red-500 relative transform scale-105 shadow-2xl scale-in stagger-2">
+              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                <Badge className="bg-gradient-to-r from-red-500 to-pink-500 text-white px-6 py-2 text-sm font-semibold shadow-lg">
+                  MOST POPULAR
+                </Badge>
               </div>
-              <CardContent className="pt-6">
-                <h3 className="text-2xl font-bold mb-2 text-gray-900">Family</h3>
-                <div className="mb-6">
-                  <span className="text-4xl font-bold text-gray-900">$19.99</span>
-                  <span className="text-gray-600">/month</span>
+              <CardHeader className="text-center pb-8 pt-8">
+                <CardTitle className="text-2xl font-bold text-gray-900">Family</CardTitle>
+                <div className="mt-4">
+                  <span className="text-5xl font-bold bg-gradient-to-r from-red-500 to-pink-500 bg-clip-text text-transparent">
+                    $5.99
+                  </span>
+                  <span className="text-gray-600 text-lg">/month</span>
                 </div>
-                <ul className="space-y-3 mb-8">
-                  <li className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-600">Up to 5 child profiles</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-600">Advanced content filtering</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-600">Real-time monitoring</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-600">Educational content library</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-600">Priority support</span>
-                  </li>
-                </ul>
-                <Button className="w-full bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700">
-                  Get Started
+                <p className="text-gray-500 mt-2">Best for growing families</p>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-4">
+                  {[
+                    "3 Child Profiles",
+                    "Unlimited Collections",
+                    "Advanced Content Filtering",
+                    "Custom Time Limits",
+                    "Watch History & Reports",
+                  ].map((feature, index) => (
+                    <div key={index} className="flex items-center">
+                      <Check className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
+                      <span className="text-gray-600">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+                <Button className="w-full mt-8 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white shadow-lg hover:shadow-xl transition-all duration-700 transform hover:scale-105">
+                  Choose Plan
                 </Button>
               </CardContent>
             </Card>
 
-            <Card className="border-2 hover:border-red-200 transition-all">
-              <CardContent className="pt-6">
-                <h3 className="text-2xl font-bold mb-2 text-gray-900">Premium</h3>
-                <div className="mb-6">
-                  <span className="text-4xl font-bold text-gray-900">$29.99</span>
-                  <span className="text-gray-600">/month</span>
+            {/* Premium Plan */}
+            <Card className="border-2 border-gray-200 hover:border-purple-300 transition-all duration-700 transform hover:scale-105 scale-in stagger-3">
+              <CardHeader className="text-center pb-8">
+                <CardTitle className="text-2xl font-bold text-gray-900">Premium</CardTitle>
+                <div className="mt-4">
+                  <span className="text-5xl font-bold bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent">
+                    $9.99
+                  </span>
+                  <span className="text-gray-600 text-lg">/month</span>
                 </div>
-                <ul className="space-y-3 mb-8">
-                  <li className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-600">Unlimited child profiles</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-600">AI-powered content analysis</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-600">Custom content playlists</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-600">Detailed analytics reports</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-600">24/7 premium support</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-600">Offline viewing</span>
-                  </li>
-                </ul>
-                <Button className="w-full bg-transparent" variant="outline">
-                  Get Started
+                <p className="text-gray-500 mt-2">For large families & power users</p>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-4">
+                  {[
+                    "10 Child Profiles",
+                    "Unlimited Collections",
+                    "Premium Content Library",
+                    "Detailed Analytics",
+                    "Priority Support",
+                  ].map((feature, index) => (
+                    <div key={index} className="flex items-center">
+                      <Check className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
+                      <span className="text-gray-600">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+                <Button
+                  variant="outline"
+                  className="w-full mt-8 bg-transparent hover:bg-purple-50 border-purple-200 hover:border-purple-300 transition-all duration-500"
+                >
+                  Choose Plan
                 </Button>
               </CardContent>
             </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Device Compatibility */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-red-50">
-        <div className="max-w-7xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Watch Anywhere, Anytime</h2>
-          <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
-            SafeStream works seamlessly across all your devices
-          </p>
-
-          <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            <div className="flex flex-col items-center">
-              <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mb-4">
-                <Smartphone className="w-10 h-10 text-red-600" />
-              </div>
-              <h3 className="font-bold text-xl mb-2 text-gray-900">Mobile</h3>
-              <p className="text-gray-600">iOS & Android apps</p>
-            </div>
-
-            <div className="flex flex-col items-center">
-              <div className="w-20 h-20 bg-pink-100 rounded-full flex items-center justify-center mb-4">
-                <Monitor className="w-10 h-10 text-pink-600" />
-              </div>
-              <h3 className="font-bold text-xl mb-2 text-gray-900">Desktop</h3>
-              <p className="text-gray-600">Mac & Windows</p>
-            </div>
-
-            <div className="flex flex-col items-center">
-              <div className="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mb-4">
-                <Tv className="w-10 h-10 text-purple-600" />
-              </div>
-              <h3 className="font-bold text-xl mb-2 text-gray-900">Smart TV</h3>
-              <p className="text-gray-600">Apple TV, Roku & more</p>
-            </div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-red-600 to-pink-600">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            Ready to Create a Safer Viewing Experience?
-          </h2>
-          <p className="text-xl text-white/90 mb-10">
-            Join thousands of families who trust SafeStream to protect their children online
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+      <section className="py-20 gradient-shift relative overflow-hidden">
+        <div className="absolute inset-0 bg-black/10"></div>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <div className="fade-in">
+            <Zap className="h-16 w-16 text-white mx-auto mb-6 float" />
+            <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">
+              Ready to create a safer viewing experience?
+            </h2>
+            <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed">
+              Join thousands of parents who trust SafeStream for their children's digital wellbeing.
+            </p>
             <Link href="/register">
-              <Button size="lg" className="bg-white text-red-600 hover:bg-gray-100 px-8 py-6 text-lg shadow-lg">
-                Start Your Free Trial
+              <Button className="bg-white text-gray-900 hover:bg-gray-100 px-10 py-4 text-lg font-semibold shadow-2xl hover:shadow-3xl transition-all duration-700 transform hover:scale-105">
+                Get Started Today
               </Button>
             </Link>
-            <Button
-              size="lg"
-              variant="outline"
-              className="border-2 border-white text-white hover:bg-white/10 px-8 py-6 text-lg bg-transparent"
-            >
-              Schedule a Demo
-            </Button>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
+      <footer className="bg-gray-900 text-white py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 fade-in">
             <div>
-              <div className="flex items-center gap-2 mb-4">
-                <Shield className="w-8 h-8 text-red-500" />
-                <span className="text-xl font-bold">SafeStream</span>
+              <div className="flex items-center space-x-2 mb-6">
+                <Shield className="h-8 w-8 text-red-500" />
+                <span className="text-2xl font-bold bg-gradient-to-r from-red-500 to-pink-500 bg-clip-text text-transparent">
+                  SafeStream
+                </span>
               </div>
-              <p className="text-gray-400">Creating safe digital experiences for families worldwide.</p>
+              <p className="text-gray-400 mb-6 leading-relaxed">
+                A parent-controlled streaming platform that allows parents to create a safe viewing environment for
+                their children.
+              </p>
+              <p className="text-gray-500 text-sm">© 2024 SafeStream. All rights reserved.</p>
             </div>
 
             <div>
-              <h3 className="font-bold mb-4">Product</h3>
-              <ul className="space-y-2 text-gray-400">
+              <h4 className="font-semibold mb-6 text-lg">Quick Links</h4>
+              <ul className="space-y-3 text-gray-400">
                 <li>
-                  <Link href="/#features" className="hover:text-white transition-colors">
-                    Features
+                  <Link
+                    href="/about"
+                    className="hover:text-white transition-all duration-500 hover:translate-x-1 transform inline-block"
+                  >
+                    About Us
                   </Link>
                 </li>
                 <li>
-                  <Link href="/#pricing" className="hover:text-white transition-colors">
-                    Pricing
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/faq" className="hover:text-white transition-colors">
-                    FAQ
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="font-bold mb-4">Company</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li>
-                  <Link href="/about" className="hover:text-white transition-colors">
-                    About
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/blog" className="hover:text-white transition-colors">
+                  <Link
+                    href="/blog"
+                    className="hover:text-white transition-all duration-500 hover:translate-x-1 transform inline-block"
+                  >
                     Blog
                   </Link>
                 </li>
                 <li>
-                  <Link href="/contact-us" className="hover:text-white transition-colors">
-                    Contact
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="font-bold mb-4">Legal</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li>
-                  <Link href="/privacy-policy" className="hover:text-white transition-colors">
+                  <Link
+                    href="/privacy-policy"
+                    className="hover:text-white transition-all duration-500 hover:translate-x-1 transform inline-block"
+                  >
                     Privacy Policy
                   </Link>
                 </li>
                 <li>
-                  <Link href="/terms-of-service" className="hover:text-white transition-colors">
+                  <Link
+                    href="/terms-of-service"
+                    className="hover:text-white transition-all duration-500 hover:translate-x-1 transform inline-block"
+                  >
                     Terms of Service
                   </Link>
                 </li>
               </ul>
             </div>
-          </div>
 
-          <div className="border-t border-gray-800 pt-8 text-center text-gray-400">
-            <p>&copy; 2025 SafeStream. All rights reserved.</p>
+            <div>
+              <h4 className="font-semibold mb-6 text-lg">Support</h4>
+              <ul className="space-y-3 text-gray-400">
+                <li>
+                  <Link
+                    href="/faq"
+                    className="hover:text-white transition-all duration-500 hover:translate-x-1 transform inline-block"
+                  >
+                    FAQ
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/help-center"
+                    className="hover:text-white transition-all duration-500 hover:translate-x-1 transform inline-block"
+                  >
+                    Help Center
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/contact-us"
+                    className="hover:text-white transition-all duration-500 hover:translate-x-1 transform inline-block"
+                  >
+                    Contact Us
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/community"
+                    className="hover:text-white transition-all duration-500 hover:translate-x-1 transform inline-block"
+                  >
+                    Community
+                  </Link>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </footer>

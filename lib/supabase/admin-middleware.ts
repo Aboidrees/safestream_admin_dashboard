@@ -22,8 +22,8 @@ export async function adminMiddleware(req: NextRequest) {
   const { data: adminData } = await supabase.from("admins").select("*").eq("user_id", session.user.id).single()
 
   if (!adminData) {
-    // Not an admin, redirect to secure admin setup page
-    return NextResponse.redirect(new URL("/my-management-office/setup", req.url))
+    // Not an admin, redirect to admin setup page
+    return NextResponse.redirect(new URL("/admin-setup", req.url))
   }
 
   return res

@@ -1,35 +1,40 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { AlertCircle } from "lucide-react"
 
-export function EnvCheck() {
-  const [missingVars, setMissingVars] = useState<string[]>([])
+export default function EnvCheck() {
+  const [envStatus, setEnvStatus] = useState<{
+    supabaseUrl: boolean
+    supabaseAnonKey: boolean
+  }>({
+    supabaseUrl: false,
+    supabaseAnonKey: false,
+  })
 
   useEffect(() => {
-    const required = ["NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY"]
-    const missing = required.filter((varName) => !process.env[varName])
-    setMissingVars(missing)
+    setEnvStatus({
+      supabaseUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+      supabaseAnonKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    })
   }, [])
 
-  if (missingVars.length === 0) return null
+  if (envStatus.supabaseUrl && envStatus.supabaseAnonKey) {
+    return null
+  }
 
   return (
-    <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 max-w-2xl w-full px-4">
-      <Alert variant="destructive">
-        <AlertCircle className="h-4 w-4" />
-        <AlertTitle>Missing Environment Variables</AlertTitle>
-        <AlertDescription>
-          The following environment variables are required but not set:
-          <ul className="list-disc list-inside mt-2">
-            {missingVars.map((varName) => (
-              <li key={varName}>{varName}</li>
-            ))}
-          </ul>
-          <p className="mt-2">Please check your .env.local file and restart the development server.</p>
-        </AlertDescription>
-      </Alert>
+    <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+      <div className="bg-white p-6 rounded-lg max-w-md w-full">
+        <h2 className="text-xl font-bold mb-4">Environment Variables Missing</h2>
+        <div className="space-y-2">
+          {!envStatus.supabaseUrl && <p className="text-red-600">NEXT_PUBLIC_SUPABASE_URL is missing</p>}
+          {!envStatus.supabaseAnonKey && <p className="text-red-600">NEXT_PUBLIC_SUPABASE_ANON_KEY is missing</p>}
+        </div>
+        <p className="mt-4">
+          Please make sure these environment variables are set in your .env.local file or in your deployment
+          environment.
+        </p>
+      </div>
     </div>
   )
 }
