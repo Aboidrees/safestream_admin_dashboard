@@ -1,85 +1,77 @@
--- Insert default subscription plans
-INSERT INTO public.plans (id, name, description, price, interval, max_profiles, max_collections, features, is_active) VALUES
-  (
-    uuid_generate_v4(),
-    'Free',
-    'Perfect for trying out SafeStream with basic features',
-    0.00,
-    'month',
-    2,
-    3,
-    '["Basic content filtering", "2 child profiles", "3 collections", "Standard support"]'::jsonb,
-    true
-  ),
-  (
-    uuid_generate_v4(),
-    'Family',
-    'Great for families with multiple children and extensive content needs',
-    9.99,
-    'month',
-    5,
-    20,
-    '["Advanced content filtering", "5 child profiles", "20 collections", "Time controls", "Watch history", "Priority support"]'::jsonb,
-    true
-  ),
-  (
-    uuid_generate_v4(),
-    'Premium',
-    'Ultimate family experience with unlimited access and premium features',
-    19.99,
-    'month',
-    10,
-    -1,
-    '["All Family features", "10 child profiles", "Unlimited collections", "Advanced analytics", "Custom content ratings", "24/7 support"]'::jsonb,
-    true
-  );
+-- Insert sample data for development/testing
 
--- Insert sample API credentials (you'll need to update these with real values)
-INSERT INTO public.api_credentials (service_name, api_key) VALUES
-  ('youtube', 'your-youtube-api-key-here'),
-  ('content_filter', 'your-content-filter-api-key-here')
-ON CONFLICT (service_name) DO NOTHING;
+-- Sample admin permissions structure
+INSERT INTO public.admins (user_id, role, permissions, is_active) VALUES
+-- This will be populated by the create-admin script
+-- Example structure:
+-- ('uuid-here', 'super_admin', '{"users": ["read", "write", "delete"], "families": ["read", "write", "delete"], "content": ["read", "write", "delete", "moderate"], "admins": ["read", "write", "delete"]}', true)
+ON CONFLICT (user_id) DO NOTHING;
 
--- Create a function to handle new user registration
-CREATE OR REPLACE FUNCTION public.handle_new_user()
-RETURNS TRIGGER AS $$
+-- Sample content ratings and categories
+-- This could be expanded with actual video data
+INSERT INTO public.videos (youtube_id, title, description, thumbnail_url, duration, channel_name, content_rating, tags) VALUES
+('dQw4w9WgXcQ', 'Sample Educational Video', 'A sample educational video for children', 'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg', 212, 'Educational Channel', 'G', ARRAY['education', 'children', 'learning']),
+('9bZkp7q19f0', 'Fun Learning Songs', 'Educational songs for kids', 'https://img.youtube.com/vi/9bZkp7q19f0/maxresdefault.jpg', 180, 'Kids Songs Channel', 'G', ARRAY['music', 'education', 'songs'])
+ON CONFLICT (youtube_id) DO NOTHING;
+
+-- Insert sample admin permissions
+INSERT INTO admins (user_id, role, permissions, is_active) VALUES
+-- This will be populated by the create-admin script
+-- Example structure:
+-- ('user-uuid-here', 'super_admin', '{"users": ["read", "write", "delete"], "content": ["read", "write", "moderate"], "system": ["read", "write", "admin"]}', true)
+ON CONFLICT (user_id) DO NOTHING;
+
+-- Insert sample video categories and age ratings
+-- This can be expanded based on your content strategy
+INSERT INTO public.videos (youtube_id, title, description, thumbnail_url, duration, channel_name, content_rating, tags) VALUES
+('video-id-1', 'Sample Video for Adults', 'A sample video for adult audience', 'https://img.youtube.com/vi/video-id-1/maxresdefault.jpg', 360, 'Adult Channel', 'PG-13', ARRAY['adult', 'entertainment', 'movies']),
+('video-id-2', 'Documentary Series', 'Educational documentary series', 'https://img.youtube.com/vi/video-id-2/maxresdefault.jpg', 720, 'Documentary Channel', 'PG', ARRAY['documentary', 'history', 'education'])
+ON CONFLICT (youtube_id) DO NOTHING;
+
+-- Create function to generate secure admin tokens
+CREATE OR REPLACE FUNCTION public.generate_admin_token()
+RETURNS TEXT AS $$
 BEGIN
-  INSERT INTO public.users (id, email, name)
-  VALUES (
-    NEW.id,
-    NEW.email,
-    COALESCE(NEW.raw_user_meta_data->>'name', NEW.email)
-  );
-  RETURN NEW;
+  RETURN encode(gen_random_bytes(32), 'base64');
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Create trigger for new user registration
-DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
-CREATE TRIGGER on_auth_user_created
-  AFTER INSERT ON auth.users
-  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
-
--- Create a function to generate unique login codes for child profiles
-CREATE OR REPLACE FUNCTION generate_login_code()
-RETURNS TEXT AS $$
-DECLARE
-  code TEXT;
-  exists_check INTEGER;
+-- Create function to verify admin access
+CREATE OR REPLACE FUNCTION public.verify_admin_access(user_uuid UUID)
+RETURNS TABLE(
+  admin_id UUID,
+  role TEXT,
+  permissions JSONB,
+  is_active BOOLEAN,
+  token_valid BOOLEAN
+) AS $$
 BEGIN
-  LOOP
-    -- Generate a 6-digit code
-    code := LPAD(FLOOR(RANDOM() * 1000000)::TEXT, 6, '0');
-    
-    -- Check if code already exists
-    SELECT COUNT(*) INTO exists_check 
-    FROM public.profiles 
-    WHERE login_code = code;
-    
-    -- If code doesn't exist, return it
-    IF exists_check = 0 THEN
-      RETURN code;
-    END IF;
-  END LOOP;
+  RETURN QUERY
+  SELECT 
+    a.id,
+    a.role,
+    a.permissions,
+    a.is_active,
+    CASE 
+      WHEN a.token_expires_at IS NULL THEN true
+      WHEN a.token_expires_at > NOW() THEN true
+      ELSE false
+    END as token_valid
+  FROM public.admins a
+  WHERE a.user_id = user_uuid 
+    AND a.is_active = true;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Create function to update admin last login
+CREATE OR REPLACE FUNCTION public.update_admin_login(user_uuid UUID)
+RETURNS VOID AS $$
+BEGIN
+  UPDATE public.admins 
+  SET 
+    last_login = NOW(),
+    session_token = public.generate_admin_token(),
+    token_expires_at = NOW() + INTERVAL '30 days'
+  WHERE user_id = user_uuid AND is_active = true;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
