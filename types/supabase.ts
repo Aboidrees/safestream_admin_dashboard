@@ -145,34 +145,25 @@ export interface Database {
       profiles: {
         Row: {
           id: string
-          parent_id: string
-          name: string
-          age: number
-          avatar: string | null
-          content_rating: string
-          login_code: string
+          email: string
+          full_name: string | null
+          role: "user" | "admin" | "superadmin"
           created_at: string
           updated_at: string
         }
         Insert: {
-          id?: string
-          parent_id: string
-          name: string
-          age: number
-          avatar?: string | null
-          content_rating: string
-          login_code: string
+          id: string
+          email: string
+          full_name?: string | null
+          role?: "user" | "admin" | "superadmin"
           created_at?: string
           updated_at?: string
         }
         Update: {
           id?: string
-          parent_id?: string
-          name?: string
-          age?: number
-          avatar?: string | null
-          content_rating?: string
-          login_code?: string
+          email?: string
+          full_name?: string | null
+          role?: "user" | "admin" | "superadmin"
           created_at?: string
           updated_at?: string
         }
@@ -370,6 +361,64 @@ export interface Database {
           completed?: boolean
         }
       }
+      child_profiles: {
+        Row: {
+          id: string
+          parent_id: string
+          name: string
+          age: number
+          avatar_url: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          parent_id: string
+          name: string
+          age: number
+          avatar_url?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          parent_id?: string
+          name?: string
+          age?: number
+          avatar_url?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      video_collections: {
+        Row: {
+          id: string
+          parent_id: string
+          child_id: string
+          name: string
+          description: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          parent_id: string
+          child_id: string
+          name: string
+          description?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          parent_id?: string
+          child_id?: string
+          name?: string
+          description?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never
@@ -378,7 +427,7 @@ export interface Database {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      user_role: "user" | "admin" | "superadmin"
     }
     CompositeTypes: {
       [_ in never]: never

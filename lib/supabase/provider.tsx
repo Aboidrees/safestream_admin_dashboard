@@ -3,7 +3,7 @@
 import type React from "react"
 import { createContext, useContext, useEffect, useState } from "react"
 import { createClient } from "./client"
-import type { Session, User } from "@supabase/supabase-js"
+import type { Session, User, SupabaseClient } from "@supabase/supabase-js"
 import { useRouter } from "next/navigation"
 
 type SupabaseContextType = {
@@ -11,6 +11,7 @@ type SupabaseContextType = {
   session: Session | null
   isLoading: boolean
   signOut: () => Promise<void>
+  supabase: SupabaseClient
 }
 
 const SupabaseContext = createContext<SupabaseContextType>({
@@ -18,6 +19,7 @@ const SupabaseContext = createContext<SupabaseContextType>({
   session: null,
   isLoading: true,
   signOut: async () => {},
+  supabase: createClient(),
 })
 
 export const useSupabase = () => useContext(SupabaseContext)
@@ -27,10 +29,9 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
+  const [supabase] = useState(() => createClient())
 
   useEffect(() => {
-    const supabase = createClient()
-
     const getSession = async () => {
       try {
         const {
@@ -65,11 +66,10 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
     return () => {
       subscription.unsubscribe()
     }
-  }, [router])
+  }, [router, supabase])
 
   const signOut = async () => {
     try {
-      const supabase = createClient()
       await supabase.auth.signOut()
       router.push("/")
     } catch (error) {
@@ -82,6 +82,7 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
     session,
     isLoading,
     signOut,
+    supabase,
   }
 
   return <SupabaseContext.Provider value={value}>{children}</SupabaseContext.Provider>

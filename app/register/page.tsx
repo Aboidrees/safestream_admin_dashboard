@@ -8,157 +8,164 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Shield, AlertCircle, CheckCircle } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 
 export default function RegisterPage() {
+  const [fullName, setFullName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [name, setName] = useState("")
-  const [loading, setLoading] = useState(false)
+  const [confirmPassword, setConfirmPassword] = useState("")
   const [error, setError] = useState("")
   const [success, setSuccess] = useState(false)
+  const [loading, setLoading] = useState(false)
   const router = useRouter()
+  const supabase = createClient()
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true)
     setError("")
+    setSuccess(false)
+    setLoading(true)
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match")
+      setLoading(false)
+      return
+    }
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters long")
+      setLoading(false)
+      return
+    }
 
     try {
-      const supabase = createClient()
-
-      const { data, error } = await supabase.auth.signUp({
+      const { data, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
         options: {
           data: {
-            name,
+            full_name: fullName,
           },
         },
       })
 
-      if (error) {
-        setError(error.message)
+      if (signUpError) {
+        setError(signUpError.message)
+        setLoading(false)
         return
       }
 
       if (data.user) {
-        // Create user profile in our users table
-        const { error: profileError } = await supabase.from("users").insert({
-          id: data.user.id,
-          email: data.user.email!,
-          name,
-        })
-
-        if (profileError) {
-          console.error("Error creating user profile:", profileError)
-        }
-
         setSuccess(true)
         setTimeout(() => {
-          router.push("/login")
+          router.push("/dashboard")
+          router.refresh()
         }, 2000)
       }
     } catch (err) {
-      setError("An unexpected error occurred")
-    } finally {
+      setError("An unexpected error occurred. Please try again.")
       setLoading(false)
     }
   }
 
-  if (success) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 mobile-padding">
-        <Card className="w-full max-w-md">
-          <CardHeader className="space-y-1 text-center">
-            <CardTitle className="mobile-heading font-bold text-green-600">Registration Successful!</CardTitle>
-            <CardDescription className="mobile-text">
-              Please check your email to confirm your account. You'll be redirected to the login page shortly.
-            </CardDescription>
-          </CardHeader>
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 p-4">
+      <div className="w-full max-w-md space-y-8">
+        <div className="text-center">
+          <Link href="/" className="inline-flex items-center space-x-2">
+            <Shield className="h-12 w-12 text-blue-600" />
+            <span className="text-3xl font-bold">SafeStream</span>
+          </Link>
+          <h2 className="mt-6 text-2xl font-bold text-gray-900">Create your account</h2>
+          <p className="mt-2 text-gray-600">Start your journey to safer streaming</p>
+        </div>
+
+        <Card>
+          <form onSubmit={handleRegister}>
+            <CardHeader>
+              <CardTitle>Sign Up</CardTitle>
+              <CardDescription>Enter your details to create a new account</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {error && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+              {success && (
+                <Alert className="bg-green-50 text-green-900 border-green-200">
+                  <CheckCircle className="h-4 w-4" />
+                  <AlertDescription>Account created successfully! Redirecting to dashboard...</AlertDescription>
+                </Alert>
+              )}
+              <div className="space-y-2">
+                <Label htmlFor="fullName">Full Name</Label>
+                <Input
+                  id="fullName"
+                  type="text"
+                  placeholder="John Doe"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  required
+                  disabled={loading || success}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  disabled={loading || success}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  disabled={loading || success}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  placeholder="••••••••"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  disabled={loading || success}
+                />
+              </div>
+            </CardContent>
+            <CardFooter className="flex flex-col space-y-4">
+              <Button type="submit" className="w-full" disabled={loading || success}>
+                {loading ? "Creating account..." : success ? "Account created!" : "Sign Up"}
+              </Button>
+              <p className="text-sm text-center text-gray-600">
+                Already have an account?{" "}
+                <Link href="/login" className="text-blue-600 hover:underline font-medium">
+                  Sign in
+                </Link>
+              </p>
+            </CardFooter>
+          </form>
         </Card>
       </div>
-    )
-  }
-
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 mobile-padding">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1 text-center">
-          <CardTitle className="mobile-heading font-bold">Create your SafeStream account</CardTitle>
-          <CardDescription className="mobile-text">Enter your information to get started</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleRegister} className="space-y-6">
-            {error && (
-              <Alert variant="destructive">
-                <AlertDescription className="mobile-text">{error}</AlertDescription>
-              </Alert>
-            )}
-
-            <div className="space-y-2">
-              <Label htmlFor="name" className="mobile-text font-medium">
-                Full Name
-              </Label>
-              <Input
-                id="name"
-                type="text"
-                placeholder="Enter your full name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                className="touch-target mobile-text"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="email" className="mobile-text font-medium">
-                Email
-              </Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="touch-target mobile-text"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password" className="mobile-text font-medium">
-                Password
-              </Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Create a password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={6}
-                className="touch-target mobile-text"
-              />
-            </div>
-
-            <Button type="submit" className="w-full touch-target mobile-text" disabled={loading}>
-              {loading ? "Creating account..." : "Create account"}
-            </Button>
-          </form>
-
-          <div className="mt-6 text-center">
-            <p className="mobile-text text-muted-foreground">
-              Already have an account?{" "}
-              <Link href="/login" className="text-blue-600 hover:underline font-medium">
-                Sign in
-              </Link>
-            </p>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   )
 }

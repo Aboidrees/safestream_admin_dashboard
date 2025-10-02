@@ -28,96 +28,32 @@ export default function HomePage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <NavigationHeader />
 
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-8">
-              <div className="space-y-4">
-                <Badge className="bg-white/20 text-white border-white/30 hover:bg-white/30">
-                  <Star className="w-4 h-4 mr-2" />
-                  Trusted by 10,000+ Families
-                </Badge>
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
-                  Safe YouTube for{" "}
-                  <span className="bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">
-                    Your Kids
-                  </span>
-                </h1>
-                <p className="text-xl text-blue-100 max-w-2xl">
-                  Create curated video collections from YouTube that are safe, educational, and entertaining for your
-                  children. Complete parental control with peace of mind.
-                </p>
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link href="/register">
-                  <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50 font-semibold px-8">
-                    Start Free Trial
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </Link>
-                <Link href="#how-it-works">
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="border-white/30 text-white hover:bg-white/10 font-semibold px-8 bg-transparent"
-                  >
-                    <Play className="mr-2 h-5 w-5" />
-                    See How It Works
-                  </Button>
-                </Link>
-              </div>
-
-              <div className="flex items-center space-x-8 text-sm">
-                <div className="flex items-center">
-                  <CheckCircle className="h-5 w-5 mr-2 text-green-300" />
-                  <span>No ads</span>
-                </div>
-                <div className="flex items-center">
-                  <CheckCircle className="h-5 w-5 mr-2 text-green-300" />
-                  <span>100% safe content</span>
-                </div>
-                <div className="flex items-center">
-                  <CheckCircle className="h-5 w-5 mr-2 text-green-300" />
-                  <span>Parental controls</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="relative">
-              <div className="relative bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
-                <div className="space-y-6">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold">Emma's Learning Time</h3>
-                    <Badge className="bg-green-500/20 text-green-300 border-green-500/30">
-                      <Play className="w-3 h-3 mr-1" />
-                      Active
-                    </Badge>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    {[
-                      { title: "ABC Songs", duration: "15 min", thumbnail: "🎵" },
-                      { title: "Science Fun", duration: "12 min", thumbnail: "🔬" },
-                      { title: "Story Time", duration: "20 min", thumbnail: "📚" },
-                      { title: "Art & Craft", duration: "18 min", thumbnail: "🎨" },
-                    ].map((video, index) => (
-                      <div key={index} className="bg-white/10 rounded-lg p-3 space-y-2">
-                        <div className="text-2xl">{video.thumbnail}</div>
-                        <div>
-                          <p className="font-medium text-sm">{video.title}</p>
-                          <p className="text-xs text-blue-200">{video.duration}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-blue-200">Screen time today: 45 min</span>
-                    <span className="text-green-300">✓ All safe</span>
-                  </div>
-                </div>
-              </div>
+      {/* Hero Section - Reverted to Previous Design */}
+      <section className="relative overflow-hidden bg-gradient-to-r from-blue-600 to-purple-600 text-white py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center space-y-8">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold">Safe YouTube for Your Kids</h1>
+            <p className="text-xl text-blue-100 max-w-3xl mx-auto">
+              Create curated video collections from YouTube that are safe, educational, and entertaining for your
+              children. Complete parental control with peace of mind.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href="/register">
+                <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50 font-semibold px-8">
+                  Start Free Trial
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+              <Link href="#how-it-works">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="border-white/30 text-white hover:bg-white/10 font-semibold px-8 bg-transparent"
+                >
+                  <Play className="mr-2 h-5 w-5" />
+                  See How It Works
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
@@ -569,7 +505,7 @@ export default function HomePage() {
           </div>
 
           <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 SafeStream. All rights reserved.</p>
+            <p>&copy; 2025 SafeStream. All rights reserved.</p>
           </div>
         </div>
       </footer>
