@@ -14,7 +14,8 @@ async function main() {
     // Clear existing data (in development only)
     if (process.env.NODE_ENV === 'development') {
       console.log('🧹 Clearing existing data...')
-      await prisma.tokenSession.deleteMany()
+      // Skip tokenSession for now due to client generation issue
+      // await prisma.tokenSession.deleteMany()
       await prisma.deviceSession.deleteMany()
       await prisma.remoteCommand.deleteMany()
       await prisma.notification.deleteMany()

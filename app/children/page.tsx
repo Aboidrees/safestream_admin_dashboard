@@ -37,7 +37,7 @@ export default function AdminChildrenPage() {
   const fetchChildren = async () => {
     try {
       setLoading(true)
-      const response = await fetch('/api/admin/children')
+      const response = await fetch('/api/children')
       const data = await response.json()
       
       if (response.ok && data.children) {

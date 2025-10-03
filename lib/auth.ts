@@ -19,38 +19,42 @@ export const authOptions: NextAuthOptions = {
           return null
         }
 
-        const user = await prisma.user.findFirst({
-          where: {
-            email: credentials.email
-          },
-          include: {
-            admins: {
-              where: { isActive: true },
-              select: { role: true, id: true },
-              take: 1
+        try {
+          const user = await prisma.user.findFirst({
+            where: {
+              email: credentials.email
             },
+            include: {
+              admins: {
+                where: { isActive: true },
+                select: { role: true, id: true },
+              },
+            }
+          })
+
+          if (!user || !user.password) {
+            return null
           }
-        })
 
-        if (!user || !user.password) {
+          const isPasswordValid = await bcrypt.compare(credentials.password, user.password)
+
+          if (!isPasswordValid) {
+            return null
+          }
+
+          const admin = user.admins?.[0]
+
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            role: admin?.role || 'user',
+            isAdmin: !!admin,
+            adminId: admin?.id,
+          } as any
+        } catch (error) {
+          console.error('Authorize error:', error)
           return null
-        }
-
-        const isPasswordValid = await bcrypt.compare(credentials.password, user.password)
-
-        if (!isPasswordValid) {
-          return null
-        }
-
-        const admin = user.admins[0]
-
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: admin?.role || 'user',
-          isAdmin: !!admin,
-          adminId: admin?.id,
         }
       }
     })
@@ -64,38 +68,16 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async jwt({ token, user, account }) {
-      // If this is a new login, create tokens
+      // If this is a new login, add custom user properties to token
       if (user && account) {
-        try {
-          const accessToken = await createAccessToken({
-            id: user.id,
-            email: user.email!,
-            name: user.name!,
-            role: user.role,
-            isAdmin: user.isAdmin,
-            adminId: user.adminId,
-          })
-
-          const refreshToken = await createRefreshToken({
-            id: user.id,
-            email: user.email,
-          })
-
-          return {
-            ...token,
-            id: user.id,
-            email: user.email,
-            name: user.name,
-            role: user.role,
-            isAdmin: user.isAdmin,
-            adminId: user.adminId,
-            accessToken,  
-            refreshToken,
-          }
-        } catch (error) {
-          console.error('Failed to create tokens:', error)
-          // Return token without custom tokens on error
-          return token
+        return {
+          ...token,
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          role: (user as any).role,
+          isAdmin: (user as any).isAdmin,
+          adminId: (user as any).adminId,
         }
       }
 
@@ -103,6 +85,7 @@ export const authOptions: NextAuthOptions = {
       return token
     },
     async session({ session, token }) {
+      // Add custom token properties to session
       if (token) {
         session.user = {
           ...session.user,
@@ -112,7 +95,7 @@ export const authOptions: NextAuthOptions = {
           role: token.role as string,
           isAdmin: token.isAdmin as boolean,
           adminId: token.adminId as string | undefined,
-        }
+        } as any
       }
       return session
     },

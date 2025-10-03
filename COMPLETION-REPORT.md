@@ -10,9 +10,9 @@
 ### **API Endpoints Implemented (7/7)**
 
 #### **1. Users Management** ✅
-- **GET `/api/admin/users`** - List all users with admin status
-- **POST `/api/admin/users/[id]/ban`** - Ban user and revoke tokens
-- **DELETE `/api/admin/users/[id]`** - Delete user with safeguards
+- **GET `/api/users`** - List all users with admin status
+- **POST `/api/users/[id]/ban`** - Ban user and revoke tokens
+- **DELETE `/api/users/[id]`** - Delete user with safeguards
 
 **Features:**
 - Admin-only access
@@ -22,7 +22,7 @@
 - Full user data with family counts
 
 #### **2. Families Management** ✅
-- **GET `/api/admin/families`** - List all families with stats
+- **GET `/api/families`** - List all families with stats
 
 **Features:**
 - Family details with creator info
@@ -30,7 +30,7 @@
 - Collections count per family
 
 #### **3. Children Profiles** ✅
-- **GET `/api/admin/children`** - List all child profiles
+- **GET `/api/children`** - List all child profiles
 
 **Features:**
 - Child details with family info
@@ -39,7 +39,7 @@
 - QR codes
 
 #### **4. Collections Management** ✅
-- **GET `/api/admin/collections`** - List all content collections
+- **GET `/api/collections`** - List all content collections
 
 **Features:**
 - Collection details with creator info
@@ -47,8 +47,8 @@
 - Public/private status
 
 #### **5. Settings Management** ✅
-- **GET `/api/admin/settings`** - Get platform settings
-- **POST `/api/admin/settings`** - Save platform settings
+- **GET `/api/settings`** - Get platform settings
+- **POST `/api/settings`** - Save platform settings
 
 **Features:**
 - Complete platform configuration
@@ -66,9 +66,9 @@
 // Before: Mock data
 // After: Real API integration with error handling
 
-- Fetch users from /api/admin/users
-- Ban users with /api/admin/users/[id]/ban
-- Delete users with /api/admin/users/[id]
+- Fetch users from /api/users
+- Ban users with /api/users/[id]/ban
+- Delete users with /api/users/[id]
 - Proper error messages and confirmations
 ```
 
@@ -77,7 +77,7 @@
 // Before: Mock data
 // After: Real API integration
 
-- Fetch families from /api/admin/families
+- Fetch families from /api/families
 - Display real family data with stats
 ```
 
@@ -86,7 +86,7 @@
 // Before: Mock data
 // After: Real API integration
 
-- Fetch children from /api/admin/children
+- Fetch children from /api/children
 - Display real child profiles with QR codes
 ```
 
@@ -95,7 +95,7 @@
 // Before: Mock data
 // After: Real API integration
 
-- Fetch collections from /api/admin/collections
+- Fetch collections from /api/collections
 - Display real collection data with video counts
 ```
 
@@ -104,7 +104,7 @@
 // Before: Mock save
 // After: Real API integration
 
-- Save settings to /api/admin/settings
+- Save settings to /api/settings
 - Proper validation and error handling
 ```
 

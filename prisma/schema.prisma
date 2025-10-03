@@ -1,9 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
-  output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
@@ -12,260 +8,259 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(uuid()) @db.Uuid
-  email         String    @unique
-  emailVerified DateTime? @map("email_verified")
-  name          String?
-  password      String?
-  avatar        String?
-  phoneNumber   String?   @map("phone_number")
-  preferences   Json      @default("{}")
-  createdAt     DateTime  @default(now()) @map("created_at")
-  updatedAt     DateTime  @updatedAt @map("updated_at")
-
-  // Relations
-  createdFamilies Family[]
-  createdCollections Collection[]
-  admins Admin[]
-  accounts Account[]
-  sessions Session[]
-  tokenSessions TokenSession[]
-  notifications Notification[]
-  familyMembers FamilyMember[]
+  id                 String         @id @default(uuid()) @db.Uuid
+  email              String         @unique
+  emailVerified      DateTime?      @map("email_verified")
+  name               String?
+  password           String?
+  avatar             String?
+  phoneNumber        String?        @map("phone_number")
+  preferences        Json           @default("{}")
+  createdAt          DateTime       @default(now()) @map("created_at")
+  updatedAt          DateTime       @updatedAt @map("updated_at")
+  accounts           Account[]
+  createdFamilies    Family[]
+  familyMembers      FamilyMember[]
+  notifications      Notification[]
+  sessions           Session[]
+  tokenSessions      TokenSession[]
 
   @@map("users")
 }
 
 model Admin {
-  id             String   @id @default(uuid()) @db.Uuid
-  userId         String   @map("user_id") @db.Uuid
+  id             String    @id @default(uuid()) @db.Uuid
+  email          String    @unique
+  name           String
+  password       String
   role           AdminRole
-  permissions    Json     @default("{}")
-  isActive       Boolean  @default(true) @map("is_active")
+  permissions    Json      @default("{}")
+  isActive       Boolean   @default(true) @map("is_active")
   tokenExpiresAt DateTime? @map("token_expires_at")
   lastLogin      DateTime? @map("last_login")
-  createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @updatedAt @map("updated_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  createdCollections Collection[]
+  moderatedVideos Video[]
 
-  // Relations
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([userId])
   @@map("admins")
 }
 
 model Family {
-  id        String   @id @default(uuid()) @db.Uuid
-  name      String
-  createdBy String   @map("created_by") @db.Uuid
-  settings  Json     @default("{}")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  // Relations
-  creator User @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+  id            String         @id @default(uuid()) @db.Uuid
+  name          String
+  createdBy     String         @map("created_by") @db.Uuid
+  settings      Json           @default("{}")
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
   childProfiles ChildProfile[]
+  creator       User           @relation(fields: [createdBy], references: [id], onDelete: Cascade)
   familyMembers FamilyMember[]
 
   @@map("families")
 }
 
 model ChildProfile {
-  id                String   @id @default(uuid()) @db.Uuid
-  familyId          String   @map("family_id") @db.Uuid
-  name              String
-  age               Int?
-  avatarUrl         String?  @map("avatar_url")
-  qrCode            String?  @unique @map("qr_code")
-  qrCodeExpiresAt   DateTime? @map("qr_code_expires_at")
-  isActive          Boolean  @default(true) @map("is_active")
-  contentRestrictions Json   @default("{}") @map("content_restrictions")
-  screenTimeLimits  Json     @default("{}") @map("screen_time_limits")
-  theme             String?  @default("default")
-  language          String?  @default("en")
-  createdAt         DateTime @default(now()) @map("created_at")
-  updatedAt         DateTime @updatedAt @map("updated_at")
-
-  // Relations
-  family Family @relation(fields: [familyId], references: [id], onDelete: Cascade)
-  watchHistory WatchHistory[]
-  favorites Favorite[]
-  screenTime ScreenTime[]
-  deviceSessions DeviceSession[]
+  id                  String          @id @default(uuid()) @db.Uuid
+  familyId            String          @map("family_id") @db.Uuid
+  name                String
+  age                 Int?
+  avatarUrl           String?         @map("avatar_url")
+  qrCode              String?         @unique @map("qr_code")
+  qrCodeExpiresAt     DateTime?       @map("qr_code_expires_at")
+  isActive            Boolean         @default(true) @map("is_active")
+  contentRestrictions Json            @default("{}") @map("content_restrictions")
+  screenTimeLimits    Json            @default("{}") @map("screen_time_limits")
+  theme               String?         @default("default")
+  language            String?         @default("en")
+  createdAt           DateTime        @default(now()) @map("created_at")
+  updatedAt           DateTime        @updatedAt @map("updated_at")
+  family              Family          @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  deviceSessions      DeviceSession[]
+  favorites           Favorite[]
+  screenTime          ScreenTime[]
+  watchHistory        WatchHistory[]
 
   @@map("child_profiles")
 }
 
-model Collection {
-  id           String   @id @default(uuid()) @db.Uuid
-  name         String
-  description  String?
-  createdBy    String   @map("created_by") @db.Uuid
-  isPublic     Boolean  @default(false) @map("is_public")
-  thumbnailUrl String?  @map("thumbnail_url")
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
+model Category {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String   @unique
+  description String?
+  color       String?  // Hex color for UI
+  icon        String?  // Icon name or emoji
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 
   // Relations
-  creator User @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+  collections Collection[]
+
+  @@map("categories")
+}
+
+model Collection {
+  id               String            @id @default(uuid()) @db.Uuid
+  name             String
+  description      String?
+  createdBy        String            @map("created_by") @db.Uuid
+  categoryId       String?           @map("category_id") @db.Uuid
+  isPublic         Boolean           @default(false) @map("is_public")
+  thumbnailUrl     String?           @map("thumbnail_url")
+  createdAt        DateTime          @default(now()) @map("created_at")
+  updatedAt        DateTime          @updatedAt @map("updated_at")
+  ageRating        Int               @default(0) @map("age_rating")
+  isMandatory      Boolean           @default(false) @map("is_mandatory")
+  isPlatform       Boolean           @default(false) @map("is_platform")
   collectionVideos CollectionVideo[]
+  creator          Admin             @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+  category         Category?         @relation(fields: [categoryId], references: [id], onDelete: SetNull)
 
   @@map("collections")
 }
 
 model Video {
-  id           String   @id @default(uuid()) @db.Uuid
-  youtubeId    String   @unique @map("youtube_id")
-  title        String
-  description  String?
-  thumbnailUrl String?  @map("thumbnail_url")
-  duration     Int?
-  channelName  String?  @map("channel_name")
-  ageRating    String?  @map("age_rating")
-  tags         String[]
-  isApproved   Boolean  @default(false) @map("is_approved")
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
-
-  // Relations
+  id               String            @id @default(uuid()) @db.Uuid
+  youtubeId        String            @unique @map("youtube_id")
+  title            String
+  description      String?
+  thumbnailUrl     String?           @map("thumbnail_url")
+  duration         Int?
+  channelName      String?           @map("channel_name")
+  ageRating        String?           @map("age_rating")
+  tags             String[]
+  isApproved       Boolean           @default(false) @map("is_approved")
+  createdAt        DateTime          @default(now()) @map("created_at")
+  updatedAt        DateTime          @updatedAt @map("updated_at")
+  moderatedAt      DateTime?         @map("moderated_at")
+  moderatedBy      String?           @map("moderated_by") @db.Uuid
+  moderationNotes  String?           @map("moderation_notes")
+  moderationStatus ModerationStatus  @default(PENDING) @map("moderation_status")
+  rejectionReason  String?           @map("rejection_reason")
   collectionVideos CollectionVideo[]
-  watchHistory WatchHistory[]
-  favorites Favorite[]
+  favorites        Favorite[]
+  moderator        Admin?            @relation(fields: [moderatedBy], references: [id])
+  watchHistory     WatchHistory[]
 
   @@map("videos")
 }
 
 model CollectionVideo {
-  id           String   @id @default(uuid()) @db.Uuid
-  collectionId String   @map("collection_id") @db.Uuid
-  videoId      String   @map("video_id") @db.Uuid
-  orderIndex   Int      @default(0) @map("order_index")
-  createdAt    DateTime @default(now()) @map("created_at")
-
-  // Relations
-  collection Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
-  video Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  id           String     @id @default(uuid()) @db.Uuid
+  collectionId String     @map("collection_id") @db.Uuid
+  videoId      String     @map("video_id") @db.Uuid
+  orderIndex   Int        @default(0) @map("order_index")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  video        Video      @relation(fields: [videoId], references: [id], onDelete: Cascade)
 
   @@unique([collectionId, videoId])
   @@map("collection_videos")
 }
 
 model WatchHistory {
-  id             String   @id @default(uuid()) @db.Uuid
-  childProfileId String   @map("child_profile_id") @db.Uuid
-  videoId        String   @map("video_id") @db.Uuid
-  watchedAt      DateTime @default(now()) @map("watched_at")
-  watchDuration  Int      @default(0) @map("watch_duration")
-  completed      Boolean  @default(false)
-  skipped        Boolean  @default(false)
-  pausedAt       DateTime? @map("paused_at")
-  resumedAt      DateTime? @map("resumed_at")
-
-  // Relations
-  childProfile ChildProfile @relation(fields: [childProfileId], references: [id], onDelete: Cascade)
-  video Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  id             String       @id @default(uuid()) @db.Uuid
+  childProfileId String       @map("child_profile_id") @db.Uuid
+  videoId        String       @map("video_id") @db.Uuid
+  watchedAt      DateTime     @default(now()) @map("watched_at")
+  watchDuration  Int          @default(0) @map("watch_duration")
+  completed      Boolean      @default(false)
+  skipped        Boolean      @default(false)
+  pausedAt       DateTime?    @map("paused_at")
+  resumedAt      DateTime?    @map("resumed_at")
+  childProfile   ChildProfile @relation(fields: [childProfileId], references: [id], onDelete: Cascade)
+  video          Video        @relation(fields: [videoId], references: [id], onDelete: Cascade)
 
   @@map("watch_history")
 }
 
 model Favorite {
-  id             String   @id @default(uuid()) @db.Uuid
-  childProfileId String   @map("child_profile_id") @db.Uuid
-  videoId        String   @map("video_id") @db.Uuid
-  isMandatory    Boolean  @default(false) @map("is_mandatory")
-  isRestricted   Boolean  @default(false) @map("is_restricted")
-  createdAt      DateTime @default(now()) @map("created_at")
-
-  // Relations
-  childProfile ChildProfile @relation(fields: [childProfileId], references: [id], onDelete: Cascade)
-  video Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  id             String       @id @default(uuid()) @db.Uuid
+  childProfileId String       @map("child_profile_id") @db.Uuid
+  videoId        String       @map("video_id") @db.Uuid
+  isMandatory    Boolean      @default(false) @map("is_mandatory")
+  isRestricted   Boolean      @default(false) @map("is_restricted")
+  createdAt      DateTime     @default(now()) @map("created_at")
+  childProfile   ChildProfile @relation(fields: [childProfileId], references: [id], onDelete: Cascade)
+  video          Video        @relation(fields: [videoId], references: [id], onDelete: Cascade)
 
   @@unique([childProfileId, videoId])
   @@map("favorites")
 }
 
 model ScreenTime {
-  id             String   @id @default(uuid()) @db.Uuid
-  childProfileId String   @map("child_profile_id") @db.Uuid
-  date           DateTime @db.Date
-  totalMinutes   Int      @default(0) @map("total_minutes")
-  dailyLimit     Int      @default(60) @map("daily_limit") // minutes
-  blockedHours   Json     @default("[]") @map("blocked_hours") // array of time ranges
-  isPaused       Boolean  @default(false) @map("is_paused")
-  pausedAt       DateTime? @map("paused_at")
-  resumedAt      DateTime? @map("resumed_at")
-  createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @updatedAt @map("updated_at")
-
-  // Relations
-  childProfile ChildProfile @relation(fields: [childProfileId], references: [id], onDelete: Cascade)
+  id             String       @id @default(uuid()) @db.Uuid
+  childProfileId String       @map("child_profile_id") @db.Uuid
+  date           DateTime     @db.Date
+  totalMinutes   Int          @default(0) @map("total_minutes")
+  dailyLimit     Int          @default(60) @map("daily_limit")
+  blockedHours   Json         @default("[]") @map("blocked_hours")
+  isPaused       Boolean      @default(false) @map("is_paused")
+  pausedAt       DateTime?    @map("paused_at")
+  resumedAt      DateTime?    @map("resumed_at")
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+  childProfile   ChildProfile @relation(fields: [childProfileId], references: [id], onDelete: Cascade)
 
   @@unique([childProfileId, date])
   @@map("screen_time")
 }
 
 model DeviceSession {
-  id             String   @id @default(uuid()) @db.Uuid
-  childProfileId String   @map("child_profile_id") @db.Uuid
-  deviceId       String   @map("device_id")
-  deviceName     String?  @map("device_name")
-  platform       String   // ios, android, web
-  isActive       Boolean  @default(true) @map("is_active")
-  lastSeenAt     DateTime @default(now()) @map("last_seen_at")
-  createdAt      DateTime @default(now()) @map("created_at")
-
-  // Relations
-  childProfile ChildProfile @relation(fields: [childProfileId], references: [id], onDelete: Cascade)
+  id             String          @id @default(uuid()) @db.Uuid
+  childProfileId String          @map("child_profile_id") @db.Uuid
+  deviceId       String          @map("device_id")
+  deviceName     String?         @map("device_name")
+  platform       String
+  isActive       Boolean         @default(true) @map("is_active")
+  lastSeenAt     DateTime        @default(now()) @map("last_seen_at")
+  createdAt      DateTime        @default(now()) @map("created_at")
+  childProfile   ChildProfile    @relation(fields: [childProfileId], references: [id], onDelete: Cascade)
   remoteCommands RemoteCommand[]
 
   @@map("device_sessions")
 }
 
 model RemoteCommand {
-  id             String   @id @default(uuid()) @db.Uuid
-  deviceSessionId String  @map("device_session_id") @db.Uuid
-  commandType    CommandType @map("command_type")
-  payload        Json     @default("{}")
-  status         CommandStatus @default(PENDING)
-  executedAt     DateTime? @map("executed_at")
-  createdAt      DateTime @default(now()) @map("created_at")
-  expiresAt      DateTime @map("expires_at")
-
-  // Relations
-  deviceSession DeviceSession @relation(fields: [deviceSessionId], references: [id], onDelete: Cascade)
+  id              String        @id @default(uuid()) @db.Uuid
+  deviceSessionId String        @map("device_session_id") @db.Uuid
+  commandType     CommandType   @map("command_type")
+  payload         Json          @default("{}")
+  status          CommandStatus @default(PENDING)
+  executedAt      DateTime?     @map("executed_at")
+  createdAt       DateTime      @default(now()) @map("created_at")
+  expiresAt       DateTime      @map("expires_at")
+  deviceSession   DeviceSession @relation(fields: [deviceSessionId], references: [id], onDelete: Cascade)
 
   @@map("remote_commands")
 }
 
 model Notification {
-  id        String   @id @default(uuid()) @db.Uuid
-  userId    String   @map("user_id") @db.Uuid
-  type      NotificationType
-  title     String
-  message   String
-  data      Json     @default("{}")
-  isRead    Boolean  @default(false) @map("is_read")
-  sentAt    DateTime @default(now()) @map("sent_at")
-  readAt    DateTime? @map("read_at")
-
-  // Relations
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id      String           @id @default(uuid()) @db.Uuid
+  userId  String           @map("user_id") @db.Uuid
+  type    NotificationType
+  title   String
+  message String
+  data    Json             @default("{}")
+  isRead  Boolean          @default(false) @map("is_read")
+  sentAt  DateTime         @default(now()) @map("sent_at")
+  readAt  DateTime?        @map("read_at")
+  user    User             @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("notifications")
 }
 
 model FamilyMember {
-  id       String   @id @default(uuid()) @db.Uuid
-  familyId String   @map("family_id") @db.Uuid
-  userId   String   @map("user_id") @db.Uuid
-  role     FamilyRole
-  permissions Json  @default("{}")
-  isActive Boolean  @default(true) @map("is_active")
-  createdAt DateTime @default(now()) @map("created_at")
-
-  // Relations
-  family Family @relation(fields: [familyId], references: [id], onDelete: Cascade)
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id          String     @id @default(uuid()) @db.Uuid
+  familyId    String     @map("family_id") @db.Uuid
+  userId      String     @map("user_id") @db.Uuid
+  role        FamilyRole
+  permissions Json       @default("{}")
+  isActive    Boolean    @default(true) @map("is_active")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  family      Family     @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([familyId, userId])
   @@map("family_members")
@@ -277,15 +272,14 @@ model Account {
   type              String
   provider          String
   providerAccountId String  @map("provider_account_id")
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@map("accounts")
@@ -303,21 +297,19 @@ model Session {
 
 model TokenSession {
   id        String   @id @default(uuid()) @db.Uuid
-  jti       String   @unique // JWT ID for token revocation
+  jti       String   @unique
   userId    String   @map("user_id") @db.Uuid
-  tokenType String   @map("token_type") // 'access' or 'refresh'
+  tokenType String   @map("token_type")
   expiresAt DateTime @map("expires_at")
   revoked   Boolean  @default(false)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  // Relations
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("token_sessions")
   @@index([jti])
   @@index([userId])
   @@index([expiresAt])
+  @@map("token_sessions")
 }
 
 model VerificationToken {
@@ -377,4 +369,14 @@ enum FamilyRole {
   READ_ONLY
 
   @@map("family_role")
+}
+
+enum ModerationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  FLAGGED
+  UNDER_REVIEW
+
+  @@map("moderation_status")
 }

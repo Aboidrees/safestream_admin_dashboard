@@ -35,7 +35,7 @@ export default function AdminCollectionsPage() {
   const fetchCollections = async () => {
     try {
       setLoading(true)
-      const response = await fetch('/api/admin/collections')
+      const response = await fetch('/api/collections')
       const data = await response.json()
       
       if (response.ok && data.collections) {

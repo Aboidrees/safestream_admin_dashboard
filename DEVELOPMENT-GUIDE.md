@@ -972,7 +972,7 @@ describe('Authentication Flow', () => {
     const { accessToken, refreshToken } = await loginResponse.json()
     
     // 2. Access protected route
-    const protectedResponse = await fetch('/api/admin/users', {
+    const protectedResponse = await fetch('/api/users', {
       headers: {
         'Authorization': `Bearer ${accessToken}`
       }

@@ -35,14 +35,14 @@
 
 ### **API Endpoints Implemented (7/7)** ✅
 ```
-✅ GET  /api/admin/users           - List all users
-✅ POST /api/admin/users/[id]/ban  - Ban user
-✅ DELETE /api/admin/users/[id]    - Delete user
-✅ GET  /api/admin/families        - List all families
-✅ GET  /api/admin/children        - List all children
-✅ GET  /api/admin/collections     - List all collections
-✅ GET  /api/admin/settings        - Get platform settings
-✅ POST /api/admin/settings        - Save platform settings
+✅ GET  /api/users           - List all users
+✅ POST /api/users/[id]/ban  - Ban user
+✅ DELETE /api/users/[id]    - Delete user
+✅ GET  /api/families        - List all families
+✅ GET  /api/children        - List all children
+✅ GET  /api/collections     - List all collections
+✅ GET  /api/settings        - Get platform settings
+✅ POST /api/settings        - Save platform settings
 ```
 
 ### **Frontend Integration (5/5)** ✅

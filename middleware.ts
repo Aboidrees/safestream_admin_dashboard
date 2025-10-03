@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
-import { verifyAccessToken, validateAdminToken } from "./lib/jwt-enhanced"
+import { verifyAccessToken } from "./lib/jwt-enhanced"
 import type { SafeStreamJWTPayload } from "./lib/types"
+import { getToken } from "next-auth/jwt"
 
 // Security headers configuration
 const securityHeaders = {
@@ -26,7 +27,6 @@ const IS_DEVELOPMENT = process.env.NODE_ENV === 'development'
 // Public routes that don't require authentication
 const publicRoutes = [
   "/login",
-  "/setup",
   "/dashboard/login",
   "/dashboard/register",
   "/api/auth/signin",
@@ -36,6 +36,7 @@ const publicRoutes = [
   "/api/auth/session",
   "/api/auth/callback",
   "/api/auth/register",
+  "/api/auth/admin-check",
   "/_next",
   "/favicon.ico"
 ]
@@ -124,35 +125,51 @@ function getClientIP(req: NextRequest): string {
 
 // Validate token and extract user info
 async function validateToken(req: NextRequest): Promise<{ payload: SafeStreamJWTPayload; token: string } | null> {
-  let token: string | null = null
-  
-  // Check Authorization header first (for API requests)
+  // Check Authorization header first (for API requests with custom JWT)
   const authHeader = req.headers.get("authorization")
   if (authHeader?.startsWith("Bearer ")) {
-    token = authHeader.substring(7)
-  }
-  
-  // Check cookies for web requests
-  if (!token) {
-    const sessionToken = req.cookies.get("next-auth.session-token")?.value
-    if (sessionToken) {
-      token = sessionToken
+    const token = authHeader.substring(7)
+    try {
+      const payload = await verifyAccessToken(token)
+      if (payload) {
+        return { payload, token }
+      }
+    } catch (error) {
+      console.error("Bearer token validation error:", error)
     }
   }
   
-  if (!token) {
-    return null
-  }
-  
+  // Check NextAuth session for web requests
   try {
-    const payload = await verifyAccessToken(token)
-    if (!payload) {
+    const token = await getToken({ 
+      req,
+      secret: process.env.NEXTAUTH_SECRET 
+    })
+    
+    if (!token) {
       return null
     }
     
-    return { payload, token }
+    // Convert NextAuth token to our payload format
+    const now = Math.floor(Date.now() / 1000)
+    const payload: SafeStreamJWTPayload = {
+      id: token.id as string,
+      email: token.email as string,
+      name: token.name as string,
+      role: token.role as string,
+      isAdmin: token.isAdmin as boolean,
+      adminId: token.adminId as string | undefined,
+      jti: '', // Not needed for NextAuth tokens
+      type: 'access',
+      iat: now,
+      exp: now + 900, // 15 minutes from now
+      iss: 'safestream',
+      aud: 'safestream-users',
+    }
+    
+    return { payload, token: token.accessToken as string || '' }
   } catch (error) {
-    console.error("Token validation error:", error)
+    console.error("NextAuth token validation error:", error)
     return null
   }
 }
@@ -232,13 +249,12 @@ export async function middleware(req: NextRequest) {
       return NextResponse.redirect(loginUrl)
     }
     
-    const { payload, token } = tokenData
+    const { payload } = tokenData
     
     // Check admin routes
     if (isAdminRoute(pathname)) {
-      const adminValidation = await validateAdminToken(token)
-      
-      if (!adminValidation.isValid) {
+      // Validate admin status from payload
+      if (!payload.isAdmin || !payload.adminId) {
         if (pathname.startsWith("/api/")) {
           return createErrorResponse("Admin access required", 403)
         }
@@ -249,8 +265,8 @@ export async function middleware(req: NextRequest) {
       
       // Add admin info to headers
       const response = createSecurityResponse(req)
-      response.headers.set("x-admin-id", adminValidation.adminId || "")
-      response.headers.set("x-admin-role", adminValidation.role || "")
+      response.headers.set("x-admin-id", payload.adminId || "")
+      response.headers.set("x-admin-role", payload.role || "")
       response.headers.set("x-user-id", payload.id)
       response.headers.set("x-user-email", payload.email)
       

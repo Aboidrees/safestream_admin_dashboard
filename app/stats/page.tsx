@@ -1,67 +1,42 @@
-"use client"
-
-import { useEffect, useState } from "react"
 import { BarChart, TrendingUp, TrendingDown, Activity } from "lucide-react"
 import type { PlatformStats, GrowthTrends, StatCardProps } from "@/lib/types"
+import { prisma } from "@/lib/prisma"
 
-
-
-export default function AdminStatsPage() {
-  const [stats, setStats] = useState<PlatformStats>({
+export default async function AdminStatsPage() {
+  // Fetch stats directly from the database (server-side)
+  let stats: PlatformStats = {
     totalUsers: 0,
     totalProfiles: 0,
     totalCollections: 0,
     totalVideos: 0,
-  })
-  const [trends, setTrends] = useState<GrowthTrends>({
-    usersGrowth: 0,
-    profilesGrowth: 0,
-    collectionsGrowth: 0,
-    videosGrowth: 0,
-  })
-  const [loading, setLoading] = useState(true)
+  }
 
-  useEffect(() => {
-    fetchStats()
-  }, [])
+  try {
+    const [totalUsers, totalProfiles, totalCollections, totalVideos] = await Promise.all([
+      prisma.user.count(),
+      prisma.childProfile.count(),
+      prisma.collection.count(),
+      prisma.video.count(),
+    ])
 
-  const fetchStats = async () => {
-    try {
-      setLoading(true)
-
-      const [usersRes, profilesRes, collectionsRes, videosRes] = await Promise.all([
-        fetch('/api/admin/stats/users'),
-        fetch('/api/admin/stats/profiles'),
-        fetch('/api/admin/stats/collections'),
-        fetch('/api/admin/stats/videos')
-      ])
-
-      const [usersData, profilesData, collectionsData, videosData] = await Promise.all([
-        usersRes.json(),
-        profilesRes.json(),
-        collectionsRes.json(),
-        videosRes.json()
-      ])
-
-      setStats({
-        totalUsers: usersData.count || 0,
-        totalProfiles: profilesData.count || 0,
-        totalCollections: collectionsData.count || 0,
-        totalVideos: videosData.count || 0,
-      })
-
-      // Calculate mock growth trends (replace with real data from API)
-      setTrends({
-        usersGrowth: 12.5,
-        profilesGrowth: 8.3,
-        collectionsGrowth: 15.2,
-        videosGrowth: 22.7,
-      })
-    } catch (error) {
-      console.error("Error fetching admin stats:", error)
-    } finally {
-      setLoading(false)
+    stats = {
+      totalUsers,
+      totalProfiles,
+      totalCollections,
+      totalVideos,
     }
+  } catch (error) {
+    // Optionally log error
+    console.error("Error fetching admin stats:", error)
+    // stats remain as zeroes
+  }
+
+  // Mock growth trends (replace with real data if available)
+  const trends: GrowthTrends = {
+    usersGrowth: 12.5,
+    profilesGrowth: 8.3,
+    collectionsGrowth: 15.2,
+    videosGrowth: 22.7,
   }
 
   const StatCard = ({ title, value, growth, icon: Icon, color }: StatCardProps) => (
@@ -104,128 +79,119 @@ export default function AdminStatsPage() {
         </p>
       </div>
 
-      {loading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="text-gray-500">Loading statistics...</div>
+      {/* Main Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <StatCard
+          title="Total Users"
+          value={stats.totalUsers}
+          growth={trends.usersGrowth.toString()}
+          icon={() => <span>👥</span>}
+          color="#3b82f6"
+        />
+        <StatCard
+          title="Child Profiles"
+          value={stats.totalProfiles}
+          growth={trends.profilesGrowth.toString()}
+          icon={() => <span>👶</span>}
+          color="#9333ea"
+        />
+        <StatCard
+          title="Collections"
+          value={stats.totalCollections}
+          growth={trends.collectionsGrowth.toString()}
+          icon={() => <span>📚</span>}
+          color="#06b6d4"
+        />
+        <StatCard
+          title="Videos"
+          value={stats.totalVideos}
+          growth={trends.videosGrowth.toString()}
+          icon={() => <span>🎬</span>}
+          color="#f59e0b"
+        />
+      </div>
+
+      {/* Additional Metrics */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div className="bg-white rounded-lg shadow-sm p-6">
+          <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <Activity className="h-5 w-5 text-blue-600" />
+            Platform Health
+          </h2>
+          <div className="space-y-4">
+            <div className="flex justify-between items-center py-2 border-b">
+              <span className="text-gray-600">System Status</span>
+              <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+                Operational
+              </span>
+            </div>
+            <div className="flex justify-between items-center py-2 border-b">
+              <span className="text-gray-600">Database</span>
+              <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+                Connected
+              </span>
+            </div>
+            <div className="flex justify-between items-center py-2 border-b">
+              <span className="text-gray-600">API Response Time</span>
+              <span className="text-gray-900 font-medium">48ms</span>
+            </div>
+            <div className="flex justify-between items-center py-2">
+              <span className="text-gray-600">Uptime</span>
+              <span className="text-gray-900 font-medium">99.98%</span>
+            </div>
+          </div>
         </div>
-      ) : (
-        <>
-          {/* Main Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <StatCard
-              title="Total Users"
-              value={stats.totalUsers}
-              growth={trends.usersGrowth.toString()}
-              icon={() => <span>👥</span>}
-              color="#3b82f6"
-            />
-            <StatCard
-              title="Child Profiles"
-              value={stats.totalProfiles}
-              growth={trends.profilesGrowth.toString()}
-              icon={() => <span>👶</span>}
-              color="#9333ea"
-            />
-            <StatCard
-              title="Collections"
-              value={stats.totalCollections}
-              growth={trends.collectionsGrowth.toString()}
-              icon={() => <span>📚</span>}
-              color="#06b6d4"
-            />
-            <StatCard
-              title="Videos"
-              value={stats.totalVideos}
-              growth={trends.videosGrowth.toString()}
-              icon={() => <span>🎬</span>}
-              color="#f59e0b"
-            />
-          </div>
 
-          {/* Additional Metrics */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <Activity className="h-5 w-5 text-blue-600" />
-                Platform Health
-              </h2>
-              <div className="space-y-4">
-                <div className="flex justify-between items-center py-2 border-b">
-                  <span className="text-gray-600">System Status</span>
-                  <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
-                    Operational
-                  </span>
-                </div>
-                <div className="flex justify-between items-center py-2 border-b">
-                  <span className="text-gray-600">Database</span>
-                  <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
-                    Connected
-                  </span>
-                </div>
-                <div className="flex justify-between items-center py-2 border-b">
-                  <span className="text-gray-600">API Response Time</span>
-                  <span className="text-gray-900 font-medium">48ms</span>
-                </div>
-                <div className="flex justify-between items-center py-2">
-                  <span className="text-gray-600">Uptime</span>
-                  <span className="text-gray-900 font-medium">99.98%</span>
-                </div>
-              </div>
+        <div className="bg-white rounded-lg shadow-sm p-6">
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            User Activity
+          </h2>
+          <div className="space-y-4">
+            <div className="flex justify-between items-center py-2 border-b">
+              <span className="text-gray-600">Active Users (24h)</span>
+              <span className="text-gray-900 font-medium">{Math.floor(stats.totalUsers * 0.4)}</span>
             </div>
-
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                User Activity
-              </h2>
-              <div className="space-y-4">
-                <div className="flex justify-between items-center py-2 border-b">
-                  <span className="text-gray-600">Active Users (24h)</span>
-                  <span className="text-gray-900 font-medium">{Math.floor(stats.totalUsers * 0.4)}</span>
-                </div>
-                <div className="flex justify-between items-center py-2 border-b">
-                  <span className="text-gray-600">Active Families</span>
-                  <span className="text-gray-900 font-medium">{Math.floor(stats.totalUsers * 0.7)}</span>
-                </div>
-                <div className="flex justify-between items-center py-2 border-b">
-                  <span className="text-gray-600">Videos Watched Today</span>
-                  <span className="text-gray-900 font-medium">{stats.totalVideos * 15}</span>
-                </div>
-                <div className="flex justify-between items-center py-2">
-                  <span className="text-gray-600">Avg. Screen Time</span>
-                  <span className="text-gray-900 font-medium">2h 15m</span>
-                </div>
-              </div>
+            <div className="flex justify-between items-center py-2 border-b">
+              <span className="text-gray-600">Active Families</span>
+              <span className="text-gray-900 font-medium">{Math.floor(stats.totalUsers * 0.7)}</span>
+            </div>
+            <div className="flex justify-between items-center py-2 border-b">
+              <span className="text-gray-600">Videos Watched Today</span>
+              <span className="text-gray-900 font-medium">{stats.totalVideos * 15}</span>
+            </div>
+            <div className="flex justify-between items-center py-2">
+              <span className="text-gray-600">Avg. Screen Time</span>
+              <span className="text-gray-900 font-medium">2h 15m</span>
             </div>
           </div>
+        </div>
+      </div>
 
-          {/* Content Statistics */}
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
-              Content Overview
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div>
-                <p className="text-sm text-gray-600 mb-2">Most Popular Category</p>
-                <p className="text-2xl font-bold text-blue-600">Educational</p>
-                <p className="text-sm text-gray-500">{Math.floor(stats.totalCollections * 0.45)} collections</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-600 mb-2">Avg. Collection Size</p>
-                <p className="text-2xl font-bold text-purple-600">
-                  {stats.totalCollections > 0 ? Math.floor(stats.totalVideos / stats.totalCollections) : 0}
-                </p>
-                <p className="text-sm text-gray-500">videos per collection</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-600 mb-2">Content Rating</p>
-                <p className="text-2xl font-bold text-green-600">4.8/5.0</p>
-                <p className="text-sm text-gray-500">average rating</p>
-              </div>
-            </div>
+      {/* Content Statistics */}
+      <div className="bg-white rounded-lg shadow-sm p-6">
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">
+          Content Overview
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div>
+            <p className="text-sm text-gray-600 mb-2">Most Popular Category</p>
+            <p className="text-2xl font-bold text-blue-600">Educational</p>
+            <p className="text-sm text-gray-500">{Math.floor(stats.totalCollections * 0.45)} collections</p>
           </div>
-        </>
-      )}
+          <div>
+            <p className="text-sm text-gray-600 mb-2">Avg. Collection Size</p>
+            <p className="text-2xl font-bold text-purple-600">
+              {stats.totalCollections > 0 ? Math.floor(stats.totalVideos / stats.totalCollections) : 0}
+            </p>
+            <p className="text-sm text-gray-500">videos per collection</p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-600 mb-2">Content Rating</p>
+            <p className="text-2xl font-bold text-green-600">4.8/5.0</p>
+            <p className="text-sm text-gray-500">average rating</p>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
-

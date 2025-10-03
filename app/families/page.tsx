@@ -1,7 +1,8 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Search, Users, Eye, Baby } from "lucide-react"
+import { Search, Users, Eye, Baby, ArrowRight } from "lucide-react"
+import Link from "next/link"
 import type { Family } from "@/lib/types"
 
 export default function AdminFamiliesPage() {
@@ -31,7 +32,7 @@ export default function AdminFamiliesPage() {
   const fetchFamilies = async () => {
     try {
       setLoading(true)
-      const response = await fetch('/api/admin/families')
+      const response = await fetch('/api/families')
       const data = await response.json()
       
       if (response.ok && data.families) {
@@ -152,9 +153,9 @@ export default function AdminFamiliesPage() {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {filteredFamilies.map((family) => (
-                  <tr key={family.id} className="hover:bg-gray-50">
+                  <tr key={family.id} className="hover:bg-gray-50 cursor-pointer">
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
+                      <Link href={`/families/${family.id}`} className="flex items-center">
                         <div className="h-10 w-10 flex-shrink-0">
                           <div className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-400 to-cyan-400 flex items-center justify-center text-white font-bold text-lg">
                             👨‍👩‍👧‍👦
@@ -163,32 +164,40 @@ export default function AdminFamiliesPage() {
                         <div className="ml-4">
                           <div className="text-sm font-medium text-gray-900">{family.name}</div>
                         </div>
-                      </div>
+                      </Link>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{family.parentName}</div>
-                      <div className="text-sm text-gray-500">{family.parentEmail}</div>
+                      <Link href={`/families/${family.id}`}>
+                        <div className="text-sm text-gray-900">{family.parentName}</div>
+                        <div className="text-sm text-gray-500">{family.parentEmail}</div>
+                      </Link>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center gap-1">
+                      <Link href={`/families/${family.id}`} className="flex items-center gap-1">
                         <Baby className="h-4 w-4 text-purple-600" />
                         <span className="text-sm font-medium text-gray-900">{family.childrenCount}</span>
-                      </div>
+                      </Link>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {family.collectionsCount}
+                      <Link href={`/families/${family.id}`}>
+                        {family.collectionsCount}
+                      </Link>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {new Date(family.createdAt).toLocaleDateString()}
+                      <Link href={`/families/${family.id}`}>
+                        {new Date(family.createdAt).toLocaleDateString()}
+                      </Link>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button
+                      <Link
+                        href={`/families/${family.id}`}
                         className="text-blue-600 hover:text-blue-900 inline-flex items-center gap-1"
                         title="View Details"
                       >
                         <Eye className="h-4 w-4" />
                         View
-                      </button>
+                        <ArrowRight className="h-4 w-4" />
+                      </Link>
                     </td>
                   </tr>
                 ))}

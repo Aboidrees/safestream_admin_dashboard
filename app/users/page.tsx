@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { Search, UserPlus, Ban, CheckCircle, XCircle, Mail, Calendar, Shield } from "lucide-react"
 import type { User } from "@/lib/types"
 
-export default function AdminUsersPage() {
+export default  function AdminUsersPage() {
   const [users, setUsers] = useState<User[]>([])
   const [filteredUsers, setFilteredUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
@@ -37,7 +37,7 @@ export default function AdminUsersPage() {
   const fetchUsers = async () => {
     try {
       setLoading(true)
-      const response = await fetch('/api/admin/users')
+      const response = await fetch('/api/users')
       const data = await response.json()
       
       if (response.ok && data.users) {
@@ -57,7 +57,7 @@ export default function AdminUsersPage() {
     if (!confirm("Are you sure you want to ban this user?")) return
     
     try {
-      const response = await fetch(`/api/admin/users/${userId}/ban`, { method: 'POST' })
+      const response = await fetch(`/api/users/${userId}/ban`, { method: 'POST' })
       const data = await response.json()
       
       if (response.ok) {
@@ -76,7 +76,7 @@ export default function AdminUsersPage() {
     if (!confirm("Are you sure you want to delete this user? This action cannot be undone.")) return
     
     try {
-      const response = await fetch(`/api/admin/users/${userId}`, { method: 'DELETE' })
+      const response = await fetch(`/api/users/${userId}`, { method: 'DELETE' })
       const data = await response.json()
       
       if (response.ok) {

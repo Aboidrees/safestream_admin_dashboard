@@ -106,13 +106,26 @@ export interface FamilyMember {
 // CONTENT TYPES
 // ============================================================================
 
+export interface Category {
+  id: string
+  name: string
+  description?: string
+  color?: string
+  icon?: string
+  isActive?: boolean
+  createdAt?: string
+  updatedAt?: string
+}
+
 export interface Collection {
   id: string
   name: string
-  category: string
+  description?: string
+  category: Category | null
   ageRating: number
   videoCount: number
   isPublic: boolean
+  isPlatform?: boolean
   isMandatory: boolean
   creatorName: string
   createdAt: string
@@ -120,14 +133,20 @@ export interface Collection {
 
 export interface Video {
   id: string
+  youtubeId: string
   title: string
-  description: string
-  url: string
-  thumbnailUrl: string
-  duration: number
-  ageRating: number
-  category: string
-  isRestricted: boolean
+  description?: string
+  thumbnailUrl?: string
+  duration?: number
+  channelName?: string
+  ageRating?: string
+  tags: string[]
+  isApproved: boolean
+  moderationStatus: 'PENDING' | 'APPROVED' | 'REJECTED' | 'FLAGGED' | 'UNDER_REVIEW'
+  moderatedBy?: string
+  moderatedAt?: string
+  moderationNotes?: string
+  rejectionReason?: string
   createdAt: string
   collectionId?: string
 }

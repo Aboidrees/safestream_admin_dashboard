@@ -1,17 +1,10 @@
 import { NextRequest, NextResponse } from "next/server"
 import { revokeToken, revokeAllUserTokens } from "@/lib/jwt-enhanced"
-import { getAuthenticatedUser } from "@/lib/auth-utils"
+import { requireAuth } from "@/lib/auth-session"
 
 export async function POST(req: NextRequest) {
   try {
-    const user = await getAuthenticatedUser(req)
-    
-    if (!user) {
-      return NextResponse.json(
-        { error: "Authentication required" },
-        { status: 401 }
-      )
-    }
+    const user = await requireAuth(req)
 
     const { tokenId, revokeAll } = await req.json()
 

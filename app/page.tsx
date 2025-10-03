@@ -1,51 +1,33 @@
-"use client"
+import { prisma } from "@/lib/prisma"
 
-import { useEffect, useState } from "react"
-
-export default function AdminHomePage() {
-  const [stats, setStats] = useState({
+export default async function AdminHomePage() {
+  // Fetch stats directly from the database (server-side)
+  let stats = {
     totalUsers: 0,
     totalProfiles: 0,
     totalCollections: 0,
     totalVideos: 0,
-  })
-  const [loading, setLoading] = useState(true)
+  }
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        setLoading(true)
+  try {
+    const [totalUsers, totalProfiles, totalCollections, totalVideos] = await Promise.all([
+      prisma.user.count(),
+      prisma.childProfile.count(),
+      prisma.collection.count(),
+      prisma.video.count(),
+    ])
 
-        // Fetch stats from API endpoints
-        const [usersRes, profilesRes, collectionsRes, videosRes] = await Promise.all([
-          fetch('/api/admin/stats/users'),
-          fetch('/api/admin/stats/profiles'),
-          fetch('/api/admin/stats/collections'),
-          fetch('/api/admin/stats/videos')
-        ])
-
-        const [usersData, profilesData, collectionsData, videosData] = await Promise.all([
-          usersRes.json(),
-          profilesRes.json(),
-          collectionsRes.json(),
-          videosRes.json()
-        ])
-
-        setStats({
-          totalUsers: usersData.count || 0,
-          totalProfiles: profilesData.count || 0,
-          totalCollections: collectionsData.count || 0,
-          totalVideos: videosData.count || 0,
-        })
-      } catch (error) {
-        console.error("Error fetching admin stats:", error)
-      } finally {
-        setLoading(false)
-      }
+    stats = {
+      totalUsers,
+      totalProfiles,
+      totalCollections,
+      totalVideos,
     }
-
-    fetchStats()
-  }, [])
+  } catch (error) {
+    // Optionally log error
+    console.error("Error fetching admin stats:", error)
+    // stats remain as zeroes
+  }
 
   return (
     <div>
@@ -56,53 +38,47 @@ export default function AdminHomePage() {
         </p>
       </div>
 
-      {loading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="text-gray-500">Loading statistics...</div>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow-sm p-6 border-l-4 border-blue-500">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600 mb-1">Total Users</p>
-                <p className="text-3xl font-bold text-blue-600">{stats.totalUsers}</p>
-              </div>
-              <div className="text-4xl">👥</div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="bg-white rounded-lg shadow-sm p-6 border-l-4 border-blue-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600 mb-1">Total Users</p>
+              <p className="text-3xl font-bold text-blue-600">{stats.totalUsers}</p>
             </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-sm p-6 border-l-4 border-purple-500">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600 mb-1">Child Profiles</p>
-                <p className="text-3xl font-bold text-purple-600">{stats.totalProfiles}</p>
-              </div>
-              <div className="text-4xl">👶</div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-sm p-6 border-l-4 border-cyan-500">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600 mb-1">Collections</p>
-                <p className="text-3xl font-bold text-cyan-600">{stats.totalCollections}</p>
-              </div>
-              <div className="text-4xl">📚</div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-sm p-6 border-l-4 border-orange-500">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600 mb-1">Videos</p>
-                <p className="text-3xl font-bold text-orange-600">{stats.totalVideos}</p>
-              </div>
-              <div className="text-4xl">🎬</div>
-            </div>
+            <div className="text-4xl">👥</div>
           </div>
         </div>
-      )}
+
+        <div className="bg-white rounded-lg shadow-sm p-6 border-l-4 border-purple-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600 mb-1">Child Profiles</p>
+              <p className="text-3xl font-bold text-purple-600">{stats.totalProfiles}</p>
+            </div>
+            <div className="text-4xl">👶</div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-sm p-6 border-l-4 border-cyan-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600 mb-1">Collections</p>
+              <p className="text-3xl font-bold text-cyan-600">{stats.totalCollections}</p>
+            </div>
+            <div className="text-4xl">📚</div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-sm p-6 border-l-4 border-orange-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600 mb-1">Videos</p>
+              <p className="text-3xl font-bold text-orange-600">{stats.totalVideos}</p>
+            </div>
+            <div className="text-4xl">🎬</div>
+          </div>
+        </div>
+      </div>
 
       {/* Quick Actions */}
       <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
@@ -145,4 +121,5 @@ export default function AdminHomePage() {
     </div>
   )
 }
+
 

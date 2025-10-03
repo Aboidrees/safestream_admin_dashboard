@@ -8,7 +8,7 @@ import type { AdminShellProps } from "@/lib/types"
 export function AdminShell({ children }: AdminShellProps) {
   const pathname = usePathname()
 
-  const isAuthPage = pathname === "/login" || pathname === "/setup"
+  const isAuthPage = pathname === "/login"
 
   if (isAuthPage) {
     return <>{children}</>
@@ -110,7 +110,7 @@ export function AdminShell({ children }: AdminShellProps) {
               <ul className="space-y-1">
                 <li>
                   <Link 
-                    href="/collections" 
+                    href="/content/collections" 
                     className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors"
                   >
                     📚 Collections
@@ -118,7 +118,7 @@ export function AdminShell({ children }: AdminShellProps) {
                 </li>
                 <li>
                   <Link 
-                    href="/videos" 
+                    href="/content/videos" 
                     className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors"
                   >
                     🎬 Videos
@@ -126,7 +126,7 @@ export function AdminShell({ children }: AdminShellProps) {
                 </li>
                 <li>
                   <Link 
-                    href="/content-moderation" 
+                    href="/content/moderation" 
                     className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors"
                   >
                     ⚠️ Moderation
@@ -154,14 +154,6 @@ export function AdminShell({ children }: AdminShellProps) {
                     className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors"
                   >
                     ⚙️ Settings
-                  </Link>
-                </li>
-                <li>
-                  <Link 
-                    href="/setup" 
-                    className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors"
-                  >
-                    🔧 Admin Setup
                   </Link>
                 </li>
               </ul>

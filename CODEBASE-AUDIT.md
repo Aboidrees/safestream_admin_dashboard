@@ -187,13 +187,13 @@ Tokens immediately invalid on next request
 
 #### **API Endpoints (7/7 Complete)**
 ```typescript
-✅ app/api/admin/users/route.ts - GET users
-✅ app/api/admin/users/[id]/ban/route.ts - POST ban user  
-✅ app/api/admin/users/[id]/route.ts - DELETE user
-✅ app/api/admin/families/route.ts - GET families
-✅ app/api/admin/children/route.ts - GET children
-✅ app/api/admin/collections/route.ts - GET collections
-✅ app/api/admin/settings/route.ts - GET/POST settings
+✅ app/api/users/route.ts - GET users
+✅ app/api/users/[id]/ban/route.ts - POST ban user  
+✅ app/api/users/[id]/route.ts - DELETE user
+✅ app/api/families/route.ts - GET families
+✅ app/api/children/route.ts - GET children
+✅ app/api/collections/route.ts - GET collections
+✅ app/api/settings/route.ts - GET/POST settings
 ```
 
 **Impact:** All UI pages now connected to real APIs with proper error handling.
@@ -295,13 +295,13 @@ npm run lint
 
 ### **API Implementation (7/7 Complete)**
 ```typescript
-✅ 1. app/api/admin/users/route.ts - GET users
-✅ 2. app/api/admin/users/[id]/ban/route.ts - POST ban user
-✅ 3. app/api/admin/users/[id]/route.ts - DELETE user
-✅ 4. app/api/admin/families/route.ts - GET families
-✅ 5. app/api/admin/children/route.ts - GET children
-✅ 6. app/api/admin/collections/route.ts - GET collections
-✅ 7. app/api/admin/settings/route.ts - GET/POST settings
+✅ 1. app/api/users/route.ts - GET users
+✅ 2. app/api/users/[id]/ban/route.ts - POST ban user
+✅ 3. app/api/users/[id]/route.ts - DELETE user
+✅ 4. app/api/families/route.ts - GET families
+✅ 5. app/api/children/route.ts - GET children
+✅ 6. app/api/collections/route.ts - GET collections
+✅ 7. app/api/settings/route.ts - GET/POST settings
 ```
 
 **Status:** All API endpoints implemented and integrated ✅

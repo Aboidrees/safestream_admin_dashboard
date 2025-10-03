@@ -39,13 +39,13 @@ export default function AdminLoginPage() {
 
       if (!data.isAdmin) {
         setError("Access denied. Admin privileges required.")
-        await signIn("credentials", { callbackUrl: "/admin/login" }) // Sign out
+        await signIn("credentials", { callbackUrl: "/login" }) // Sign out
         setLoading(false)
         return
       }
 
       // Redirect to admin dashboard
-      router.push("/admin")
+      router.push("/")
     } catch (error) {
       console.error("Login error:", error)
       setError("An error occurred during login")
@@ -120,14 +120,6 @@ export default function AdminLoginPage() {
             </button>
           </form>
 
-          <div className="mt-6 text-center">
-            <Link 
-              href="/admin/setup" 
-              className="text-sm text-blue-600 hover:text-blue-800"
-            >
-              Need to set up an admin account?
-            </Link>
-          </div>
         </div>
 
         {/* Security Notice */}

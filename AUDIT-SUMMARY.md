@@ -64,13 +64,13 @@
 
 ### **All APIs Implemented:**
 ```
-✅ app/api/admin/users/route.ts - GET users
-✅ app/api/admin/users/[id]/ban/route.ts - POST ban user
-✅ app/api/admin/users/[id]/route.ts - DELETE user
-✅ app/api/admin/families/route.ts - GET families
-✅ app/api/admin/children/route.ts - GET children
-✅ app/api/admin/collections/route.ts - GET collections
-✅ app/api/admin/settings/route.ts - GET/POST settings
+✅ app/api/users/route.ts - GET users
+✅ app/api/users/[id]/ban/route.ts - POST ban user
+✅ app/api/users/[id]/route.ts - DELETE user
+✅ app/api/families/route.ts - GET families
+✅ app/api/children/route.ts - GET children
+✅ app/api/collections/route.ts - GET collections
+✅ app/api/settings/route.ts - GET/POST settings
 ```
 
 **Status:** 100% Complete ✅

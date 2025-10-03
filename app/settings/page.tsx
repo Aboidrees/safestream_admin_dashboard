@@ -22,7 +22,7 @@ export default function AdminSettingsPage() {
   const handleSave = async () => {
     setSaving(true)
     try {
-      const response = await fetch('/api/admin/settings', {
+      const response = await fetch('/api/settings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(settings)
