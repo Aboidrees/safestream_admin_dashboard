@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { CheckCircle, XCircle, Eye, Clock, AlertTriangle } from 'lucide-react'
 import type { Video } from '@/lib/types'
+import Image from 'next/image'
 
 export default function ModerationPage() {
   const [videos, setVideos] = useState<Video[]>([])
@@ -145,8 +146,8 @@ export default function ModerationPage() {
               {pendingVideos.map((video) => (
                 <div key={video.id} className="bg-white rounded-lg shadow overflow-hidden">
                   <div className="relative">
-                    <img 
-                      src={video.thumbnailUrl} 
+                    <Image 
+                      src={video.thumbnailUrl || ''} 
                       alt={video.title}
                       className="w-full h-48 object-cover"
                     />
@@ -176,7 +177,7 @@ export default function ModerationPage() {
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-xs text-gray-500">
-                        {Math.floor(video.duration / 60)}:{(video.duration % 60).toString().padStart(2, '0')}
+                        {Math.floor(video.duration || 0 / 60)}:{(video.duration || 0 % 60).toString().padStart(2, '0')}
                       </span>
                       <button
                         onClick={() => openModerationModal(video)}
@@ -200,8 +201,8 @@ export default function ModerationPage() {
               {underReviewVideos.map((video) => (
                 <div key={video.id} className="bg-white rounded-lg shadow overflow-hidden">
                   <div className="relative">
-                    <img 
-                      src={video.thumbnailUrl} 
+                    <Image 
+                      src={video.thumbnailUrl || ''} 
                       alt={video.title}
                       className="w-full h-48 object-cover"
                     />
@@ -219,7 +220,7 @@ export default function ModerationPage() {
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-xs text-gray-500">
-                        {Math.floor(video.duration / 60)}:{(video.duration % 60).toString().padStart(2, '0')}
+                        {Math.floor(video.duration || 0 / 60)}:{(video.duration || 0 % 60).toString().padStart(2, '0')}
                       </span>
                       <button
                         onClick={() => openModerationModal(video)}
@@ -243,8 +244,8 @@ export default function ModerationPage() {
               {flaggedVideos.map((video) => (
                 <div key={video.id} className="bg-white rounded-lg shadow overflow-hidden border-l-4 border-orange-500">
                   <div className="relative">
-                    <img 
-                      src={video.thumbnailUrl} 
+                    <Image 
+                      src={video.thumbnailUrl || ''} 
                       alt={video.title}
                       className="w-full h-48 object-cover"
                     />
@@ -262,7 +263,7 @@ export default function ModerationPage() {
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-xs text-gray-500">
-                        {Math.floor(video.duration / 60)}:{(video.duration % 60).toString().padStart(2, '0')}
+                        {Math.floor(video.duration || 0 / 60)}:{(video.duration || 0 % 60).toString().padStart(2, '0')}
                       </span>
                       <button
                         onClick={() => openModerationModal(video)}
@@ -295,8 +296,8 @@ export default function ModerationPage() {
             <div className="p-6">
               <div className="grid gap-6 md:grid-cols-2">
                 <div>
-                  <img 
-                    src={selectedVideo.thumbnailUrl} 
+                  <Image 
+                    src={selectedVideo.thumbnailUrl || ''} 
                     alt={selectedVideo.title}
                     className="w-full rounded-lg"
                   />

@@ -1,13 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { signIn } from "next-auth/react"
-import { useRouter } from "next/navigation"
+import { useSearchParams } from "next/navigation"
 import Link from "next/link"
 import type { LoginFormData } from "@/lib/types"
 
-export default function AdminLoginPage() {
-  const router = useRouter()
+function LoginForm() {
+  const searchParams = useSearchParams()
   const [formData, setFormData] = useState<LoginFormData>({
     email: "",
     password: "",
@@ -15,37 +15,43 @@ export default function AdminLoginPage() {
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
 
+  // Check for circular redirect and clean up URL
+  useEffect(() => {
+    const callbackUrl = searchParams.get('callbackUrl')
+    if (callbackUrl && callbackUrl.includes('/login')) {
+      // Remove the circular callbackUrl parameter
+      const newUrl = new URL(window.location.href)
+      newUrl.searchParams.delete('callbackUrl')
+      window.history.replaceState({}, '', newUrl.toString())
+    }
+  }, [searchParams])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError("")
 
     try {
-      const result = await signIn("credentials", {
+      const result = await signIn("admin-credentials", {
         email: formData.email,
         password: formData.password,
         redirect: false,
       })
 
       if (result?.error) {
-        setError("Invalid email or password")
+        // Handle specific error messages from the server
+        const errorMessage = result.error === "CredentialsSignin" 
+          ? "Invalid admin credentials" 
+          : result.error
+        setError(errorMessage)
         setLoading(false)
         return
       }
 
-      // Verify admin role
-      const response = await fetch("/api/auth/admin-check")
-      const data = await response.json()
-
-      if (!data.isAdmin) {
-        setError("Access denied. Admin privileges required.")
-        await signIn("credentials", { callbackUrl: "/login" }) // Sign out
-        setLoading(false)
-        return
+      if (result?.ok) {
+        // Force a hard redirect to avoid circular redirects
+        window.location.href = "/"
       }
-
-      // Redirect to admin dashboard
-      router.push("/")
     } catch (error) {
       console.error("Login error:", error)
       setError("An error occurred during login")
@@ -143,6 +149,18 @@ export default function AdminLoginPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function AdminLoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
   )
 }
 

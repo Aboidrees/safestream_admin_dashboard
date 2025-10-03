@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { requireAdmin } from "@/lib/auth-session"
-import { revokeAllUserTokens } from "@/lib/jwt-enhanced"
 
 export async function POST(
   req: NextRequest,
@@ -15,12 +14,7 @@ export async function POST(
 
     // Check if user exists
     const targetUser = await prisma.user.findUnique({
-      where: { id: userId },
-      include: {
-        admins: {
-          select: { role: true, isActive: true }
-        }
-      }
+      where: { id: userId }
     })
 
     if (!targetUser) {
@@ -30,9 +24,13 @@ export async function POST(
       )
     }
 
+    // Check if user is an admin (separate table)
+    const adminRecord = await prisma.admin.findFirst({
+      where: { email: targetUser.email }
+    })
+
     // Prevent banning super admin users
-    const isSuperAdmin = targetUser.admins.some(admin => admin.role === 'SUPER_ADMIN')
-    if (isSuperAdmin) {
+    if (adminRecord && adminRecord.role === 'SUPER_ADMIN') {
       return NextResponse.json(
         { error: "Cannot ban super admin users" },
         { status: 403 }
@@ -40,13 +38,16 @@ export async function POST(
     }
 
     if (action === 'ban') {
-      // Revoke all user tokens
-      await revokeAllUserTokens(userId)
+      // Update user status to inactive
+      await prisma.user.update({
+        where: { id: userId },
+        data: { isActive: false }
+      })
 
       // Deactivate admin status if user is an admin
-      if (targetUser.admins.length > 0) {
-        await prisma.admin.updateMany({
-          where: { userId: userId },
+      if (adminRecord) {
+        await prisma.admin.update({
+          where: { id: adminRecord.id },
           data: { isActive: false }
         })
       }
@@ -56,10 +57,16 @@ export async function POST(
         action: "banned"
       })
     } else if (action === 'unban') {
+      // Update user status to active
+      await prisma.user.update({
+        where: { id: userId },
+        data: { isActive: true }
+      })
+
       // Reactivate admin status if user was an admin
-      if (targetUser.admins.length > 0) {
-        await prisma.admin.updateMany({
-          where: { userId: userId },
+      if (adminRecord) {
+        await prisma.admin.update({
+          where: { id: adminRecord.id },
           data: { isActive: true }
         })
       }

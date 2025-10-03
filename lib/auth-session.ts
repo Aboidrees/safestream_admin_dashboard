@@ -1,79 +1,91 @@
 import { NextRequest } from "next/server"
 import { getToken } from "next-auth/jwt"
-import { verifyAccessToken } from "./jwt-enhanced"
-import type { AuthenticatedUser } from "./types"
+import type { AdminRole } from "@prisma/client"
+
+// Custom error classes for better error handling
+export class AuthenticationError extends Error {
+  constructor(message: string, public code: string) {
+    super(message)
+    this.name = 'AuthenticationError'
+  }
+}
+
+export class AuthorizationError extends Error {
+  constructor(message: string, public code: string) {
+    super(message)
+    this.name = 'AuthorizationError'
+  }
+}
+
+export interface AuthenticatedAdmin {
+  id: string
+  email: string
+  name: string
+  role: AdminRole
+  isAdmin: boolean
+  adminId: string
+}
 
 /**
- * Get authenticated user from either NextAuth session or custom JWT token
- * This function handles both authentication methods used in the application
+ * Get authenticated admin from NextAuth session
  */
-export async function getAuthenticatedUser(req: NextRequest): Promise<AuthenticatedUser | null> {
+export async function getAuthenticatedAdmin(req: NextRequest): Promise<AuthenticatedAdmin | null> {
   try {
-    // First, try to get NextAuth session token
-    const nextAuthToken = await getToken({
+    const token = await getToken({
       req,
       secret: process.env.NEXTAUTH_SECRET
     })
 
-    if (nextAuthToken) {
-      // Convert NextAuth token to our AuthenticatedUser format
-      return {
-        id: nextAuthToken.id as string,
-        email: nextAuthToken.email as string,
-        name: nextAuthToken.name as string,
-        role: nextAuthToken.role as string || "user",
-        isAdmin: nextAuthToken.isAdmin as boolean || false,
-        adminId: nextAuthToken.adminId as string | undefined,
-      }
+    if (!token || !token.isAdmin) {
+      return null
     }
 
-    // If no NextAuth token, try custom JWT from Authorization header
-    const authHeader = req.headers.get("authorization")
-    if (authHeader?.startsWith("Bearer ")) {
-      const token = authHeader.substring(7)
-      const payload = await verifyAccessToken(token)
-      
-      if (payload) {
-        return {
-          id: payload.id,
-          email: payload.email,
-          name: payload.name || "",
-          role: payload.role || "user",
-          isAdmin: payload.isAdmin || false,
-          adminId: payload.adminId,
-        }
-      }
+    return {
+      id: token.id as string,
+      email: token.email as string,
+      name: token.name as string,
+      role: token.role as AdminRole,
+      isAdmin: token.isAdmin as boolean,
+      adminId: token.adminId as string,
     }
-
-    return null
   } catch (error) {
-    console.error("Failed to get authenticated user:", error)
+    console.error("Failed to get authenticated admin:", error)
     return null
   }
 }
 
 /**
- * Require authentication - throws error if user is not authenticated
+ * Require admin authentication - throws error if not authenticated
  */
-export async function requireAuth(req: NextRequest): Promise<AuthenticatedUser> {
-  const user = await getAuthenticatedUser(req)
+export async function requireAdmin(req: NextRequest): Promise<AuthenticatedAdmin> {
+  const admin = await getAuthenticatedAdmin(req)
   
-  if (!user) {
-    throw new Error("Authentication required")
+  if (!admin) {
+    throw new AuthenticationError("Admin authentication required", "AUTH_REQUIRED")
   }
   
-  return user
+  return admin
 }
 
 /**
- * Require admin access - throws error if user is not admin
+ * Require specific admin role - throws error if insufficient permissions
  */
-export async function requireAdmin(req: NextRequest): Promise<AuthenticatedUser> {
-  const user = await requireAuth(req)
+export async function requireRole(req: NextRequest, requiredRole: AdminRole): Promise<AuthenticatedAdmin> {
+  const admin = await requireAdmin(req)
   
-  if (!user.isAdmin) {
-    throw new Error("Admin access required")
+  // Define role hierarchy (higher number = more permissions)
+  const roleHierarchy: Record<AdminRole, number> = {
+    MODERATOR: 1,
+    ADMIN: 2,
+    SUPER_ADMIN: 3
   }
   
-  return user
+  if (roleHierarchy[admin.role] < roleHierarchy[requiredRole]) {
+    throw new AuthorizationError(
+      `Insufficient permissions. Required: ${requiredRole}, Current: ${admin.role}`,
+      "INSUFFICIENT_PERMISSIONS"
+    )
+  }
+  
+  return admin
 }

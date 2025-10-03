@@ -89,15 +89,23 @@ export function AdminShell({ children }: AdminShellProps) {
                     href="/families" 
                     className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors"
                   >
-                    👨‍👩‍👧‍👦 Families
+                    👨‍👩‍👧‍👦 Family Management
                   </Link>
                 </li>
+              </ul>
+            </div>
+
+            <div className="mb-6">
+              <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 mb-2">
+                Admin Management
+              </div>
+              <ul className="space-y-1">
                 <li>
                   <Link 
-                    href="/children" 
+                    href="/admins" 
                     className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors"
                   >
-                    👶 Child Profiles
+                    🛡️ Admin Accounts
                   </Link>
                 </li>
               </ul>

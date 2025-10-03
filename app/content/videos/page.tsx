@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Plus, Edit, Trash, Eye, CheckCircle, XCircle, Clock } from 'lucide-react'
 import type { Video } from '@/lib/types'
+import Image from 'next/image'
 
 export default function VideosPage() {
   const [videos, setVideos] = useState<Video[]>([])
@@ -39,14 +40,14 @@ export default function VideosPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     try {
-      const url = editingVideo 
+      const url = editingVideo
         ? `/api/content/videos/${editingVideo.id}`
         : '/api/content/videos'
-      
+
       const method = editingVideo ? 'PUT' : 'POST'
-      
+
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
@@ -86,9 +87,9 @@ export default function VideosPage() {
     setFormData({
       youtubeId: video.youtubeId,
       title: video.title,
-      description: video.description,
-      channelName: video.channelName,
-      ageRating: video.ageRating,
+      description: video.description || '',
+      channelName: video.channelName || '',
+      ageRating: video.ageRating || '',
       tags: video.tags.join(', ')
     })
     setShowModal(true)
@@ -200,8 +201,8 @@ export default function VideosPage() {
         {videos.map((video) => (
           <div key={video.id} className="bg-white rounded-lg shadow overflow-hidden">
             <div className="relative">
-              <img 
-                src={video.thumbnailUrl} 
+              <Image
+                src={video.thumbnailUrl || ''}
                 alt={video.title}
                 className="w-full h-48 object-cover"
               />
@@ -231,7 +232,7 @@ export default function VideosPage() {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-xs text-gray-500">
-                  {Math.floor(video.duration / 60)}:{(video.duration % 60).toString().padStart(2, '0')}
+                  {Math.floor(video.duration || 0 / 60)}:{(video.duration || 0 % 60).toString().padStart(2, '0')}
                 </span>
                 <div className="flex gap-2">
                   <button

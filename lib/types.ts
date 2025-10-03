@@ -15,6 +15,7 @@ export interface User {
   role: string
   createdAt: string
   isActive: boolean
+  isDeleted: boolean
   familyCount?: number
 }
 
@@ -222,11 +223,14 @@ export interface Notification {
 
 export interface Admin {
   id: string
-  userId: string
-  role: 'super_admin' | 'admin' | 'moderator'
-  permissions: string[]
+  name: string
+  email: string
+  role: 'SUPER_ADMIN' | 'ADMIN' | 'MODERATOR'
+  isActive: boolean
   createdAt: string
-  lastActiveAt: string
+  lastLogin?: string | null
+  collectionsCount?: number
+  moderatedVideosCount?: number
 }
 
 // ============================================================================

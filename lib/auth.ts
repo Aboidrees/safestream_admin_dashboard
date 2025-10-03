@@ -1,107 +1,180 @@
 import { NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
-import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import { prisma } from "./prisma"
-import { createAccessToken, createRefreshToken } from "./jwt-enhanced"
 import bcrypt from "bcryptjs"
+import type { AdminRole } from "@prisma/client"
+
+
+// Extend NextAuth types for better type safety
+declare module "next-auth" {
+  interface User {
+    id: string
+    email: string
+    name: string
+    role: AdminRole
+    isAdmin: boolean
+    adminId: string
+  }
+
+  interface Session {
+    user: {
+      id: string
+      email: string
+      name: string
+      role: AdminRole
+      isAdmin: boolean
+      adminId: string
+    }
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    id: string
+    email: string
+    name: string
+    role: AdminRole
+    isAdmin: boolean
+    adminId: string
+  }
+}
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
+  debug: true,
+  useSecureCookies: false, // For development
   providers: [
     CredentialsProvider({
-      name: "credentials",
+      id: "admin-credentials",
+      name: "Admin Credentials",
       credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" }
+        email: { 
+          label: "Email", 
+          type: "email",
+          placeholder: "admin@safestream.app"
+        },
+        password: { 
+          label: "Password", 
+          type: "password" 
+        }
       },
       async authorize(credentials) {
+        console.log("🔐 Authorize called with credentials:", { email: credentials?.email, hasPassword: !!credentials?.password })
+        
         if (!credentials?.email || !credentials?.password) {
-          return null
+          throw new Error("Email and password are required")
         }
 
         try {
-          const user = await prisma.user.findFirst({
-            where: {
-              email: credentials.email
-            },
-            include: {
-              admins: {
-                where: { isActive: true },
-                select: { role: true, id: true },
-              },
+          // Only authenticate admins - NO USER TABLE USED
+          const admin = await prisma.admin.findUnique({
+            where: { 
+              email: credentials.email.toLowerCase().trim()
             }
           })
 
-          if (!user || !user.password) {
-            return null
+          if (!admin || !admin.password) {
+            throw new Error("Invalid credentials")
           }
 
-          const isPasswordValid = await bcrypt.compare(credentials.password, user.password)
+          if (!admin.isActive) {
+            throw new Error("Account is not active")
+          }
+
+          // Verify password with timing attack protection
+          const isPasswordValid = await bcrypt.compare(
+            credentials.password,
+            admin.password
+          )
 
           if (!isPasswordValid) {
-            return null
+            throw new Error("Invalid credentials")
           }
 
-          const admin = user.admins?.[0]
+          const adminUser = {
+            id: admin.id,
+            email: admin.email,
+            name: admin.name,
+            role: admin.role,
+            isAdmin: true,
+            adminId: admin.id,
+          }
 
-          return {
-            id: user.id,
-            email: user.email,
-            name: user.name,
-            role: admin?.role || 'user',
-            isAdmin: !!admin,
-            adminId: admin?.id,
-          } as any
+          return adminUser
         } catch (error) {
-          console.error('Authorize error:', error)
-          return null
+          throw error // Re-throw to preserve specific error messages
         }
       }
     })
   ],
   session: {
     strategy: "jwt",
-    maxAge: 7 * 24 * 60 * 60, // 7 days
+    maxAge: 24 * 60 * 60, // 24 hours for testing
+    updateAge: 60 * 60, // 1 hour
   },
   jwt: {
-    maxAge: 7 * 24 * 60 * 60, // 7 days
+    maxAge: 24 * 60 * 60, // 24 hours for testing
   },
   callbacks: {
     async jwt({ token, user, account }) {
-      // If this is a new login, add custom user properties to token
-      if (user && account) {
-        return {
+      console.log("🔄 JWT callback - token:", token, "user:", user, "account:", account)
+      
+      // Initial sign in
+      if (account && user) {
+        const newToken = {
           ...token,
           id: user.id,
           email: user.email,
           name: user.name,
-          role: (user as any).role,
-          isAdmin: (user as any).isAdmin,
-          adminId: (user as any).adminId,
+          role: user.role,
+          isAdmin: user.isAdmin,
+          adminId: user.adminId,
         }
+        return newToken
       }
 
-      // For subsequent requests, return the existing token
+      // Return previous token if the access token has not expired yet
       return token
     },
     async session({ session, token }) {
-      // Add custom token properties to session
+      
+      // Send properties to the client - ONLY ADMIN DATA
       if (token) {
         session.user = {
-          ...session.user,
-          id: token.id as string,
-          email: token.email as string,
-          name: token.name as string,
-          role: token.role as string,
-          isAdmin: token.isAdmin as boolean,
-          adminId: token.adminId as string | undefined,
-        } as any
-      }
+          id: token.id,
+          email: token.email,
+          name: token.name,
+          role: token.role,
+          isAdmin: token.isAdmin,
+          adminId: token.adminId,
+        }
+      } 
       return session
     },
+    async redirect({ url, baseUrl }) {
+      // If it's a relative URL, make it absolute
+      if (url.startsWith("/")) return `${baseUrl}${url}`
+      
+      // If it's the same origin, allow it
+      if (url.startsWith(baseUrl)) return url
+      
+      // For any other URL, redirect to dashboard
+      return `${baseUrl}/`
+    }
   },
   pages: {
     signIn: "/login",
     error: "/login",
   },
+  events: {
+    async signIn({ user, account, profile, isNewUser }) {
+      console.log("🎉 Admin sign in: ", user)
+      console.log("🎉 Account: ", account)
+      console.log("🎉 Profile: ", profile)
+      console.log("🎉 Is new user: ", isNewUser)
+    },
+    async signOut({ session, token }) {
+      console.log("👋 Admin sign out: ", session?.user?.email || token?.email, session?.user?.name || token?.name, session?.user?.role || token?.role, session?.user?.isAdmin || token?.isAdmin, session?.user?.adminId || token?.adminId || 'none')
+    },
+  },
+  secret: process.env.NEXTAUTH_SECRET,
 }

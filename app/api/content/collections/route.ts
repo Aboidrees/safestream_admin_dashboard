@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { requireAdmin } from "@/lib/auth-session"
-import { Collection } from "@/lib/types"
 
 export async function GET(req: NextRequest) {
   try {
     await requireAdmin(req)
-
     // Get all platform collections
     const collections = await prisma.collection.findMany({
       where: {
@@ -38,7 +36,7 @@ export async function GET(req: NextRequest) {
       }
     })
 
-    const formattedCollections = collections.map((c: any) => ({
+    const formattedCollections = collections.map((c) => ({
       id: c.id,
       name: c.name,
       description: c.description || '',

@@ -6,20 +6,19 @@ export async function GET(req: NextRequest) {
   try {
     await requireAdmin(req)
 
-    // Get all users with their admin status and family count
+    // Get all users with their family count (excluding deleted users)
     const users = await prisma.user.findMany({
+      where: {
+        isDeleted: false // Only show non-deleted users
+      },
       select: {
         id: true,
         name: true,
         email: true,
         createdAt: true,
         avatar: true,
-        admins: {
-          select: {
-            role: true,
-            isActive: true,
-          },
-        },
+        isActive: true,
+        isDeleted: true,
         _count: {
           select: {
             createdFamilies: true,
@@ -37,9 +36,10 @@ export async function GET(req: NextRequest) {
       id: u.id,
       name: u.name || 'Unknown',
       email: u.email,
-      role: u.admins?.[0]?.role || 'user',
+      role: 'user', // All users in this table are regular users
       createdAt: u.createdAt.toISOString(),
-      isActive: u.admins?.[0]?.isActive ?? true,
+      isActive: u.isActive,
+      isDeleted: u.isDeleted,
       familyCount: u._count.createdFamilies + u._count.familyMembers
     }))
 

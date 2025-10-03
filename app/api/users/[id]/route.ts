@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { requireAdmin } from "@/lib/auth-session"
-import { revokeAllUserTokens } from "@/lib/jwt-enhanced"
 
 export async function DELETE(
   req: NextRequest,
@@ -15,11 +14,6 @@ export async function DELETE(
     // Check if user exists
     const targetUser = await prisma.user.findUnique({
       where: { id: userId },
-      include: {
-        admins: {
-          select: { role: true }
-        }
-      }
     })
 
     if (!targetUser) {
@@ -30,7 +24,11 @@ export async function DELETE(
     }
 
     // Prevent deleting super admin users
-    const isSuperAdmin = targetUser.admins.some(admin => admin.role === 'SUPER_ADMIN')
+    const adminRecord = await prisma.admin.findFirst({
+      where: { email: targetUser.email }
+    })
+
+    const isSuperAdmin = adminRecord && adminRecord.role === 'SUPER_ADMIN'
     if (isSuperAdmin) {
       return NextResponse.json(
         { error: "Cannot delete super admin users" },
@@ -38,16 +36,14 @@ export async function DELETE(
       )
     }
 
-    // Revoke all user tokens before deletion
-    await revokeAllUserTokens(userId)
-
-    // Delete user (this will cascade to related records)
-    await prisma.user.delete({
-      where: { id: userId }
+    // Soft delete user (set isDeleted to true)
+    await prisma.user.update({
+      where: { id: userId },
+      data: { isDeleted: true }
     })
 
-    return NextResponse.json({ 
-      message: "User deleted successfully" 
+    return NextResponse.json({
+      message: "User deleted successfully"
     })
   } catch (error) {
     console.error("Error deleting user:", error)

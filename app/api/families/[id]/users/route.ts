@@ -10,9 +10,14 @@ export async function GET(
     await requireAdmin(req)
     const { id: familyId } = await params
 
-    // Get family members (users associated with this family)
+    // Get family members (users associated with this family, excluding deleted users)
     const familyMembers = await prisma.familyMember.findMany({
-      where: { familyId: familyId },
+      where: {
+        familyId: familyId,
+        user: {
+          isDeleted: false // Only include non-deleted users
+        }
+      },
       include: {
         user: {
           select: {
@@ -21,12 +26,8 @@ export async function GET(
             email: true,
             createdAt: true,
             avatar: true,
-            admins: {
-              select: {
-                role: true,
-                isActive: true,
-              },
-            }
+            isActive: true,
+            isDeleted: true,
           }
         }
       },
@@ -36,13 +37,14 @@ export async function GET(
     })
 
     // Transform the data to match the expected format
-    const formattedUsers = familyMembers.map(fm => ({
+    const formattedUsers = familyMembers.map((fm) => ({
       id: fm.user.id,
       name: fm.user.name || 'Unknown',
       email: fm.user.email,
-      role: fm.user.admins?.[0]?.role || 'user',
+      role: fm.role,
       createdAt: fm.user.createdAt.toISOString(),
-      isActive: fm.user.admins?.[0]?.isActive ?? true,
+      isActive: fm.user.isActive,
+      isDeleted: fm.user.isDeleted,
       familyRole: fm.role,
       familyCount: 1 // This user is part of this family
     }))

@@ -53,10 +53,10 @@ export default function AdminFamiliesPage() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
           <Users className="h-8 w-8 text-blue-600" />
-          Family Overview
+          Family Management
         </h1>
         <p className="text-gray-600 mt-2">
-          View and monitor all registered families on the platform
+          Manage families, users, children, and collections. Click on any family to view detailed management options.
         </p>
       </div>
 

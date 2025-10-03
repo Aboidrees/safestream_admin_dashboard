@@ -1,4 +1,4 @@
-import { NotificationType, PrismaClient } from '@prisma/client'
+import { NotificationType, Prisma, PrismaClient  } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 import dotenv from 'dotenv'
 
@@ -35,30 +35,25 @@ async function main() {
       await prisma.user.deleteMany()
     }
 
+    // Create separate admin
+    console.log('👑 Creating admin...')
+    
+    const hashedPassword = await bcrypt.hash('password123', 12)
+    
+    const admin = await prisma.admin.create({
+      data: {
+        email: 'admin@safestream.app',
+        name: 'Admin User',
+        password: hashedPassword,
+        role: 'SUPER_ADMIN',
+        permissions: ['ALL'],
+        isActive: true
+      }
+    })
+    console.log('✅ Created admin')
+
     // Create test users
     console.log('👤 Creating test users...')
-
-    const hashedPassword = await bcrypt.hash('password123', 12)
-
-    // Check if users already exist, if not create them
-    let adminUser = await prisma.user.findUnique({
-      where: { email: 'admin@safestream.app' }
-    })
-
-    if (!adminUser) {
-      adminUser = await prisma.user.create({
-        data: {
-          email: 'admin@safestream.app',
-          name: 'Admin User',
-          password: hashedPassword,
-          emailVerified: new Date(),
-          avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
-        }
-      })
-      console.log('✅ Created admin user')
-    } else {
-      console.log('✅ Admin user already exists')
-    }
 
     let parentUser = await prisma.user.findUnique({
       where: { email: 'parent@safestream.app' }
@@ -98,29 +93,10 @@ async function main() {
       console.log('✅ Parent user 2 already exists')
     }
 
-    // Create admin
-    console.log('👑 Creating admin...')
-    let admin = await prisma.admin.findFirst({
-      where: { userId: adminUser.id }
-    })
 
-    if (!admin) {
-      admin = await prisma.admin.create({
-        data: {
-          userId: adminUser.id,
-          role: 'SUPER_ADMIN',
-          permissions: ['ALL'],
-          isActive: true,
-        }
-      })
-      console.log('✅ Created admin record')
-    } else {
-      console.log('✅ Admin record already exists')
-    }
-
-    // Create families
-    console.log('👨‍👩‍👧‍👦 Creating families...')
-    const family1 = await prisma.family.create({
+    // Create main family with two parents and three children
+    console.log('👨‍👩‍👧‍👦 Creating main family...')
+    const mainFamily = await prisma.family.create({
       data: {
         name: 'The Smith Family',
         createdBy: parentUser.id,
@@ -132,6 +108,7 @@ async function main() {
       }
     })
 
+    // Create secondary family for comparison
     const family2 = await prisma.family.create({
       data: {
         name: 'The Johnson Family',
@@ -144,11 +121,13 @@ async function main() {
       }
     })
 
-    // Create family members
+    // Create family members - both parents in main family
     console.log('👥 Creating family members...')
+    
+    // Parent 1 in main family
     await prisma.familyMember.create({
       data: {
-        familyId: family1.id,
+        familyId: mainFamily.id,
         userId: parentUser.id,
         role: 'PARENT',
         permissions: ['MANAGE_CHILDREN', 'VIEW_ANALYTICS', 'MANAGE_CONTENT'],
@@ -156,6 +135,18 @@ async function main() {
       }
     })
 
+    // Parent 2 in main family
+    await prisma.familyMember.create({
+      data: {
+        familyId: mainFamily.id,
+        userId: parentUser2.id,
+        role: 'PARENT',
+        permissions: ['MANAGE_CHILDREN', 'VIEW_ANALYTICS', 'MANAGE_CONTENT'],
+        isActive: true,
+      }
+    })
+
+    // Parent 2 also in secondary family
     await prisma.familyMember.create({
       data: {
         familyId: family2.id,
@@ -169,7 +160,10 @@ async function main() {
     // Create child profiles
     console.log('👶 Creating child profiles...')
 
-    // Check if child profiles already exist
+    // Create three children in the main family
+    console.log('👶 Creating child profiles for main family...')
+
+    // Child 1: Emma (8 years old)
     let child1 = await prisma.childProfile.findUnique({
       where: { qrCode: 'QR_EMMA_001' }
     })
@@ -177,7 +171,7 @@ async function main() {
     if (!child1) {
       child1 = await prisma.childProfile.create({
         data: {
-          familyId: family1.id,
+          familyId: mainFamily.id,
           name: 'Emma Smith',
           age: 8,
           avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face',
@@ -202,6 +196,7 @@ async function main() {
       console.log('✅ Child profile 1 (Emma) already exists')
     }
 
+    // Child 2: Liam (12 years old)
     let child2 = await prisma.childProfile.findUnique({
       where: { qrCode: 'QR_LIAM_002' }
     })
@@ -209,7 +204,7 @@ async function main() {
     if (!child2) {
       child2 = await prisma.childProfile.create({
         data: {
-          familyId: family1.id,
+          familyId: mainFamily.id,
           name: 'Liam Smith',
           age: 12,
           avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face',
@@ -234,6 +229,7 @@ async function main() {
       console.log('✅ Child profile 2 (Liam) already exists')
     }
 
+    // Child 3: Sophia (6 years old)
     let child3 = await prisma.childProfile.findUnique({
       where: { qrCode: 'QR_SOPHIA_003' }
     })
@@ -241,8 +237,8 @@ async function main() {
     if (!child3) {
       child3 = await prisma.childProfile.create({
         data: {
-          familyId: family2.id,
-          name: 'Sophia Johnson',
+          familyId: mainFamily.id,
+          name: 'Sophia Smith',
           age: 6,
           avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face',
           contentRestrictions: {
@@ -272,7 +268,7 @@ async function main() {
       data: {
         name: 'Educational Content',
         description: 'Learning videos for children (Math, Science, History)',
-        createdBy: adminUser.id,
+        createdBy: admin.id,
         isPublic: true,
       }
     })
@@ -281,7 +277,7 @@ async function main() {
       data: {
         name: 'Family Entertainment',
         description: 'Fun videos for the whole family (Comedy, Adventure, Music)',
-        createdBy: adminUser.id,
+        createdBy: admin.id,
         isPublic: true,
       }
     })
@@ -290,14 +286,44 @@ async function main() {
       data: {
         name: 'Cartoons & Animation',
         description: 'Animated content for children (2D, 3D, Stop Motion)',
-        createdBy: adminUser.id,
+        createdBy: admin.id,
         isPublic: true,
+        ageRating: 0,
+        isPlatform: true,
+        isMandatory: false,
       }
     })
 
-    // Create videos
-    console.log('🎬 Creating videos...')
+    const musicCollection = await prisma.collection.create({
+      data: {
+        name: 'Music & Songs',
+        description: 'Educational and fun music videos for children',
+        createdBy: admin.id,
+        isPublic: true,
+        ageRating: 0,
+        isPlatform: true,
+        isMandatory: false,
+      }
+    })
+
+    const scienceCollection = await prisma.collection.create({
+      data: {
+        name: 'Science & Nature',
+        description: 'Explore the wonders of science and nature',
+        createdBy: admin.id,
+        isPublic: true,
+        ageRating: 0,
+        isPlatform: true,
+        isMandatory: false,
+      }
+    })
+
+    console.log('✅ Created 5 collections')
+
+    // Create videos for all collections
+    console.log('🎬 Creating videos for all collections...')
     const videos = [
+      // Educational Content videos
       {
         youtubeId: 'numbers-1-10-001',
         title: 'Learning Numbers 1-10',
@@ -308,9 +334,42 @@ async function main() {
         ageRating: 'G',
         tags: ['numbers', 'counting', 'education'],
         isApproved: true,
+        moderationStatus: 'APPROVED',
+        moderatedBy: admin.id,
+        moderatedAt: new Date(),
       },
       {
-        youtubeId: 'adventure-time-ep1-002',
+        youtubeId: 'alphabet-song-002',
+        title: 'ABC Song for Kids',
+        description: 'Learn the alphabet with this fun song',
+        duration: 180, // 3 minutes
+        thumbnailUrl: 'https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=300&h=200&fit=crop',
+        channelName: 'Educational Kids',
+        ageRating: 'G',
+        tags: ['alphabet', 'letters', 'education'],
+        isApproved: true,
+        moderationStatus: 'APPROVED',
+        moderatedBy: admin.id,
+        moderatedAt: new Date(),
+      },
+      {
+        youtubeId: 'math-addition-003',
+        title: 'Basic Addition for Kids',
+        description: 'Learn addition with fun examples',
+        duration: 420, // 7 minutes
+        thumbnailUrl: 'https://images.unsplash.com/photo-1635070041078-e43d6dd8dca3?w=300&h=200&fit=crop',
+        channelName: 'Math for Kids',
+        ageRating: 'G',
+        tags: ['math', 'addition', 'education'],
+        isApproved: true,
+        moderationStatus: 'APPROVED',
+        moderatedBy: admin.id,
+        moderatedAt: new Date(),
+      },
+      
+      // Family Entertainment videos
+      {
+        youtubeId: 'adventure-time-ep1-004',
         title: 'Adventure Time Episode 1',
         description: 'Finn and Jake go on an adventure',
         duration: 1320, // 22 minutes
@@ -319,20 +378,58 @@ async function main() {
         ageRating: 'PG',
         tags: ['adventure', 'fantasy', 'cartoon'],
         isApproved: true,
+        moderationStatus: 'APPROVED',
+        moderatedBy: admin.id,
+        moderatedAt: new Date(),
       },
       {
-        youtubeId: 'science-experiments-003',
-        title: 'Science Experiments for Kids',
-        description: 'Safe science experiments you can do at home',
+        youtubeId: 'family-comedy-005',
+        title: 'Funny Family Moments',
+        description: 'Clean comedy for the whole family',
         duration: 600, // 10 minutes
-        thumbnailUrl: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=300&h=200&fit=crop',
-        channelName: 'Science Kids',
+        thumbnailUrl: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=300&h=200&fit=crop',
+        channelName: 'Family Fun',
         ageRating: 'G',
-        tags: ['science', 'experiments', 'learning'],
+        tags: ['comedy', 'family', 'fun'],
         isApproved: true,
+        moderationStatus: 'APPROVED',
+        moderatedBy: admin.id,
+        moderatedAt: new Date(),
+      },
+      
+      // Cartoons & Animation videos
+      {
+        youtubeId: 'peppa-pig-ep1-006',
+        title: 'Peppa Pig - Muddy Puddles',
+        description: 'Peppa loves jumping in muddy puddles',
+        duration: 300, // 5 minutes
+        thumbnailUrl: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=200&fit=crop',
+        channelName: 'Peppa Pig Official',
+        ageRating: 'G',
+        tags: ['peppa pig', 'cartoon', 'animals'],
+        isApproved: true,
+        moderationStatus: 'APPROVED',
+        moderatedBy: admin.id,
+        moderatedAt: new Date(),
       },
       {
-        youtubeId: 'disney-songs-004',
+        youtubeId: 'paw-patrol-ep1-007',
+        title: 'PAW Patrol - Pups Save the Day',
+        description: 'The PAW Patrol pups help their community',
+        duration: 600, // 10 minutes
+        thumbnailUrl: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=200&fit=crop',
+        channelName: 'PAW Patrol',
+        ageRating: 'G',
+        tags: ['paw patrol', 'heroes', 'cartoon'],
+        isApproved: true,
+        moderationStatus: 'APPROVED',
+        moderatedBy: admin.id,
+        moderatedAt: new Date(),
+      },
+      
+      // Music & Songs videos
+      {
+        youtubeId: 'disney-songs-008',
         title: 'Disney Songs Collection',
         description: 'Popular Disney songs for children',
         duration: 1800, // 30 minutes
@@ -341,6 +438,67 @@ async function main() {
         ageRating: 'G',
         tags: ['disney', 'music', 'songs'],
         isApproved: true,
+        moderationStatus: 'APPROVED',
+        moderatedBy: admin.id,
+        moderatedAt: new Date(),
+      },
+      {
+        youtubeId: 'nursery-rhymes-009',
+        title: 'Classic Nursery Rhymes',
+        description: 'Traditional nursery rhymes for toddlers',
+        duration: 900, // 15 minutes
+        thumbnailUrl: 'https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=300&h=200&fit=crop',
+        channelName: 'Kids Music',
+        ageRating: 'G',
+        tags: ['nursery rhymes', 'toddlers', 'music'],
+        isApproved: true,
+        moderationStatus: 'APPROVED',
+        moderatedBy: admin.id,
+        moderatedAt: new Date(),
+      },
+      
+      // Science & Nature videos
+      {
+        youtubeId: 'science-experiments-010',
+        title: 'Science Experiments for Kids',
+        description: 'Safe science experiments you can do at home',
+        duration: 600, // 10 minutes
+        thumbnailUrl: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=300&h=200&fit=crop',
+        channelName: 'Science Kids',
+        ageRating: 'G',
+        tags: ['science', 'experiments', 'learning'],
+        isApproved: true,
+        moderationStatus: 'APPROVED',
+        moderatedBy: admin.id,
+        moderatedAt: new Date(),
+      },
+      {
+        youtubeId: 'animals-wildlife-011',
+        title: 'Amazing Animals Around the World',
+        description: 'Learn about different animals and their habitats',
+        duration: 720, // 12 minutes
+        thumbnailUrl: 'https://images.unsplash.com/photo-1549366021-9f761d7f8e2f?w=300&h=200&fit=crop',
+        channelName: 'Nature Kids',
+        ageRating: 'G',
+        tags: ['animals', 'nature', 'wildlife'],
+        isApproved: true,
+        moderationStatus: 'APPROVED',
+        moderatedBy: admin.id,
+        moderatedAt: new Date(),
+      },
+      {
+        youtubeId: 'space-planets-012',
+        title: 'Our Solar System for Kids',
+        description: 'Explore the planets in our solar system',
+        duration: 480, // 8 minutes
+        thumbnailUrl: 'https://images.unsplash.com/photo-1446776877081-d282a0f896e2?w=300&h=200&fit=crop',
+        channelName: 'Space Kids',
+        ageRating: 'G',
+        tags: ['space', 'planets', 'solar system'],
+        isApproved: true,
+        moderationStatus: 'APPROVED',
+        moderatedBy: admin.id,
+        moderatedAt: new Date(),
       }
     ]
 
@@ -353,7 +511,7 @@ async function main() {
 
       if (!video) {
         video = await prisma.video.create({
-          data: videoData
+          data: videoData as Prisma.VideoCreateInput
         })
         console.log(`✅ Created video: ${videoData.title}`)
       } else {
@@ -362,37 +520,100 @@ async function main() {
       createdVideos.push(video)
     }
 
-    // Add videos to collections
+    // Add videos to collections - distribute across all 5 collections
     console.log('🔗 Adding videos to collections...')
+    
+    // Educational Content Collection (3 videos)
     await prisma.collectionVideo.create({
       data: {
         collectionId: educationalCollection.id,
-        videoId: createdVideos[0].id,
+        videoId: createdVideos[0].id, // Learning Numbers 1-10
         orderIndex: 1,
       }
     })
-
-    await prisma.collectionVideo.create({
-      data: {
-        collectionId: cartoonsCollection.id,
-        videoId: createdVideos[1].id,
-        orderIndex: 1,
-      }
-    })
-
     await prisma.collectionVideo.create({
       data: {
         collectionId: educationalCollection.id,
-        videoId: createdVideos[2].id,
+        videoId: createdVideos[1].id, // ABC Song for Kids
+        orderIndex: 2,
+      }
+    })
+    await prisma.collectionVideo.create({
+      data: {
+        collectionId: educationalCollection.id,
+        videoId: createdVideos[2].id, // Basic Addition for Kids
+        orderIndex: 3,
+      }
+    })
+
+    // Family Entertainment Collection (2 videos)
+    await prisma.collectionVideo.create({
+      data: {
+        collectionId: entertainmentCollection.id,
+        videoId: createdVideos[3].id, // Adventure Time Episode 1
+        orderIndex: 1,
+      }
+    })
+    await prisma.collectionVideo.create({
+      data: {
+        collectionId: entertainmentCollection.id,
+        videoId: createdVideos[4].id, // Funny Family Moments
         orderIndex: 2,
       }
     })
 
+    // Cartoons & Animation Collection (2 videos)
     await prisma.collectionVideo.create({
       data: {
-        collectionId: entertainmentCollection.id,
-        videoId: createdVideos[3].id,
+        collectionId: cartoonsCollection.id,
+        videoId: createdVideos[5].id, // Peppa Pig - Muddy Puddles
         orderIndex: 1,
+      }
+    })
+    await prisma.collectionVideo.create({
+      data: {
+        collectionId: cartoonsCollection.id,
+        videoId: createdVideos[6].id, // PAW Patrol - Pups Save the Day
+        orderIndex: 2,
+      }
+    })
+
+    // Music & Songs Collection (2 videos)
+    await prisma.collectionVideo.create({
+      data: {
+        collectionId: musicCollection.id,
+        videoId: createdVideos[7].id, // Disney Songs Collection
+        orderIndex: 1,
+      }
+    })
+    await prisma.collectionVideo.create({
+      data: {
+        collectionId: musicCollection.id,
+        videoId: createdVideos[8].id, // Classic Nursery Rhymes
+        orderIndex: 2,
+      }
+    })
+
+    // Science & Nature Collection (3 videos)
+    await prisma.collectionVideo.create({
+      data: {
+        collectionId: scienceCollection.id,
+        videoId: createdVideos[9].id, // Science Experiments for Kids
+        orderIndex: 1,
+      }
+    })
+    await prisma.collectionVideo.create({
+      data: {
+        collectionId: scienceCollection.id,
+        videoId: createdVideos[10].id, // Amazing Animals Around the World
+        orderIndex: 2,
+      }
+    })
+    await prisma.collectionVideo.create({
+      data: {
+        collectionId: scienceCollection.id,
+        videoId: createdVideos[11].id, // Our Solar System for Kids
+        orderIndex: 3,
       }
     })
 
@@ -490,13 +711,20 @@ async function main() {
     console.log('👑 Admin: admin@safestream.app / password123')
     console.log('👨‍👩‍👧‍👦 Parent 1: parent@safestream.app / password123')
     console.log('👨‍👩‍👧‍👦 Parent 2: jane@safestream.app / password123')
-    console.log('\n👶 Child Profiles:')
+    console.log('\n👨‍👩‍👧‍👦 Main Family: The Smith Family')
+    console.log('👥 Parents: John Parent & Jane Smith (both parents in same family)')
+    console.log('👶 Children:')
     console.log('• Emma Smith (8 years old) - QR: QR_EMMA_001')
     console.log('• Liam Smith (12 years old) - QR: QR_LIAM_002')
-    console.log('• Sophia Johnson (6 years old) - QR: QR_SOPHIA_003')
-    console.log('\n📚 Collections: Educational Content, Family Entertainment, Cartoons & Animation')
-    console.log('🎬 Videos: 4 sample videos with different categories')
-    console.log('\n🚀 You can now test the login flow with these accounts!')
+    console.log('• Sophia Smith (6 years old) - QR: QR_SOPHIA_003')
+    console.log('\n📚 Collections (5 total):')
+    console.log('• Educational Content (3 videos)')
+    console.log('• Family Entertainment (2 videos)')
+    console.log('• Cartoons & Animation (2 videos)')
+    console.log('• Music & Songs (2 videos)')
+    console.log('• Science & Nature (3 videos)')
+    console.log('\n🎬 Videos: 12 total videos distributed across collections')
+    console.log('\n🚀 You can now test the family management with comprehensive data!')
 
   } catch (error) {
     console.error('❌ Error seeding database:', error)
