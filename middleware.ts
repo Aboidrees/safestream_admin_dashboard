@@ -241,8 +241,9 @@ export async function middleware(req: NextRequest) {
         if (pathname.startsWith("/api/")) {
           return createErrorResponse("Admin access required", 403)
         }
-        
-        return NextResponse.redirect(new URL("/", req.url))
+        const loginUrl = new URL("/login", req.url)
+        loginUrl.searchParams.set("redirect", pathname)
+        return NextResponse.redirect(loginUrl)
       }
       
       // Add admin info to headers

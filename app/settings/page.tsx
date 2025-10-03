@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Settings, Save, Database, Mail, Shield, Globe, Bell } from "lucide-react"
+import { Settings, Save, Database, Shield, Globe, Bell } from "lucide-react"
 
 export default function AdminSettingsPage() {
   const [saving, setSaving] = useState(false)

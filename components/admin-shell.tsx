@@ -1,18 +1,25 @@
-import type React from "react"
-import Link from "next/link"
+"use client"
 
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import type React from "react"
+
+export function AdminShell({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname()
+
+  const isAuthPage = pathname === "/login" || pathname === "/setup"
+
+  if (isAuthPage) {
+    return <>{children}</>
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Admin Header */}
       <header className="bg-gradient-to-r from-blue-600 to-purple-600 shadow-lg">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center h-16">
-            <Link href="/admin" className="text-2xl font-bold text-white">
+            <Link href="/" className="text-2xl font-bold text-white">
               SafeStream Admin
             </Link>
             <div className="flex items-center space-x-4">
@@ -46,7 +53,7 @@ export default function AdminLayout({
               <ul className="space-y-1">
                 <li>
                   <Link 
-                    href="/admin" 
+                    href="/" 
                     className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors"
                   >
                     📊 Overview
@@ -54,7 +61,7 @@ export default function AdminLayout({
                 </li>
                 <li>
                   <Link 
-                    href="/admin/stats" 
+                    href="/stats" 
                     className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors"
                   >
                     📈 Statistics
@@ -70,7 +77,7 @@ export default function AdminLayout({
               <ul className="space-y-1">
                 <li>
                   <Link 
-                    href="/admin/users" 
+                    href="/users" 
                     className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors"
                   >
                     👥 All Users
@@ -78,7 +85,7 @@ export default function AdminLayout({
                 </li>
                 <li>
                   <Link 
-                    href="/admin/families" 
+                    href="/families" 
                     className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors"
                   >
                     👨‍👩‍👧‍👦 Families
@@ -86,7 +93,7 @@ export default function AdminLayout({
                 </li>
                 <li>
                   <Link 
-                    href="/admin/children" 
+                    href="/children" 
                     className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors"
                   >
                     👶 Child Profiles
@@ -102,7 +109,7 @@ export default function AdminLayout({
               <ul className="space-y-1">
                 <li>
                   <Link 
-                    href="/admin/collections" 
+                    href="/collections" 
                     className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors"
                   >
                     📚 Collections
@@ -110,7 +117,7 @@ export default function AdminLayout({
                 </li>
                 <li>
                   <Link 
-                    href="/admin/videos" 
+                    href="/videos" 
                     className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors"
                   >
                     🎬 Videos
@@ -118,7 +125,7 @@ export default function AdminLayout({
                 </li>
                 <li>
                   <Link 
-                    href="/admin/content-moderation" 
+                    href="/content-moderation" 
                     className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors"
                   >
                     ⚠️ Moderation
@@ -134,7 +141,7 @@ export default function AdminLayout({
               <ul className="space-y-1">
                 <li>
                   <Link 
-                    href="/admin/reports" 
+                    href="/reports" 
                     className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors"
                   >
                     📋 Reports
@@ -142,7 +149,7 @@ export default function AdminLayout({
                 </li>
                 <li>
                   <Link 
-                    href="/admin/settings" 
+                    href="/settings" 
                     className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors"
                   >
                     ⚙️ Settings
@@ -150,7 +157,7 @@ export default function AdminLayout({
                 </li>
                 <li>
                   <Link 
-                    href="/admin/setup" 
+                    href="/setup" 
                     className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors"
                   >
                     🔧 Admin Setup
@@ -169,4 +176,5 @@ export default function AdminLayout({
     </div>
   )
 }
+
 

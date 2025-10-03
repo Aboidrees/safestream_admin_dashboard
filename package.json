@@ -16,7 +16,7 @@
     "db:migrate-to-prisma": "node scripts/migrate-to-prisma.js",
     "db:seed": "node scripts/seed-database.js",
     "dev": "next dev",
-    "lint": "next lint",
+    "lint": "eslint .",
     "start": "next start"
   },
   "dependencies": {
@@ -59,6 +59,7 @@
     "url": "latest"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
     "@tailwindcss/postcss": "^4.1.14",
     "@types/node": "^24.6.2",
     "@types/react": "^19.2.0",

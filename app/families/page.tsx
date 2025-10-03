@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Search, Users, Child, Eye } from "lucide-react"
+import { Search, Users, Eye, Baby } from "lucide-react"
 
 interface Family {
   id: string
@@ -136,7 +136,7 @@ export default function AdminFamiliesPage() {
                 {families.reduce((sum, f) => sum + f.childrenCount, 0)}
               </p>
             </div>
-            <Child className="h-10 w-10 text-purple-600" />
+            <Baby className="h-10 w-10 text-purple-600" />
           </div>
         </div>
         <div className="bg-white rounded-lg shadow-sm p-6">
@@ -144,7 +144,7 @@ export default function AdminFamiliesPage() {
             <div>
               <p className="text-sm text-gray-600 mb-1">Avg. Children per Family</p>
               <p className="text-3xl font-bold text-green-600">
-                {families.length > 0 
+                {families.length > 0
                   ? (families.reduce((sum, f) => sum + f.childrenCount, 0) / families.length).toFixed(1)
                   : 0}
               </p>
@@ -211,7 +211,7 @@ export default function AdminFamiliesPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-1">
-                        <Child className="h-4 w-4 text-purple-600" />
+                        <Baby className="h-4 w-4 text-purple-600" />
                         <span className="text-sm font-medium text-gray-900">{family.childrenCount}</span>
                       </div>
                     </td>

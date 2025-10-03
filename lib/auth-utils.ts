@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server"
-import { verifyJWT, validateAdminToken, type SafeStreamJWTPayload } from "./jwt"
+import { verifyJWT, validateAdminToken } from "./jwt"
 
 export interface AuthenticatedUser {
   id: string

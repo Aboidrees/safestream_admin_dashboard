@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Search, Video, Eye, Flag, Trash2 } from "lucide-react"
+import { Search, Video, Eye, Flag } from "lucide-react"
 
 export default function AdminVideosPage() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -76,7 +76,7 @@ export default function AdminVideosPage() {
         </p>
         <div className="bg-blue-50 rounded-lg p-4 max-w-2xl mx-auto">
           <p className="text-sm text-blue-800">
-            <strong>Upcoming features:</strong> Video moderation, bulk operations, video analytics, 
+            <strong>Upcoming features:</strong> Video moderation, bulk operations, video analytics,
             flagged content review, and automated content filtering.
           </p>
         </div>

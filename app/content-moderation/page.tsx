@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { AlertTriangle, CheckCircle, XCircle, Flag, Eye } from "lucide-react"
+import { AlertTriangle, CheckCircle, XCircle, Flag, } from "lucide-react"
 
 export default function ContentModerationPage() {
   const [filter, setFilter] = useState("all")
