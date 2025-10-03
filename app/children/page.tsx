@@ -2,17 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { Search, Baby, Calendar, QrCode, Shield } from "lucide-react"
-
-interface ChildProfile {
-  id: string
-  name: string
-  age: number
-  familyName: string
-  parentName: string
-  createdAt: string
-  screenTimeLimit: number
-  qrCode: string
-}
+import type { ChildProfile } from "@/lib/types"
 
 export default function AdminChildrenPage() {
   const [children, setChildren] = useState<ChildProfile[]>([])
@@ -26,59 +16,6 @@ export default function AdminChildrenPage() {
   }, [])
 
   useEffect(() => {
-    filterChildren()
-  }, [filteredChildren, searchTerm, ageFilter, children])
-
-  const fetchChildren = async () => {
-    try {
-      setLoading(true)
-      // TODO: Replace with actual API call
-      // const response = await fetch('/api/admin/children')
-      // const data = await response.json()
-      // setChildren(data.children)
-
-      // Mock data
-      const mockChildren: ChildProfile[] = [
-        {
-          id: "1",
-          name: "Emma Smith",
-          age: 8,
-          familyName: "The Smith Family",
-          parentName: "John Smith",
-          createdAt: "2024-01-15T10:00:00Z",
-          screenTimeLimit: 120,
-          qrCode: "QR-ABC123"
-        },
-        {
-          id: "2",
-          name: "Liam Smith",
-          age: 5,
-          familyName: "The Smith Family",
-          parentName: "John Smith",
-          createdAt: "2024-01-15T10:05:00Z",
-          screenTimeLimit: 90,
-          qrCode: "QR-ABC124"
-        },
-        {
-          id: "3",
-          name: "Olivia Johnson",
-          age: 10,
-          familyName: "The Johnson Family",
-          parentName: "Jane Johnson",
-          createdAt: "2024-02-20T14:30:00Z",
-          screenTimeLimit: 150,
-          qrCode: "QR-DEF456"
-        }
-      ]
-      setChildren(mockChildren)
-    } catch (error) {
-      console.error("Error fetching children:", error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const filterChildren = () => {
     let filtered = children
 
     if (searchTerm) {
@@ -95,13 +32,27 @@ export default function AdminChildrenPage() {
     }
 
     setFilteredChildren(filtered)
+  }, [searchTerm, ageFilter, children])
+
+  const fetchChildren = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch('/api/admin/children')
+      const data = await response.json()
+      
+      if (response.ok && data.children) {
+        setChildren(data.children)
+      } else {
+        console.error('Failed to fetch children:', data.error)
+      }
+    } catch (error) {
+      console.error("Error fetching children:", error)
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const getAgeGroup = (age: number) => {
-    if (age <= 5) return "0-5"
-    if (age <= 10) return "6-10"
-    return "11+"
-  }
+
 
   return (
     <div>

@@ -2,16 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { Search, Users, Eye, Baby } from "lucide-react"
-
-interface Family {
-  id: string
-  name: string
-  createdAt: string
-  parentName: string
-  parentEmail: string
-  childrenCount: number
-  collectionsCount: number
-}
+import type { Family } from "@/lib/types"
 
 export default function AdminFamiliesPage() {
   const [families, setFamilies] = useState<Family[]>([])
@@ -24,56 +15,6 @@ export default function AdminFamiliesPage() {
   }, [])
 
   useEffect(() => {
-    filterFamilies()
-  }, [searchTerm, families])
-
-  const fetchFamilies = async () => {
-    try {
-      setLoading(true)
-      // TODO: Replace with actual API call
-      // const response = await fetch('/api/admin/families')
-      // const data = await response.json()
-      // setFamilies(data.families)
-
-      // Mock data for now
-      const mockFamilies: Family[] = [
-        {
-          id: "1",
-          name: "The Smith Family",
-          createdAt: "2024-01-15T10:00:00Z",
-          parentName: "John Smith",
-          parentEmail: "john@example.com",
-          childrenCount: 2,
-          collectionsCount: 5
-        },
-        {
-          id: "2",
-          name: "The Johnson Family",
-          createdAt: "2024-02-20T14:30:00Z",
-          parentName: "Jane Johnson",
-          parentEmail: "jane@example.com",
-          childrenCount: 1,
-          collectionsCount: 3
-        },
-        {
-          id: "3",
-          name: "The Williams Family",
-          createdAt: "2024-03-10T09:15:00Z",
-          parentName: "Bob Williams",
-          parentEmail: "bob@example.com",
-          childrenCount: 3,
-          collectionsCount: 8
-        }
-      ]
-      setFamilies(mockFamilies)
-    } catch (error) {
-      console.error("Error fetching families:", error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const filterFamilies = () => {
     let filtered = families
 
     if (searchTerm) {
@@ -85,7 +26,26 @@ export default function AdminFamiliesPage() {
     }
 
     setFilteredFamilies(filtered)
+  }, [searchTerm, families])
+
+  const fetchFamilies = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch('/api/admin/families')
+      const data = await response.json()
+      
+      if (response.ok && data.families) {
+        setFamilies(data.families)
+      } else {
+        console.error('Failed to fetch families:', data.error)
+      }
+    } catch (error) {
+      console.error("Error fetching families:", error)
+    } finally {
+      setLoading(false)
+    }
   }
+
 
   return (
     <div>

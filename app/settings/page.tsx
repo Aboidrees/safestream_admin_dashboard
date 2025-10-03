@@ -2,10 +2,11 @@
 
 import { useState } from "react"
 import { Settings, Save, Database, Shield, Globe, Bell } from "lucide-react"
+import type { PlatformSettings } from "@/lib/types"
 
 export default function AdminSettingsPage() {
   const [saving, setSaving] = useState(false)
-  const [settings, setSettings] = useState({
+  const [settings, setSettings] = useState<PlatformSettings>({
     siteName: "SafeStream",
     siteUrl: "https://safestream.app",
     adminEmail: "admin@safestream.app",
@@ -20,10 +21,25 @@ export default function AdminSettingsPage() {
 
   const handleSave = async () => {
     setSaving(true)
-    // TODO: Implement settings save API
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    setSaving(false)
-    alert("Settings saved successfully!")
+    try {
+      const response = await fetch('/api/admin/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(settings)
+      })
+      const data = await response.json()
+      
+      if (response.ok) {
+        alert("Settings saved successfully!")
+      } else {
+        alert(data.error || "Failed to save settings")
+      }
+    } catch (error) {
+      console.error('Error saving settings:', error)
+      alert("Failed to save settings")
+    } finally {
+      setSaving(false)
+    }
   }
 
   return (

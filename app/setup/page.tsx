@@ -1,9 +1,10 @@
 "use client"
 
 import { useState } from "react"
+import type { AdminSetupFormData } from "@/lib/types"
 
 export default function AdminSetupPage() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<AdminSetupFormData>({
     name: "",
     email: "",
     password: "",
@@ -53,7 +54,7 @@ export default function AdminSetupPage() {
       } else {
         setError(data.error || "Failed to create admin account")
       }
-    } catch (error) {
+    } catch {
       setError("An error occurred. Please try again.")
     } finally {
       setLoading(false)

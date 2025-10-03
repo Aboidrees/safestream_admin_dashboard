@@ -2,18 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { Search, BookOpen, Eye, Globe, Lock, Star } from "lucide-react"
-
-interface Collection {
-  id: string
-  name: string
-  category: string
-  ageRating: number
-  videoCount: number
-  isPublic: boolean
-  isMandatory: boolean
-  creatorName: string
-  createdAt: string
-}
+import type { Collection } from "@/lib/types"
 
 export default function AdminCollectionsPage() {
   const [collections, setCollections] = useState<Collection[]>([])
@@ -27,62 +16,6 @@ export default function AdminCollectionsPage() {
   }, [])
 
   useEffect(() => {
-    filterCollections()
-  }, [searchTerm, categoryFilter, collections])
-
-  const fetchCollections = async () => {
-    try {
-      setLoading(true)
-      // TODO: Replace with actual API call to get all collections as admin
-      // const response = await fetch('/api/admin/collections')
-      // const data = await response.json()
-      // setCollections(data.collections)
-
-      // Mock data
-      const mockCollections: Collection[] = [
-        {
-          id: "1",
-          name: "Educational Adventures",
-          category: "Educational",
-          ageRating: 5,
-          videoCount: 25,
-          isPublic: true,
-          isMandatory: false,
-          creatorName: "John Smith",
-          createdAt: "2024-01-15T10:00:00Z"
-        },
-        {
-          id: "2",
-          name: "Fun Cartoons",
-          category: "Entertainment",
-          ageRating: 3,
-          videoCount: 40,
-          isPublic: true,
-          isMandatory: false,
-          creatorName: "Jane Johnson",
-          createdAt: "2024-02-20T14:30:00Z"
-        },
-        {
-          id: "3",
-          name: "Safety First",
-          category: "Educational",
-          ageRating: 0,
-          videoCount: 15,
-          isPublic: true,
-          isMandatory: true,
-          creatorName: "Admin",
-          createdAt: "2024-01-01T00:00:00Z"
-        }
-      ]
-      setCollections(mockCollections)
-    } catch (error) {
-      console.error("Error fetching collections:", error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const filterCollections = () => {
     let filtered = collections
 
     if (searchTerm) {
@@ -97,8 +30,26 @@ export default function AdminCollectionsPage() {
     }
 
     setFilteredCollections(filtered)
-  }
+  }, [searchTerm, categoryFilter, collections])
 
+  const fetchCollections = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch('/api/admin/collections')
+      const data = await response.json()
+      
+      if (response.ok && data.collections) {
+        setCollections(data.collections)
+      } else {
+        console.error('Failed to fetch collections:', data.error)
+      }
+    } catch (error) {
+      console.error("Error fetching collections:", error)
+    } finally {
+      setLoading(false)
+    }
+  }
+  
   return (
     <div>
       <div className="mb-8">
@@ -243,7 +194,7 @@ export default function AdminCollectionsPage() {
                       <div className="flex items-center">
                         <div className="text-sm font-medium text-gray-900">{collection.name}</div>
                         {collection.isMandatory && (
-                          <Star className="ml-2 h-4 w-4 text-red-500 fill-current" title="Mandatory Content" />
+                          <Star className="ml-2 h-4 w-4 text-red-500 fill-current" />
                         )}
                       </div>
                     </td>

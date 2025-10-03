@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
-import { verifyJWT, validateAdminToken } from "./lib/jwt"
+import { verifyAccessToken, validateAdminToken } from "./lib/jwt-enhanced"
+import type { SafeStreamJWTPayload } from "./lib/types"
 
 // Security headers configuration
 const securityHeaders = {
@@ -122,7 +123,7 @@ function getClientIP(req: NextRequest): string {
 }
 
 // Validate token and extract user info
-async function validateToken(req: NextRequest): Promise<{ payload: any; token: string } | null> {
+async function validateToken(req: NextRequest): Promise<{ payload: SafeStreamJWTPayload; token: string } | null> {
   let token: string | null = null
   
   // Check Authorization header first (for API requests)
@@ -144,7 +145,7 @@ async function validateToken(req: NextRequest): Promise<{ payload: any; token: s
   }
   
   try {
-    const payload = await verifyJWT(token)
+    const payload = await verifyAccessToken(token)
     if (!payload) {
       return null
     }

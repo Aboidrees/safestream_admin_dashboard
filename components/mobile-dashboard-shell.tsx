@@ -22,6 +22,7 @@ import {
   LogOut,
 } from "lucide-react"
 import { useSupabase } from "@/lib/supabase/provider"
+import type { MobileDashboardShellProps } from "@/lib/types"
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: Home },
@@ -34,10 +35,6 @@ const navigation = [
   { name: "QR Codes", href: "/dashboard/qr-codes", icon: QrCode },
   { name: "Database", href: "/dashboard/database", icon: Database },
 ]
-
-interface MobileDashboardShellProps {
-  children: React.ReactNode
-}
 
 export function MobileDashboardShell({ children }: MobileDashboardShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)

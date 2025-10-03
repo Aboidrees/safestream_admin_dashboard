@@ -2,7 +2,7 @@ import { NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import { prisma } from "./prisma"
-import { createSessionToken, verifyJWT, type SafeStreamJWTPayload } from "./jwt"
+import { createAccessToken, createRefreshToken } from "./jwt-enhanced"
 import bcrypt from "bcryptjs"
 
 export const authOptions: NextAuthOptions = {
@@ -19,18 +19,20 @@ export const authOptions: NextAuthOptions = {
           return null
         }
 
-        const user = await prisma.user.findUnique({
+        const user = await prisma.user.findFirst({
           where: {
             email: credentials.email
+          },
+          include: {
+            admins: {
+              where: { isActive: true },
+              select: { role: true, id: true },
+              take: 1
+            },
           }
         })
 
-        if (!user) {
-          return null
-        }
-
-        // Check if user has a password (should be hashed)
-        if (!user.password) {
+        if (!user || !user.password) {
           return null
         }
 
@@ -40,10 +42,15 @@ export const authOptions: NextAuthOptions = {
           return null
         }
 
+        const admin = user.admins[0]
+
         return {
           id: user.id,
           email: user.email,
           name: user.name,
+          role: admin?.role || 'user',
+          isAdmin: !!admin,
+          adminId: admin?.id,
         }
       }
     })
@@ -57,26 +64,38 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async jwt({ token, user, account }) {
-      // If this is a new login, create a custom JWT with jose
+      // If this is a new login, create tokens
       if (user && account) {
         try {
-          const customToken = await createSessionToken(user.id)
-          // Parse the custom JWT to get the payload
-          const payload = await verifyJWT(customToken)
-          if (payload) {
-            return {
-              ...token,
-              id: payload.id,
-              email: payload.email,
-              name: payload.name,
-              role: payload.role,
-              isAdmin: payload.isAdmin,
-              adminId: payload.adminId,
-              customToken: customToken
-            }
+          const accessToken = await createAccessToken({
+            id: user.id,
+            email: user.email!,
+            name: user.name!,
+            role: user.role,
+            isAdmin: user.isAdmin,
+            adminId: user.adminId,
+          })
+
+          const refreshToken = await createRefreshToken({
+            id: user.id,
+            email: user.email,
+          })
+
+          return {
+            ...token,
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
+            isAdmin: user.isAdmin,
+            adminId: user.adminId,
+            accessToken,  
+            refreshToken,
           }
         } catch (error) {
-          console.error('Failed to create custom JWT:', error)
+          console.error('Failed to create tokens:', error)
+          // Return token without custom tokens on error
+          return token
         }
       }
 
@@ -85,19 +104,21 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       if (token) {
-        session = {
-          ...session,
-          user: {
-            ...session?.user,
-            ...token,
-          }
+        session.user = {
+          ...session.user,
+          id: token.id as string,
+          email: token.email as string,
+          name: token.name as string,
+          role: token.role as string,
+          isAdmin: token.isAdmin as boolean,
+          adminId: token.adminId as string | undefined,
         }
       }
       return session
     },
   },
   pages: {
-    signIn: "/dashboard/login",
-    newUser: "/dashboard/register",
+    signIn: "/login",
+    error: "/login",
   },
 }

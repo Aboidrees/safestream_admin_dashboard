@@ -3,8 +3,9 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import type React from "react"
+import type { AdminShellProps } from "@/lib/types"
 
-export function AdminShell({ children }: { children: React.ReactNode }) {
+export function AdminShell({ children }: AdminShellProps) {
   const pathname = usePathname()
 
   const isAuthPage = pathname === "/login" || pathname === "/setup"

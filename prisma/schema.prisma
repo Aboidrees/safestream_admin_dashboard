@@ -29,6 +29,7 @@ model User {
   admins Admin[]
   accounts Account[]
   sessions Session[]
+  tokenSessions TokenSession[]
   notifications Notification[]
   familyMembers FamilyMember[]
 
@@ -298,6 +299,25 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("sessions")
+}
+
+model TokenSession {
+  id        String   @id @default(uuid()) @db.Uuid
+  jti       String   @unique // JWT ID for token revocation
+  userId    String   @map("user_id") @db.Uuid
+  tokenType String   @map("token_type") // 'access' or 'refresh'
+  expiresAt DateTime @map("expires_at")
+  revoked   Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("token_sessions")
+  @@index([jti])
+  @@index([userId])
+  @@index([expiresAt])
 }
 
 model VerificationToken {

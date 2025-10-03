@@ -5,16 +5,13 @@
   "type": "module",
   "scripts": {
     "build": "next build",
-    "db:check-admins": "node scripts/check-admins-prisma.js",
-    "db:create-admin": "node scripts/create-admin-prisma.js",
-    "db:setup": "node scripts/setup-database-prisma.js",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
     "db:reset": "prisma migrate reset",
-    "db:migrate-to-prisma": "node scripts/migrate-to-prisma.js",
     "db:seed": "node scripts/seed-database.js",
+    "tokens:cleanup": "node scripts/cleanup-tokens.js",
     "dev": "next dev",
     "lint": "eslint .",
     "start": "next start"
@@ -56,7 +53,8 @@
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "tailwind-merge": "^3.3.1",
-    "url": "latest"
+    "url": "latest",
+    "zod": "^4.1.11"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",

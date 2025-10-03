@@ -2,23 +2,18 @@
 
 import { useEffect, useState } from "react"
 import { BarChart, TrendingUp, TrendingDown, Activity } from "lucide-react"
+import type { PlatformStats, GrowthTrends, StatCardProps } from "@/lib/types"
 
-interface TimeSeriesData {
-  date: string
-  users: number
-  profiles: number
-  collections: number
-  videos: number
-}
+
 
 export default function AdminStatsPage() {
-  const [stats, setStats] = useState({
+  const [stats, setStats] = useState<PlatformStats>({
     totalUsers: 0,
     totalProfiles: 0,
     totalCollections: 0,
     totalVideos: 0,
   })
-  const [trends, setTrends] = useState({
+  const [trends, setTrends] = useState<GrowthTrends>({
     usersGrowth: 0,
     profilesGrowth: 0,
     collectionsGrowth: 0,
@@ -69,7 +64,7 @@ export default function AdminStatsPage() {
     }
   }
 
-  const StatCard = ({ title, value, growth, icon: Icon, color }: any) => (
+  const StatCard = ({ title, value, growth, icon: Icon, color }: StatCardProps) => (
     <div className="bg-white rounded-lg shadow-sm p-6 border-l-4" style={{ borderColor: color }}>
       <div className="flex items-center justify-between mb-4">
         <div>
@@ -81,7 +76,7 @@ export default function AdminStatsPage() {
         </div>
       </div>
       <div className="flex items-center gap-2">
-        {growth > 0 ? (
+        {growth && Number(growth) > 0 ? (
           <>
             <TrendingUp className="h-4 w-4 text-green-600" />
             <span className="text-sm text-green-600 font-medium">+{growth}%</span>
@@ -120,28 +115,28 @@ export default function AdminStatsPage() {
             <StatCard
               title="Total Users"
               value={stats.totalUsers}
-              growth={trends.usersGrowth}
+              growth={trends.usersGrowth.toString()}
               icon={() => <span>👥</span>}
               color="#3b82f6"
             />
             <StatCard
               title="Child Profiles"
               value={stats.totalProfiles}
-              growth={trends.profilesGrowth}
+              growth={trends.profilesGrowth.toString()}
               icon={() => <span>👶</span>}
               color="#9333ea"
             />
             <StatCard
               title="Collections"
               value={stats.totalCollections}
-              growth={trends.collectionsGrowth}
+              growth={trends.collectionsGrowth.toString()}
               icon={() => <span>📚</span>}
               color="#06b6d4"
             />
             <StatCard
               title="Videos"
               value={stats.totalVideos}
-              growth={trends.videosGrowth}
+              growth={trends.videosGrowth.toString()}
               icon={() => <span>🎬</span>}
               color="#f59e0b"
             />

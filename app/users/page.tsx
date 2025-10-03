@@ -2,16 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { Search, UserPlus, Ban, CheckCircle, XCircle, Mail, Calendar, Shield } from "lucide-react"
-
-interface User {
-  id: string
-  name: string
-  email: string
-  role: string
-  createdAt: string
-  isActive: boolean
-  familyCount?: number
-}
+import type { User } from "@/lib/types"
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<User[]>([])
@@ -25,56 +16,6 @@ export default function AdminUsersPage() {
   }, [])
 
   useEffect(() => {
-    filterUsers()
-  }, [searchTerm, roleFilter, users])
-
-  const fetchUsers = async () => {
-    try {
-      setLoading(true)
-      // TODO: Replace with actual API call
-      // const response = await fetch('/api/admin/users')
-      // const data = await response.json()
-      // setUsers(data.users)
-
-      // Mock data for now
-      const mockUsers: User[] = [
-        {
-          id: "1",
-          name: "John Doe",
-          email: "john@example.com",
-          role: "user",
-          createdAt: "2024-01-15T10:00:00Z",
-          isActive: true,
-          familyCount: 1
-        },
-        {
-          id: "2",
-          name: "Jane Smith",
-          email: "jane@example.com",
-          role: "user",
-          createdAt: "2024-02-20T14:30:00Z",
-          isActive: true,
-          familyCount: 2
-        },
-        {
-          id: "3",
-          name: "Admin User",
-          email: "admin@safestream.app",
-          role: "admin",
-          createdAt: "2024-01-01T00:00:00Z",
-          isActive: true,
-          familyCount: 0
-        }
-      ]
-      setUsers(mockUsers)
-    } catch (error) {
-      console.error("Error fetching users:", error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const filterUsers = () => {
     let filtered = users
 
     // Filter by search term
@@ -91,17 +32,43 @@ export default function AdminUsersPage() {
     }
 
     setFilteredUsers(filtered)
+  }, [searchTerm, roleFilter, users])
+
+  const fetchUsers = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch('/api/admin/users')
+      const data = await response.json()
+      
+      if (response.ok && data.users) {
+        setUsers(data.users)
+      } else {
+        console.error('Failed to fetch users:', data.error)
+      }
+    } catch (error) {
+      console.error("Error fetching users:", error)
+    } finally {
+      setLoading(false)
+    }
   }
+
 
   const handleBanUser = async (userId: string) => {
     if (!confirm("Are you sure you want to ban this user?")) return
     
     try {
-      // TODO: Implement ban API
-      // await fetch(`/api/admin/users/${userId}/ban`, { method: 'POST' })
-      alert("User ban functionality will be implemented")
+      const response = await fetch(`/api/admin/users/${userId}/ban`, { method: 'POST' })
+      const data = await response.json()
+      
+      if (response.ok) {
+        alert("User banned successfully")
+        fetchUsers()
+      } else {
+        alert(data.error || "Failed to ban user")
+      }
     } catch (error) {
       console.error("Error banning user:", error)
+      alert("Failed to ban user")
     }
   }
 
@@ -109,11 +76,18 @@ export default function AdminUsersPage() {
     if (!confirm("Are you sure you want to delete this user? This action cannot be undone.")) return
     
     try {
-      // TODO: Implement delete API
-      // await fetch(`/api/admin/users/${userId}`, { method: 'DELETE' })
-      alert("User delete functionality will be implemented")
+      const response = await fetch(`/api/admin/users/${userId}`, { method: 'DELETE' })
+      const data = await response.json()
+      
+      if (response.ok) {
+        alert("User deleted successfully")
+        fetchUsers()
+      } else {
+        alert(data.error || "Failed to delete user")
+      }
     } catch (error) {
       console.error("Error deleting user:", error)
+      alert("Failed to delete user")
     }
   }
 
@@ -238,7 +212,7 @@ export default function AdminUsersPage() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredUsers.map((user) => (
+                {filteredUsers.map((user: User) => (
                   <tr key={user.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">

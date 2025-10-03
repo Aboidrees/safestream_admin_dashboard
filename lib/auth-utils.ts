@@ -1,14 +1,6 @@
 import { NextRequest } from "next/server"
-import { verifyJWT, validateAdminToken } from "./jwt"
-
-export interface AuthenticatedUser {
-  id: string
-  email: string
-  name?: string
-  role: string
-  isAdmin: boolean
-  adminId?: string
-}
+import { verifyAccessToken, validateAdminToken } from "./jwt-enhanced"
+import type { AuthenticatedUser } from "./types"
 
 export async function getAuthenticatedUser(req: NextRequest): Promise<AuthenticatedUser | null> {
   try {
@@ -34,7 +26,7 @@ export async function getAuthenticatedUser(req: NextRequest): Promise<Authentica
     }
 
     // Verify the JWT using jose
-    const payload = await verifyJWT(token)
+        const payload = await verifyAccessToken(token)
     
     if (!payload) {
       return null

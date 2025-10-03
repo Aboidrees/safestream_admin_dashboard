@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import { NotificationType, PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 import dotenv from 'dotenv'
 
@@ -14,12 +14,14 @@ async function main() {
     // Clear existing data (in development only)
     if (process.env.NODE_ENV === 'development') {
       console.log('🧹 Clearing existing data...')
+      await prisma.tokenSession.deleteMany()
       await prisma.deviceSession.deleteMany()
       await prisma.remoteCommand.deleteMany()
       await prisma.notification.deleteMany()
       await prisma.screenTime.deleteMany()
       await prisma.favorite.deleteMany()
       await prisma.watchHistory.deleteMany()
+      await prisma.collectionVideo.deleteMany()
       await prisma.video.deleteMany()
       await prisma.collection.deleteMany()
       await prisma.childProfile.deleteMany()
@@ -34,14 +36,14 @@ async function main() {
 
     // Create test users
     console.log('👤 Creating test users...')
-    
+
     const hashedPassword = await bcrypt.hash('password123', 12)
-    
+
     // Check if users already exist, if not create them
     let adminUser = await prisma.user.findUnique({
       where: { email: 'admin@safestream.app' }
     })
-    
+
     if (!adminUser) {
       adminUser = await prisma.user.create({
         data: {
@@ -60,7 +62,7 @@ async function main() {
     let parentUser = await prisma.user.findUnique({
       where: { email: 'parent@safestream.app' }
     })
-    
+
     if (!parentUser) {
       parentUser = await prisma.user.create({
         data: {
@@ -79,7 +81,7 @@ async function main() {
     let parentUser2 = await prisma.user.findUnique({
       where: { email: 'jane@safestream.app' }
     })
-    
+
     if (!parentUser2) {
       parentUser2 = await prisma.user.create({
         data: {
@@ -100,7 +102,7 @@ async function main() {
     let admin = await prisma.admin.findFirst({
       where: { userId: adminUser.id }
     })
-    
+
     if (!admin) {
       admin = await prisma.admin.create({
         data: {
@@ -165,34 +167,34 @@ async function main() {
 
     // Create child profiles
     console.log('👶 Creating child profiles...')
-    
+
     // Check if child profiles already exist
     let child1 = await prisma.childProfile.findUnique({
       where: { qrCode: 'QR_EMMA_001' }
     })
-    
+
     if (!child1) {
       child1 = await prisma.childProfile.create({
-      data: {
-        familyId: family1.id,
-        name: 'Emma Smith',
-        age: 8,
-        avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face',
-        contentRestrictions: {
-          favoriteGenres: ['Educational', 'Cartoons', 'Music'],
-          restrictedContent: ['Violence', 'Horror'],
-          language: 'en',
-        },
-        screenTimeLimits: {
-          daily: 120, // 2 hours
-          weekly: 840, // 14 hours
-          bedtime: '20:00',
-          wakeTime: '07:00',
-        },
-        qrCode: 'QR_EMMA_001',
-        qrCodeExpiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
-        isActive: true,
-      }
+        data: {
+          familyId: family1.id,
+          name: 'Emma Smith',
+          age: 8,
+          avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face',
+          contentRestrictions: {
+            favoriteGenres: ['Educational', 'Cartoons', 'Music'],
+            restrictedContent: ['Violence', 'Horror'],
+            language: 'en',
+          },
+          screenTimeLimits: {
+            daily: 120, // 2 hours
+            weekly: 840, // 14 hours
+            bedtime: '20:00',
+            wakeTime: '07:00',
+          },
+          qrCode: 'QR_EMMA_001',
+          qrCodeExpiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
+          isActive: true,
+        }
       })
       console.log('✅ Created child profile 1 (Emma)')
     } else {
@@ -202,29 +204,29 @@ async function main() {
     let child2 = await prisma.childProfile.findUnique({
       where: { qrCode: 'QR_LIAM_002' }
     })
-    
+
     if (!child2) {
       child2 = await prisma.childProfile.create({
-      data: {
-        familyId: family1.id,
-        name: 'Liam Smith',
-        age: 12,
-        avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face',
-        contentRestrictions: {
-          favoriteGenres: ['Action', 'Comedy', 'Sports'],
-          restrictedContent: ['Horror'],
-          language: 'en',
-        },
-        screenTimeLimits: {
-          daily: 150, // 2.5 hours
-          weekly: 1050, // 17.5 hours
-          bedtime: '21:00',
-          wakeTime: '07:00',
-        },
-        qrCode: 'QR_LIAM_002',
-        qrCodeExpiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
-        isActive: true,
-      }
+        data: {
+          familyId: family1.id,
+          name: 'Liam Smith',
+          age: 12,
+          avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face',
+          contentRestrictions: {
+            favoriteGenres: ['Action', 'Comedy', 'Sports'],
+            restrictedContent: ['Horror'],
+            language: 'en',
+          },
+          screenTimeLimits: {
+            daily: 150, // 2.5 hours
+            weekly: 1050, // 17.5 hours
+            bedtime: '21:00',
+            wakeTime: '07:00',
+          },
+          qrCode: 'QR_LIAM_002',
+          qrCodeExpiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+          isActive: true,
+        }
       })
       console.log('✅ Created child profile 2 (Liam)')
     } else {
@@ -234,29 +236,29 @@ async function main() {
     let child3 = await prisma.childProfile.findUnique({
       where: { qrCode: 'QR_SOPHIA_003' }
     })
-    
+
     if (!child3) {
       child3 = await prisma.childProfile.create({
-      data: {
-        familyId: family2.id,
-        name: 'Sophia Johnson',
-        age: 6,
-        avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face',
-        contentRestrictions: {
-          favoriteGenres: ['Educational', 'Cartoons', 'Music'],
-          restrictedContent: ['Violence', 'Horror', 'Mature'],
-          language: 'en',
-        },
-        screenTimeLimits: {
-          daily: 90, // 1.5 hours
-          weekly: 630, // 10.5 hours
-          bedtime: '19:30',
-          wakeTime: '07:00',
-        },
-        qrCode: 'QR_SOPHIA_003',
-        qrCodeExpiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
-        isActive: true,
-      }
+        data: {
+          familyId: family2.id,
+          name: 'Sophia Johnson',
+          age: 6,
+          avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face',
+          contentRestrictions: {
+            favoriteGenres: ['Educational', 'Cartoons', 'Music'],
+            restrictedContent: ['Violence', 'Horror', 'Mature'],
+            language: 'en',
+          },
+          screenTimeLimits: {
+            daily: 90, // 1.5 hours
+            weekly: 630, // 10.5 hours
+            bedtime: '19:30',
+            wakeTime: '07:00',
+          },
+          qrCode: 'QR_SOPHIA_003',
+          qrCodeExpiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+          isActive: true,
+        }
       })
       console.log('✅ Created child profile 3 (Sophia)')
     } else {
@@ -347,7 +349,7 @@ async function main() {
       let video = await prisma.video.findUnique({
         where: { youtubeId: videoData.youtubeId }
       })
-      
+
       if (!video) {
         video = await prisma.video.create({
           data: videoData
@@ -439,9 +441,7 @@ async function main() {
       data: {
         childProfileId: child1.id,
         date: new Date(),
-        totalTimeSpent: 45, // 45 minutes today
-        videosWatched: 2,
-        collectionsAccessed: 1,
+        totalMinutes: 45, // 45 minutes today
       }
     })
 
@@ -449,10 +449,8 @@ async function main() {
       data: {
         childProfileId: child2.id,
         date: new Date(),
-        totalTimeSpent: 90, // 90 minutes today
-        videosWatched: 3,
-        collectionsAccessed: 2,
-      }
+        totalMinutes: 90, // 90 minutes today
+      } 
     })
 
     // Create some notifications
@@ -460,7 +458,7 @@ async function main() {
     await prisma.notification.create({
       data: {
         userId: parentUser.id,
-        type: 'SCREEN_TIME_LIMIT',
+        type: NotificationType.TIME_LIMIT_EXCEEDED ,
         title: 'Screen Time Limit Reached',
         message: 'Emma has reached her daily screen time limit',
         data: {
@@ -475,7 +473,7 @@ async function main() {
     await prisma.notification.create({
       data: {
         userId: parentUser.id,
-        type: 'NEW_CONTENT',
+        type: NotificationType.CONTENT_COMPLETED,
         title: 'New Educational Content Available',
         message: 'New educational videos have been added to your child\'s collection',
         data: {
