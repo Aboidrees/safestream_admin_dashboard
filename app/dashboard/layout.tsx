@@ -50,18 +50,58 @@ export default function DashboardLayout({
               </li>
               <li>
                 <Link 
-                  href="/dashboard/admin" 
+                  href="/dashboard/families" 
                   className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg"
                 >
-                  Admin Panel
+                  Families
                 </Link>
               </li>
               <li>
                 <Link 
-                  href="/dashboard/my-management-office" 
+                  href="/dashboard/children" 
                   className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg"
                 >
-                  Management Office
+                  Children
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  href="/dashboard/collections" 
+                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg"
+                >
+                  Content Collections
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  href="/dashboard/screen-time" 
+                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg"
+                >
+                  Screen Time
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  href="/dashboard/remote-control" 
+                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg"
+                >
+                  Remote Control
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  href="/dashboard/notifications" 
+                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg"
+                >
+                  Notifications
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  href="/dashboard/admin" 
+                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg"
+                >
+                  Admin Panel
                 </Link>
               </li>
             </ul>
