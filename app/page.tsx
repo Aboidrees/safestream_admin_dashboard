@@ -109,7 +109,7 @@ export default function AdminHomePage() {
         <h2 className="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <a
-            href="/admin/users"
+            href="/users"
             className="p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all"
           >
             <div className="text-2xl mb-2">👥</div>
@@ -118,7 +118,7 @@ export default function AdminHomePage() {
           </a>
 
           <a
-            href="/admin/content-moderation"
+            href="/content-moderation"
             className="p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all"
           >
             <div className="text-2xl mb-2">⚠️</div>
@@ -127,7 +127,7 @@ export default function AdminHomePage() {
           </a>
 
           <a
-            href="/admin/reports"
+            href="/reports"
             className="p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all"
           >
             <div className="text-2xl mb-2">📋</div>

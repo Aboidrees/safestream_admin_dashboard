@@ -24,19 +24,10 @@ const IS_DEVELOPMENT = process.env.NODE_ENV === 'development'
 
 // Public routes that don't require authentication
 const publicRoutes = [
-  "/",
-  "/about",
-  "/blog",
-  "/community",
-  "/contact-us",
-  "/faq",
-  "/help-center",
-  "/privacy-policy",
-  "/terms-of-service",
+  "/login",
+  "/setup",
   "/dashboard/login",
   "/dashboard/register",
-  "/admin/login",
-  "/admin/setup",
   "/api/auth/signin",
   "/api/auth/signout",
   "/api/auth/csrf",
@@ -48,9 +39,18 @@ const publicRoutes = [
   "/favicon.ico"
 ]
 
-// Admin routes that require admin privileges
+// Admin routes that require admin privileges (root-admin layout)
 const adminRoutes = [
-  "/admin",
+  "/",
+  "/users",
+  "/families",
+  "/children",
+  "/collections",
+  "/videos",
+  "/content-moderation",
+  "/reports",
+  "/settings",
+  "/stats",
   "/api/admin"
 ]
 

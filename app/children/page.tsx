@@ -27,7 +27,7 @@ export default function AdminChildrenPage() {
 
   useEffect(() => {
     filterChildren()
-  }, [searchTerm, ageFilter, children])
+  }, [filteredChildren, searchTerm, ageFilter, children])
 
   const fetchChildren = async () => {
     try {
