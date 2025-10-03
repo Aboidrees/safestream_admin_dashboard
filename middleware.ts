@@ -226,7 +226,7 @@ export async function middleware(req: NextRequest) {
         return createErrorResponse("Unauthorized", 401)
       }
       
-      const loginUrl = new URL("/dashboard/login", req.url)
+      const loginUrl = new URL("/login", req.url)
       loginUrl.searchParams.set("redirect", pathname)
       return NextResponse.redirect(loginUrl)
     }
@@ -242,7 +242,7 @@ export async function middleware(req: NextRequest) {
           return createErrorResponse("Admin access required", 403)
         }
         
-        return NextResponse.redirect(new URL("/dashboard", req.url))
+        return NextResponse.redirect(new URL("/", req.url))
       }
       
       // Add admin info to headers
@@ -271,7 +271,7 @@ export async function middleware(req: NextRequest) {
       return createErrorResponse("Internal server error", 500)
     }
     
-    const loginUrl = new URL("/dashboard/login", req.url)
+    const loginUrl = new URL("/login", req.url)
     loginUrl.searchParams.set("redirect", pathname)
     return NextResponse.redirect(loginUrl)
   }
