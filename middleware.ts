@@ -35,7 +35,8 @@ const publicRoutes = [
   "/terms-of-service",
   "/dashboard/login",
   "/dashboard/register",
-  "/dashboard/admin-setup",
+  "/admin/login",
+  "/admin/setup",
   "/api/auth/signin",
   "/api/auth/signout",
   "/api/auth/csrf",
@@ -49,8 +50,7 @@ const publicRoutes = [
 
 // Admin routes that require admin privileges
 const adminRoutes = [
-  "/dashboard/my-management-office",
-  "/dashboard/admin",
+  "/admin",
   "/api/admin"
 ]
 

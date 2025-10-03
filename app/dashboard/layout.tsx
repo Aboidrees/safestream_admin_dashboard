@@ -12,12 +12,12 @@ export default function DashboardLayout({
       <header className="bg-white shadow-sm border-b">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center h-16">
-            <Link href="/dashboard" className="text-2xl font-bold text-blue-600">
+            <Link href="/dashboard" className="text-2xl font-bold text-red-500">
               SafeStream Dashboard
             </Link>
             <div className="flex items-center space-x-4">
               <Link 
-                href="/(website)" 
+                href="/" 
                 className="text-gray-600 hover:text-gray-900"
               >
                 View Website
@@ -94,14 +94,6 @@ export default function DashboardLayout({
                   className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg"
                 >
                   Notifications
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  href="/dashboard/admin" 
-                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg"
-                >
-                  Admin Panel
                 </Link>
               </li>
             </ul>
