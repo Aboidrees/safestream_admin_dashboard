@@ -224,7 +224,7 @@ export default function FamilyDetailPage() {
                       onClick={() => handleCollectionClick(collection)}
                     >
                       <h4 className="font-medium text-gray-900">{collection.name}</h4>
-                      <p className="text-sm text-gray-600 mt-1">{collection.category}</p>
+                      <p className="text-sm text-gray-600 mt-1">{collection.category?.name}</p>
                       <div className="flex items-center justify-between mt-2">
                         <span className="text-xs text-blue-600">{collection.videoCount} videos</span>
                         <span className="text-xs text-gray-500">
@@ -242,7 +242,7 @@ export default function FamilyDetailPage() {
 
       {/* Video Modal */}
       {selectedCollection && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg max-w-4xl w-full mx-4 max-h-[80vh] overflow-hidden">
             <div className="flex items-center justify-between p-4 border-b">
               <h3 className="text-lg font-semibold">{selectedCollection.name} - Videos</h3>
