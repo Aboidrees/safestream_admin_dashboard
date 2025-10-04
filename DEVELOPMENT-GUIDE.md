@@ -1247,3 +1247,5 @@ const handleSubmit = (data) => {
 ---
 
 **This guide provides all the patterns and practices used in the admin dashboard that should be replicated in the parent dashboard for consistency, security, and maintainability.**
+
+
