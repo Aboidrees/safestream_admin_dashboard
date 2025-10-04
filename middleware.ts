@@ -67,8 +67,13 @@ export async function middleware(request: NextRequest) {
       secret: process.env.NEXTAUTH_SECRET
     })
 
+    console.log("🔍 Middleware - Pathname:", pathname)
+    console.log("🔍 Middleware - Token:", token ? "Present" : "Missing")
+    console.log("🔍 Middleware - IsAdmin:", token?.isAdmin)
+
     // If no token, redirect to login
     if (!token) {
+      console.log("❌ No token found, redirecting to login")
       const loginUrl = new URL("/login", request.url)
       // Only set callbackUrl if it's not already the login page
       if (pathname !== "/login") {
@@ -79,10 +84,13 @@ export async function middleware(request: NextRequest) {
 
     // Verify admin status
     if (!token.isAdmin) {
+      console.log("❌ Not an admin, redirecting to login")
       const loginUrl = new URL("/login", request.url)
       loginUrl.searchParams.set("error", "AccessDenied")
       return NextResponse.redirect(loginUrl)
     }
+
+    console.log("✅ Admin authenticated, allowing access to:", pathname)
 
     // Add admin info to headers for API routes
     if (pathname.startsWith('/api/')) {

@@ -49,8 +49,11 @@ function LoginForm() {
       }
 
       if (result?.ok) {
+        console.log("✅ Login successful, redirecting to dashboard...")
         // Force a hard redirect to avoid circular redirects
         window.location.href = "/"
+      } else {
+        console.log("❌ Login failed:", result)
       }
     } catch (error) {
       console.error("Login error:", error)
