@@ -158,6 +158,13 @@ export const authOptions: NextAuthOptions = {
     async redirect({ url, baseUrl }) {
       console.log("🔄 Redirect callback - url:", url, "baseUrl:", baseUrl)
       
+      // Never redirect back to login page after authentication
+      if (url.includes('/login')) {
+        const redirectUrl = `${baseUrl}/`
+        console.log("🔄 Redirect callback - avoiding login redirect, going to:", redirectUrl)
+        return redirectUrl
+      }
+      
       // If it's a relative URL, make it absolute
       if (url.startsWith("/")) {
         const redirectUrl = `${baseUrl}${url}`
