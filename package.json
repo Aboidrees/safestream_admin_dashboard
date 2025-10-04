@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "preinstall": "prisma generate",
     "build": "next build",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
