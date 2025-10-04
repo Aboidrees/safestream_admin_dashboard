@@ -14,6 +14,7 @@ declare module "next-auth" {
     role: AdminRole
     isAdmin: boolean
     adminId: string
+    image?: string | null
   }
 
   interface Session {
@@ -24,6 +25,7 @@ declare module "next-auth" {
       role: AdminRole
       isAdmin: boolean
       adminId: string
+      image?: string | null
     }
   }
 }
@@ -36,6 +38,7 @@ declare module "next-auth/jwt" {
     role: AdminRole
     isAdmin: boolean
     adminId: string
+    image?: string | null
   }
 }
 
@@ -129,10 +132,12 @@ export const authOptions: NextAuthOptions = {
           isAdmin: user.isAdmin,
           adminId: user.adminId,
         }
+        console.log("🔄 JWT callback - New token created:", newToken)
         return newToken
       }
 
       // Return previous token if the access token has not expired yet
+      console.log("🔄 JWT callback - Returning existing token:", token)
       return token
     },
     async session({ session, token }) {
@@ -151,14 +156,25 @@ export const authOptions: NextAuthOptions = {
       return session
     },
     async redirect({ url, baseUrl }) {
+      console.log("🔄 Redirect callback - url:", url, "baseUrl:", baseUrl)
+      
       // If it's a relative URL, make it absolute
-      if (url.startsWith("/")) return `${baseUrl}${url}`
+      if (url.startsWith("/")) {
+        const redirectUrl = `${baseUrl}${url}`
+        console.log("🔄 Redirect callback - relative URL, redirecting to:", redirectUrl)
+        return redirectUrl
+      }
       
       // If it's the same origin, allow it
-      if (url.startsWith(baseUrl)) return url
+      if (url.startsWith(baseUrl)) {
+        console.log("🔄 Redirect callback - same origin, allowing:", url)
+        return url
+      }
       
       // For any other URL, redirect to dashboard
-      return `${baseUrl}/`
+      const redirectUrl = `${baseUrl}/`
+      console.log("🔄 Redirect callback - default redirect to:", redirectUrl)
+      return redirectUrl
     }
   },
   pages: {

@@ -61,15 +61,33 @@ export async function middleware(request: NextRequest) {
   }
 
   try {
+    console.log("🔍 Middleware - Pathname:", pathname)
+    console.log("🔍 Middleware - Request URL:", request.url)
+    console.log("🔍 Middleware - Cookies:", request.cookies.getAll().map(c => `${c.name}=${c.value.substring(0, 20)}...`))
+    console.log("🔍 Middleware - NEXTAUTH_SECRET:", process.env.NEXTAUTH_SECRET ? "Set" : "Not set")
+    
     // Get the JWT token
     const token = await getToken({
       req: request,
       secret: process.env.NEXTAUTH_SECRET
+    }).catch((error) => {
+      console.error("🔍 Middleware - Error getting token:", error)
+      return null
     })
 
-    console.log("🔍 Middleware - Pathname:", pathname)
     console.log("🔍 Middleware - Token:", token ? "Present" : "Missing")
-    console.log("🔍 Middleware - IsAdmin:", token?.isAdmin)
+    if (token) {
+      console.log("🔍 Middleware - Token Details:", {
+        name: token.name,
+        email: token.email,
+        isAdmin: token.isAdmin,
+        adminId: token.adminId,
+        role: token.role
+      })
+    } else {
+      console.log("🔍 Middleware - Token Details: No token")
+      console.log("🔍 Middleware - Raw session token:", request.cookies.get('next-auth.session-token')?.value.substring(0, 50))
+    }
 
     // If no token, redirect to login
     if (!token) {

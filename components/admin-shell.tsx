@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { signOut } from "next-auth/react"
 import type React from "react"
 import type { AdminShellProps } from "@/lib/types"
 
@@ -9,6 +10,10 @@ export function AdminShell({ children }: AdminShellProps) {
   const pathname = usePathname()
 
   const isAuthPage = pathname === "/login"
+
+  const handleSignOut = async () => {
+    await signOut({ callbackUrl: "/login" })
+  }
 
   if (isAuthPage) {
     return <>{children}</>
@@ -30,14 +35,12 @@ export function AdminShell({ children }: AdminShellProps) {
               >
                 View Website
               </Link>
-              <form action="/api/auth/signout" method="post">
-                <button 
-                  type="submit"
-                  className="bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors font-medium"
-                >
-                  Logout
-                </button>
-              </form>
+              <button 
+                onClick={handleSignOut}
+                className="bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors font-medium"
+              >
+                Logout
+              </button>
             </div>
           </div>
         </div>

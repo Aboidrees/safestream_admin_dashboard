@@ -32,11 +32,13 @@ function LoginForm() {
     setError("")
 
     try {
+      console.log("🔄 Attempting login with:", formData.email)
       const result = await signIn("admin-credentials", {
         email: formData.email,
         password: formData.password,
         redirect: false,
       })
+      console.log("🔄 Login result:", result)
 
       if (result?.error) {
         // Handle specific error messages from the server
@@ -50,7 +52,7 @@ function LoginForm() {
 
       if (result?.ok) {
         console.log("✅ Login successful, redirecting to dashboard...")
-        // Force a hard redirect to avoid circular redirects
+        // Use NextAuth's built-in redirect instead of manual redirect
         window.location.href = "/"
       } else {
         console.log("❌ Login failed:", result)

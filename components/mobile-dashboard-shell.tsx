@@ -21,7 +21,7 @@ import {
   Database,
   LogOut,
 } from "lucide-react"
-import { useSupabase } from "@/lib/supabase/provider"
+import { useSession, signOut as nextAuthSignOut } from "next-auth/react"
 import type { MobileDashboardShellProps } from "@/lib/types"
 
 const navigation = [
@@ -39,7 +39,12 @@ const navigation = [
 export function MobileDashboardShell({ children }: MobileDashboardShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const pathname = usePathname()
-  const { user, signOut } = useSupabase()
+  const { data: session } = useSession()
+  const user = session?.user
+
+  const handleSignOut = async () => {
+    await nextAuthSignOut({ callbackUrl: "/login" })
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -58,13 +63,13 @@ export function MobileDashboardShell({ children }: MobileDashboardShellProps) {
                 {/* Mobile sidebar header */}
                 <div className="flex items-center gap-3 px-4 py-4 border-b">
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src={user?.user_metadata?.avatar_url || "/placeholder.svg"} />
+                    <AvatarImage src={user?.image || "/placeholder.svg"} />
                     <AvatarFallback>
-                      {user?.user_metadata?.name?.charAt(0) || user?.email?.charAt(0) || "U"}
+                      {user?.name?.charAt(0) || user?.email?.charAt(0) || "A"}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">{user?.user_metadata?.name || "User"}</p>
+                    <p className="text-sm font-medium text-gray-900 truncate">{user?.name || "Admin"}</p>
                     <p className="text-xs text-gray-500 truncate">{user?.email}</p>
                   </div>
                 </div>
@@ -102,7 +107,7 @@ export function MobileDashboardShell({ children }: MobileDashboardShellProps) {
                 <div className="border-t p-4">
                   <Button
                     variant="ghost"
-                    onClick={signOut}
+                    onClick={handleSignOut}
                     className="w-full justify-start touch-target text-gray-700 hover:bg-gray-50"
                   >
                     <LogOut className="mr-3 h-5 w-5" />
@@ -118,8 +123,8 @@ export function MobileDashboardShell({ children }: MobileDashboardShellProps) {
           </h1>
 
           <Avatar className="h-8 w-8">
-            <AvatarImage src={user?.user_metadata?.avatar_url || "/placeholder.svg"} />
-            <AvatarFallback>{user?.user_metadata?.name?.charAt(0) || user?.email?.charAt(0) || "U"}</AvatarFallback>
+            <AvatarImage src={user?.image || "/placeholder.svg"} />
+            <AvatarFallback>{user?.name?.charAt(0) || user?.email?.charAt(0) || "A"}</AvatarFallback>
           </Avatar>
         </div>
       </div>
@@ -130,11 +135,11 @@ export function MobileDashboardShell({ children }: MobileDashboardShellProps) {
           {/* Desktop sidebar header */}
           <div className="flex items-center gap-3 px-6 py-4 border-b">
             <Avatar className="h-10 w-10">
-              <AvatarImage src={user?.user_metadata?.avatar_url || "/placeholder.svg"} />
-              <AvatarFallback>{user?.user_metadata?.name?.charAt(0) || user?.email?.charAt(0) || "U"}</AvatarFallback>
+              <AvatarImage src={user?.image || "/placeholder.svg"} />
+              <AvatarFallback>{user?.name?.charAt(0) || user?.email?.charAt(0) || "A"}</AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 truncate">{user?.user_metadata?.name || "User"}</p>
+              <p className="text-sm font-medium text-gray-900 truncate">{user?.name || "Admin"}</p>
               <p className="text-xs text-gray-500 truncate">{user?.email}</p>
             </div>
           </div>
@@ -169,7 +174,7 @@ export function MobileDashboardShell({ children }: MobileDashboardShellProps) {
 
           {/* Desktop sidebar footer */}
           <div className="border-t p-4">
-            <Button variant="ghost" onClick={signOut} className="w-full justify-start text-gray-700 hover:bg-gray-50">
+            <Button variant="ghost" onClick={handleSignOut} className="w-full justify-start text-gray-700 hover:bg-gray-50">
               <LogOut className="mr-3 h-5 w-5" />
               Sign out
             </Button>
