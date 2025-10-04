@@ -2,6 +2,8 @@ import { BarChart, TrendingUp, TrendingDown, Activity } from "lucide-react"
 import type { PlatformStats, GrowthTrends, StatCardProps } from "@/lib/types"
 import { prisma } from "@/lib/prisma"
 
+export const dynamic = 'force-dynamic'
+
 export default async function AdminStatsPage() {
   // Fetch stats directly from the database (server-side)
   let stats: PlatformStats = {
