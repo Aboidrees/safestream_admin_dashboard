@@ -1,19 +1,28 @@
 "use client"
 
 import { useState, useEffect, Suspense } from "react"
-import { signIn } from "next-auth/react"
-import { useSearchParams } from "next/navigation"
+import { signIn, useSession } from "next-auth/react"
+import { useSearchParams, useRouter } from "next/navigation"
 import Link from "next/link"
 import type { LoginFormData } from "@/lib/types"
 
 function LoginForm() {
   const searchParams = useSearchParams()
+  const router = useRouter()
+  const { data: session, status } = useSession()
   const [formData, setFormData] = useState<LoginFormData>({
     email: "",
     password: "",
   })
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (status === "authenticated" && session?.user?.isAdmin) {
+      router.push("/")
+    }
+  }, [session, status, router])
 
   // Check for circular redirect and clean up URL
   useEffect(() => {
@@ -26,37 +35,46 @@ function LoginForm() {
     }
   }, [searchParams])
 
+  // Show loading while checking session
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    )
+  }
+
+  // Don't render form if already authenticated
+  if (status === "authenticated" && session?.user?.isAdmin) {
+    return null
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError("")
 
-    try {
-      console.log("🔄 Attempting login with:", formData.email)
-      const result = await signIn("admin-credentials", {
-        email: formData.email,
-        password: formData.password,
-        redirect: false,
-      })
-      console.log("🔄 Login result:", result)
+      try {
+        const result = await signIn("admin-credentials", {
+          email: formData.email,
+          password: formData.password,
+          redirect: false,
+        })
 
-      if (result?.error) {
-        // Handle specific error messages from the server
-        const errorMessage = result.error === "CredentialsSignin" 
-          ? "Invalid admin credentials" 
-          : result.error
-        setError(errorMessage)
-        setLoading(false)
-        return
-      }
+        if (result?.error) {
+          // Handle specific error messages from the server
+          const errorMessage = result.error === "CredentialsSignin"
+            ? "Invalid admin credentials"
+            : result.error
+          setError(errorMessage)
+          setLoading(false)
+          return
+        }
 
-      if (result?.ok) {
-        console.log("✅ Login successful, redirecting to dashboard...")
-        // Use NextAuth's built-in redirect instead of manual redirect
-        window.location.href = "/"
-      } else {
-        console.log("❌ Login failed:", result)
-      }
+        if (result?.ok) {
+          // Use NextAuth's built-in redirect instead of manual redirect
+          window.location.href = "/"
+        }
     } catch (error) {
       console.error("Login error:", error)
       setError("An error occurred during login")

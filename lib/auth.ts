@@ -43,8 +43,8 @@ declare module "next-auth/jwt" {
 }
 
 export const authOptions: NextAuthOptions = {
-  debug: true,
-  useSecureCookies: false, // For development
+  debug: process.env.NODE_ENV === 'development',
+  useSecureCookies: process.env.NODE_ENV === 'production',
   providers: [
     CredentialsProvider({
       id: "admin-credentials",
@@ -61,8 +61,6 @@ export const authOptions: NextAuthOptions = {
         }
       },
       async authorize(credentials) {
-        console.log("🔐 Authorize called with credentials:", { email: credentials?.email, hasPassword: !!credentials?.password })
-        
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Email and password are required")
         }
@@ -119,11 +117,9 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async jwt({ token, user, account }) {
-      console.log("🔄 JWT callback - token:", token, "user:", user, "account:", account)
-      
       // Initial sign in
       if (account && user) {
-        const newToken = {
+        return {
           ...token,
           id: user.id,
           email: user.email,
@@ -132,12 +128,9 @@ export const authOptions: NextAuthOptions = {
           isAdmin: user.isAdmin,
           adminId: user.adminId,
         }
-        console.log("🔄 JWT callback - New token created:", newToken)
-        return newToken
       }
 
       // Return previous token if the access token has not expired yet
-      console.log("🔄 JWT callback - Returning existing token:", token)
       return token
     },
     async session({ session, token }) {
@@ -156,32 +149,23 @@ export const authOptions: NextAuthOptions = {
       return session
     },
     async redirect({ url, baseUrl }) {
-      console.log("🔄 Redirect callback - url:", url, "baseUrl:", baseUrl)
-      
       // Never redirect back to login page after authentication
       if (url.includes('/login')) {
-        const redirectUrl = `${baseUrl}/`
-        console.log("🔄 Redirect callback - avoiding login redirect, going to:", redirectUrl)
-        return redirectUrl
+        return `${baseUrl}/`
       }
       
       // If it's a relative URL, make it absolute
       if (url.startsWith("/")) {
-        const redirectUrl = `${baseUrl}${url}`
-        console.log("🔄 Redirect callback - relative URL, redirecting to:", redirectUrl)
-        return redirectUrl
+        return `${baseUrl}${url}`
       }
       
       // If it's the same origin, allow it
       if (url.startsWith(baseUrl)) {
-        console.log("🔄 Redirect callback - same origin, allowing:", url)
         return url
       }
       
       // For any other URL, redirect to dashboard
-      const redirectUrl = `${baseUrl}/`
-      console.log("🔄 Redirect callback - default redirect to:", redirectUrl)
-      return redirectUrl
+      return `${baseUrl}/`
     }
   },
   pages: {
@@ -190,13 +174,10 @@ export const authOptions: NextAuthOptions = {
   },
   events: {
     async signIn({ user, account, profile, isNewUser }) {
-      console.log("🎉 Admin sign in: ", user)
-      console.log("🎉 Account: ", account)
-      console.log("🎉 Profile: ", profile)
-      console.log("🎉 Is new user: ", isNewUser)
+      // Admin sign in event - can be used for logging if needed
     },
     async signOut({ session, token }) {
-      console.log("👋 Admin sign out: ", session?.user?.email || token?.email, session?.user?.name || token?.name, session?.user?.role || token?.role, session?.user?.isAdmin || token?.isAdmin, session?.user?.adminId || token?.adminId || 'none')
+      // Admin sign out event - can be used for logging if needed
     },
   },
   secret: process.env.NEXTAUTH_SECRET,

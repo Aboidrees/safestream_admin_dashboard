@@ -60,28 +60,18 @@ export async function middleware(request: NextRequest) {
   }
 
   try {
-    console.log("🔍 Middleware - Pathname:", pathname)
-    console.log("🔍 Middleware - Request URL:", request.url)
-    console.log("🔍 Middleware - Cookies:", request.cookies.getAll().map(c => `${c.name}=${c.value.substring(0, 20)}...`))
-    
     // Check for session token cookie
     const sessionToken = request.cookies.get('next-auth.session-token')?.value
     if (!sessionToken) {
-      console.log("❌ No session token found, redirecting to login")
       const loginUrl = new URL("/login", request.url)
       if (pathname !== "/login") {
         loginUrl.searchParams.set("callbackUrl", pathname)
       }
       return NextResponse.redirect(loginUrl)
     }
-
-    console.log("🔍 Middleware - Session token found:", sessionToken.substring(0, 50) + "...")
     
-    // For now, just check if the session token exists
-    // The actual token validation will happen in the page components
-    // This is a temporary fix for the edge middleware issue
-    console.log("✅ Session token present, allowing access to:", pathname)
-    
+    // Session token exists, allow request to proceed
+    // Full authentication validation happens in page components
     return response
   } catch (error) {
     console.error('Middleware error:', error)

@@ -10,11 +10,8 @@ export default async function AdminHomePage() {
   const session = await getServerSession(authOptions)
   
   if (!session || !session.user?.isAdmin) {
-    console.log("❌ No admin session found, redirecting to login")
     redirect("/login")
   }
-
-  console.log("✅ Admin session found:", session.user.email)
   // Fetch stats directly from the database (server-side)
   let stats = {
     totalUsers: 0,
