@@ -7,7 +7,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireAdmin(req)
+    await requireAdmin()
 
     const { id: userId } = await params
 

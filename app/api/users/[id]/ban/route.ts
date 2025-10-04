@@ -7,7 +7,7 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireAdmin(req)
+    await requireAdmin()
 
     const { id: userId } = await params
     const { action } = await req.json() // 'ban' or 'unban'

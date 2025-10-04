@@ -4,7 +4,7 @@ import { requireAdmin } from "@/lib/auth-session"
 
 export async function GET(req: NextRequest) {
   try {
-    await requireAdmin(req)
+    await requireAdmin()
 
     // Get all child profiles with related data
     const children = await prisma.childProfile.findMany({

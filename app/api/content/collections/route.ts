@@ -4,7 +4,7 @@ import { requireAdmin } from "@/lib/auth-session"
 
 export async function GET(req: NextRequest) {
   try {
-    await requireAdmin(req)
+    await requireAdmin()
     // Get all platform collections
     const collections = await prisma.collection.findMany({
       where: {
@@ -68,7 +68,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const user = await requireAdmin(req)
+    const user = await requireAdmin()
     const body = await req.json()
 
     const { name, description, categoryId, ageRating, isPublic, isPlatform, isMandatory } = body

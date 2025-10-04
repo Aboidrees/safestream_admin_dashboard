@@ -5,7 +5,7 @@ import { requireAdmin } from "@/lib/auth-session"
 export async function GET(req: NextRequest) {
   try {
     // Require admin authentication
-    await requireAdmin(req)
+    await requireAdmin()
 
     // Get total video count
     const count = await prisma.video.count()

@@ -7,7 +7,7 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireAdmin(req)
+    await requireAdmin()
     const { id: collectionId } = await params
     const body = await req.json()
 
@@ -42,7 +42,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireAdmin(req)
+    await requireAdmin()
     const { id: collectionId } = await params
 
     await prisma.collection.delete({

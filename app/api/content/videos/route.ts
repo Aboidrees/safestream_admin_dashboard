@@ -4,7 +4,7 @@ import { requireAdmin } from "@/lib/auth-session"
 
 export async function GET(req: NextRequest) {
   try {
-    await requireAdmin(req)
+    await requireAdmin()
 
     // Get all videos
     const videos = await prisma.video.findMany({
@@ -53,7 +53,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    await requireAdmin(req)
+    await requireAdmin()
     const body = await req.json()
 
     const { youtubeId, title, description, channelName, ageRating, tags } = body

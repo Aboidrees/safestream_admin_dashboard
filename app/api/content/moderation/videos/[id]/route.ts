@@ -7,7 +7,7 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const user = await requireAdmin(req)
+    const user = await requireAdmin()
     const { id: videoId } = await params
     const body = await req.json()
 

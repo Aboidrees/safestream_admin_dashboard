@@ -6,7 +6,7 @@ import type { PlatformSettings } from "@/lib/types"
 // For now, we'll use environment variables or a config file
 export async function POST(req: NextRequest) {
   try {
-    const user = await requireAdmin(req)
+    const user = await requireAdmin()
 
     const settings: PlatformSettings = await req.json()
 

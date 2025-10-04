@@ -5,7 +5,7 @@ import { requireAdmin } from "@/lib/auth-session"
 export async function GET(req: NextRequest) {
   try {
     // Require admin authentication
-    await requireAdmin(req)
+    await requireAdmin()
 
     // Get total collection count
     const count = await prisma.collection.count()

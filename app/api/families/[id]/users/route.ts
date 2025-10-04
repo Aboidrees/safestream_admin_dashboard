@@ -7,7 +7,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireAdmin(req)
+    await requireAdmin()
     const { id: familyId } = await params
 
     // Get family members (users associated with this family, excluding deleted users)

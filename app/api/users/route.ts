@@ -6,7 +6,7 @@ export const runtime = 'nodejs'
 
 export async function GET(req: NextRequest) {
   try {
-    await requireAdmin(req)
+    await requireAdmin()
 
     // Get all users with their family count (excluding deleted users)
     const users = await prisma.user.findMany({

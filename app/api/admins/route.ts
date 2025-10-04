@@ -6,7 +6,7 @@ export const runtime = 'nodejs'
 
 export async function GET(req: NextRequest) {
   try {
-    await requireAdmin(req)
+    await requireAdmin()
 
     // Get all admins
     const admins = await prisma.admin.findMany({
@@ -55,7 +55,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    await requireAdmin(req)
+    await requireAdmin()
 
     const body = await req.json()
     const { name, email, password, role = 'admin' } = body

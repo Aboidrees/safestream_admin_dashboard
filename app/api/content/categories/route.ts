@@ -4,7 +4,7 @@ import { requireAdmin } from "@/lib/auth-session"
 
 export async function GET(req: NextRequest) {
   try {
-    await requireAdmin(req)
+    await requireAdmin()
 
     const categories = await prisma.category.findMany({
       where: {
@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    await requireAdmin(req)
+    await requireAdmin()
     const body = await req.json()
 
     const { name, description, color, icon } = body

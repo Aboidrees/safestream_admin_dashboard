@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server"
-import { getToken } from "next-auth/jwt"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
 import type { AdminRole } from "@prisma/client"
 
 // Custom error classes for better error handling
@@ -29,24 +30,21 @@ export interface AuthenticatedAdmin {
 /**
  * Get authenticated admin from NextAuth session
  */
-export async function getAuthenticatedAdmin(req: NextRequest): Promise<AuthenticatedAdmin | null> {
+export async function getAuthenticatedAdmin(): Promise<AuthenticatedAdmin | null> {
   try {
-    const token = await getToken({
-      req,
-      secret: process.env.NEXTAUTH_SECRET
-    })
+    const session = await getServerSession(authOptions)
 
-    if (!token || !token.isAdmin) {
+    if (!session || !session.user?.isAdmin) {
       return null
     }
 
     return {
-      id: token.id as string,
-      email: token.email as string,
-      name: token.name as string,
-      role: token.role as AdminRole,
-      isAdmin: token.isAdmin as boolean,
-      adminId: token.adminId as string,
+      id: session.user.id,
+      email: session.user.email,
+      name: session.user.name,
+      role: session.user.role,
+      isAdmin: session.user.isAdmin,
+      adminId: session.user.adminId,
     }
   } catch (error) {
     console.error("Failed to get authenticated admin:", error)
@@ -57,8 +55,8 @@ export async function getAuthenticatedAdmin(req: NextRequest): Promise<Authentic
 /**
  * Require admin authentication - throws error if not authenticated
  */
-export async function requireAdmin(req: NextRequest): Promise<AuthenticatedAdmin> {
-  const admin = await getAuthenticatedAdmin(req)
+export async function requireAdmin(): Promise<AuthenticatedAdmin> {
+  const admin = await getAuthenticatedAdmin()
   
   if (!admin) {
     throw new AuthenticationError("Admin authentication required", "AUTH_REQUIRED")
@@ -70,8 +68,8 @@ export async function requireAdmin(req: NextRequest): Promise<AuthenticatedAdmin
 /**
  * Require specific admin role - throws error if insufficient permissions
  */
-export async function requireRole(req: NextRequest, requiredRole: AdminRole): Promise<AuthenticatedAdmin> {
-  const admin = await requireAdmin(req)
+export async function requireRole(requiredRole: AdminRole): Promise<AuthenticatedAdmin> {
+  const admin = await requireAdmin()
   
   // Define role hierarchy (higher number = more permissions)
   const roleHierarchy: Record<AdminRole, number> = {

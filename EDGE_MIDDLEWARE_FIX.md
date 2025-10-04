@@ -1,271 +1,74 @@
 # Edge Middleware Authentication Fix
 
-## Issue Identified
+## Problem
+The admin dashboard was experiencing a redirect loop in production where:
+1. Users would successfully log in and receive a valid JWT token
+2. The edge middleware would detect the session cookie but `getToken()` would return `null`
+3. This caused a redirect back to `/login` even though the user was authenticated
+4. The loop would continue indefinitely
 
-**Problem**: The middleware was running on the **edge runtime** but trying to decode JWT tokens created in the **lambda runtime**. This caused a mismatch where:
+## Root Cause
+The issue was caused by using `getToken` from `next-auth/jwt` in the edge middleware. Edge middleware runs in Vercel's edge runtime, which has limitations when trying to decode JWT tokens created in the lambda runtime. This created a compatibility issue where:
 
-1. ✅ Login was successful (JWT token created in lambda)
-2. ✅ Redirect callback was working (redirecting to `/`)
-3. ❌ Middleware couldn't read the token (edge/lambda runtime mismatch)
-4. ❌ User was redirected back to login page
+- JWT tokens were created in the lambda runtime (via `getServerSession`)
+- Edge middleware tried to decode them using `getToken` 
+- The edge runtime couldn't properly decode the lambda-created tokens
+- This resulted in `getToken()` returning `null` even when valid session cookies were present
 
-**Root Cause**: Vercel's edge middleware has different capabilities than lambda functions and may not properly decode JWT tokens created by NextAuth in the lambda environment.
+## Solution
+I implemented a two-tier authentication approach:
 
----
+### 1. Simplified Edge Middleware
+- **File**: `middleware.ts`
+- **Change**: Removed `getToken` calls entirely
+- **Behavior**: Only checks for the *presence* of the `next-auth.session-token` cookie
+- **Result**: Fast edge middleware that doesn't attempt JWT decoding
 
-## Solution Applied
+### 2. Server-Side Authentication
+- **File**: `lib/auth-session.ts`
+- **Change**: Replaced `getToken` with `getServerSession`
+- **Behavior**: Performs full JWT validation in the lambda runtime where it works reliably
+- **Result**: Proper authentication validation without edge runtime limitations
 
-### 1. Simplified Middleware (`middleware.ts`)
-
-**Before**: Complex JWT token decoding in edge middleware
-**After**: Simple session token existence check
-
-```typescript
-// Check for session token cookie
-const sessionToken = request.cookies.get('next-auth.session-token')?.value
-if (!sessionToken) {
-  console.log("❌ No session token found, redirecting to login")
-  const loginUrl = new URL("/login", request.url)
-  if (pathname !== "/login") {
-    loginUrl.searchParams.set("callbackUrl", pathname)
-  }
-  return NextResponse.redirect(loginUrl)
-}
-
-console.log("✅ Session token present, allowing access to:", pathname)
-return response
-```
-
-**Benefits**:
-- ✅ Works reliably in edge runtime
-- ✅ No complex JWT decoding in middleware
-- ✅ Faster middleware execution
-- ✅ More compatible with Vercel's architecture
-
-### 2. Server-Side Authentication (`app/page.tsx`)
-
-**Added**: Proper authentication checks in page components
-
-```typescript
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
-import { redirect } from "next/navigation"
-
-export default async function AdminHomePage() {
-  // Check authentication
-  const session = await getServerSession(authOptions)
-  
-  if (!session || !session.user?.isAdmin) {
-    console.log("❌ No admin session found, redirecting to login")
-    redirect("/login")
-  }
-
-  console.log("✅ Admin session found:", session.user.email)
-  // ... rest of component
-}
-```
-
-**Benefits**:
-- ✅ Proper JWT token validation in lambda runtime
-- ✅ Server-side authentication checks
-- ✅ Automatic redirect if not authenticated
-- ✅ Access to full session data
-
----
+### 3. Updated API Routes
+- **Files**: All API routes in `app/api/`
+- **Change**: Removed `req` parameter from `requireAdmin()` and `requireRole()` calls
+- **Behavior**: Uses server-side session validation instead of edge middleware token decoding
+- **Result**: Consistent authentication across all API endpoints
 
 ## How It Works Now
 
-### 1. User Login Flow
-1. User enters credentials on `/login`
-2. `signIn()` authenticates with NextAuth
-3. JWT token created in lambda runtime
-4. Session cookie set (`next-auth.session-token`)
-5. Redirect callback redirects to `/` (dashboard)
+1. **Edge Middleware**: Quickly checks if session cookie exists
+   - If no cookie → redirect to login
+   - If cookie exists → allow request to proceed
 
-### 2. Middleware Check
-1. Middleware runs on edge runtime
-2. Checks for `next-auth.session-token` cookie
-3. If present, allows access to page
-4. If missing, redirects to `/login`
+2. **Page Components**: Use `getServerSession` for full validation
+   - Validates JWT token in lambda runtime
+   - Redirects to login if invalid or not admin
+   - Allows access if valid admin session
 
-### 3. Page Authentication
-1. Page component runs in lambda runtime
-2. `getServerSession()` validates JWT token
-3. If valid admin session, renders page
-4. If invalid, redirects to `/login`
+3. **API Routes**: Use `requireAdmin()` for authentication
+   - Calls `getServerSession` internally
+   - Throws authentication errors if invalid
+   - Returns admin data if valid
 
----
+## Benefits
 
-## Expected Production Logs
+- ✅ **No more redirect loops**: Edge middleware doesn't attempt JWT decoding
+- ✅ **Reliable authentication**: Server-side validation works consistently
+- ✅ **Better performance**: Edge middleware is faster without JWT operations
+- ✅ **Production stability**: Works correctly in Vercel's edge + lambda architecture
 
-### Successful Login:
-```
-🔄 Attempting login with: admin@safestream.app
-🔐 Authorize called with credentials: { email: 'admin@safestream.app', hasPassword: true }
-🔄 JWT callback - New token created: { ... isAdmin: true ... }
-🎉 Admin sign in: { ... }
-🔄 Redirect callback - avoiding login redirect, going to: https://admin.safestream.app/
-✅ Login successful, redirecting to dashboard...
-🔍 Middleware - Session token found: eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0...
-✅ Session token present, allowing access to: /
-✅ Admin session found: admin@safestream.app
-```
+## Files Modified
 
-### Failed Authentication:
-```
-🔍 Middleware - Pathname: /
-❌ No session token found, redirecting to login
-```
+- `middleware.ts` - Simplified to cookie presence check only
+- `lib/auth-session.ts` - Replaced `getToken` with `getServerSession`
+- All API routes - Updated `requireAdmin()` calls to remove `req` parameter
 
----
+## Testing
 
-## Files Changed
-
-### 1. `middleware.ts`
-- ✅ Simplified to check session token existence only
-- ✅ Removed complex JWT decoding
-- ✅ Better edge runtime compatibility
-
-### 2. `app/page.tsx`
-- ✅ Added server-side authentication check
-- ✅ Added `getServerSession()` validation
-- ✅ Added automatic redirect for unauthenticated users
-
-### 3. `lib/auth.ts` (Already Fixed)
-- ✅ Fixed redirect callback to avoid `/login` loops
-- ✅ Proper JWT token creation
-
----
-
-## Testing Checklist
-
-### ✅ Test Cases:
-1. **Fresh Login**
-   - Navigate to `/login`
-   - Enter admin credentials
-   - Click "Sign in"
-   - **Expected**: Redirect to `/` (dashboard) and stay there
-
-2. **Direct Dashboard Access (Authenticated)**
-   - Already logged in
-   - Navigate to `/`
-   - **Expected**: Dashboard loads without redirect
-
-3. **Direct Dashboard Access (Not Authenticated)**
-   - Not logged in
-   - Navigate to `/`
-   - **Expected**: Redirect to `/login`
-
-4. **Session Token Present but Invalid**
-   - Invalid session token
-   - Navigate to `/`
-   - **Expected**: Redirect to `/login` (handled by page component)
-
-5. **Logout**
-   - Click logout button
-   - **Expected**: Redirect to `/login` and session cleared
-
----
-
-## Deployment Instructions
-
-1. **Commit the changes**:
-```bash
-cd /Users/aboidrees/development/safestream/admin_dashboard
-git add middleware.ts app/page.tsx
-git commit -m "fix: edge middleware authentication compatibility"
-git push origin main
-```
-
-2. **Verify in production**:
-- Wait for deployment to complete
-- Navigate to `https://admin.safestream.app/login`
-- Enter admin credentials
-- **Expected**: Redirect to dashboard and stay there
-
-3. **Check logs** for:
-```
-✅ Session token present, allowing access to: /
-✅ Admin session found: admin@safestream.app
-```
-
----
-
-## Why This Fix Works
-
-### Edge Middleware Limitations
-- Edge middleware runs on V8 isolates
-- Limited access to Node.js APIs
-- JWT decoding may not work reliably
-- Better to keep it simple
-
-### Server-Side Authentication
-- Page components run in lambda runtime
-- Full access to Node.js APIs
-- `getServerSession()` works reliably
-- Proper JWT token validation
-
-### Hybrid Approach
-- Middleware: Quick session token check
-- Page components: Full authentication validation
-- Best of both worlds: Fast + Secure
-
----
-
-## Alternative Solutions Considered
-
-### Option 1: Move Middleware to Lambda (Not Used)
-- Could move middleware to lambda runtime
-- Would require different configuration
-- More complex setup
-
-### Option 2: Custom JWT Decoding (Not Used)
-- Could implement custom JWT decoding in edge
-- Would need to handle encryption/decryption
-- More complex and error-prone
-
-### Option 3: Client-Side Authentication (Not Used)
-- Could check authentication on client-side
-- Would expose authentication logic
-- Less secure
-
-### Option 4: Hybrid Approach (CHOSEN) ✅
-- Simple middleware check + server-side validation
-- Best performance + security
-- Most compatible with Vercel architecture
-
----
-
-## Success Criteria
-
-✅ Users can log in and are redirected to dashboard
-✅ Dashboard displays without errors
-✅ Middleware allows access when session token exists
-✅ Page components validate authentication properly
-✅ Unauthenticated users are redirected to login
-✅ No redirect loops
-✅ Production logs show correct flow
-
----
-
-## Monitoring
-
-After deployment, monitor for:
-- Number of successful logins
-- Middleware session token checks
-- Page component authentication checks
-- Redirect patterns
-- Any authentication errors
-
-**Expected Metrics**:
-- Login success rate: > 95%
-- Middleware token checks: > 90% success
-- Page authentication: > 95% success
-- Redirect loops: 0
-
----
-
-*Fix Date: October 4, 2025*
-*Fix Type: Production Critical - Edge Middleware Compatibility*
-*Status: Ready for Deployment*
-
+The fix should resolve the production redirect loop issue. Users should now be able to:
+1. Log in successfully
+2. Stay authenticated without redirect loops
+3. Access all admin dashboard features
+4. Use API endpoints without authentication errors
