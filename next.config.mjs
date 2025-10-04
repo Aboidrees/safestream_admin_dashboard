@@ -1,4 +1,4 @@
-const withPrisma = require('@prisma/nextjs-monorepo-workaround-plugin')()
+import { PrismaPlugin } from '@prisma/nextjs-monorepo-workaround-plugin'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -14,6 +14,12 @@ const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ['@prisma/client', 'prisma'],
   },
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.plugins.push(new PrismaPlugin())
+    }
+    return config
+  },
 }
 
-module.exports = withPrisma(nextConfig)
+export default nextConfig
