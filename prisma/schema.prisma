@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
@@ -9,24 +9,26 @@ datasource db {
 }
 
 model User {
-  id              String         @id @default(uuid()) @db.Uuid
-  email           String         @unique
-  emailVerified   DateTime?      @map("email_verified")
-  name            String?
-  password        String?
-  avatar          String?
-  phoneNumber     String?        @map("phone_number")
-  preferences     Json           @default("{}")
-  createdAt       DateTime       @default(now()) @map("created_at")
-  updatedAt       DateTime       @updatedAt @map("updated_at")
-  isActive        Boolean        @default(true) @map("is_active")
-  isDeleted       Boolean        @default(false) @map("is_deleted")
-  accounts        Account[]
-  createdFamilies Family[]
-  familyMembers   FamilyMember[]
-  notifications   Notification[]
-  sessions        Session[]
-  tokenSessions   TokenSession[]
+  id               String         @id @default(uuid()) @db.Uuid
+  email            String         @unique
+  emailVerified    DateTime?      @map("email_verified")
+  name             String?
+  password         String?
+  avatar           String?
+  phoneNumber      String?        @map("phone_number")
+  preferences      Json           @default("{}")
+  resetToken       String?        @map("reset_token")
+  resetTokenExpiry DateTime?      @map("reset_token_expiry")
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime       @updatedAt @map("updated_at")
+  isActive         Boolean        @default(true) @map("is_active")
+  isDeleted        Boolean        @default(false) @map("is_deleted")
+  accounts         Account[]
+  createdFamilies  Family[]
+  familyMembers    FamilyMember[]
+  notifications    Notification[]
+  sessions         Session[]
+  tokenSessions    TokenSession[]
 
   @@map("users")
 }
