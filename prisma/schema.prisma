@@ -9,26 +9,27 @@ datasource db {
 }
 
 model User {
-  id               String         @id @default(uuid()) @db.Uuid
-  email            String         @unique
-  emailVerified    DateTime?      @map("email_verified")
-  name             String?
-  password         String?
-  avatar           String?
-  phoneNumber      String?        @map("phone_number")
-  preferences      Json           @default("{}")
-  resetToken       String?        @map("reset_token")
-  resetTokenExpiry DateTime?      @map("reset_token_expiry")
-  createdAt        DateTime       @default(now()) @map("created_at")
-  updatedAt        DateTime       @updatedAt @map("updated_at")
-  isActive         Boolean        @default(true) @map("is_active")
-  isDeleted        Boolean        @default(false) @map("is_deleted")
-  accounts         Account[]
-  createdFamilies  Family[]
-  familyMembers    FamilyMember[]
-  notifications    Notification[]
-  sessions         Session[]
-  tokenSessions    TokenSession[]
+  id                    String                 @id @default(uuid()) @db.Uuid
+  email                 String                 @unique
+  emailVerified         DateTime?              @map("email_verified")
+  name                  String?
+  password              String?
+  avatar                String?
+  phoneNumber           String?                @map("phone_number")
+  preferences           Json                   @default("{}")
+  resetToken            String?                @map("reset_token")
+  resetTokenExpiry      DateTime?              @map("reset_token_expiry")
+  createdAt             DateTime               @default(now()) @map("created_at")
+  updatedAt             DateTime               @updatedAt @map("updated_at")
+  isActive              Boolean                @default(true) @map("is_active")
+  isDeleted             Boolean                @default(false) @map("is_deleted")
+  accounts              Account[]
+  devicePairingRequests DevicePairingRequest[]
+  createdFamilies       Family[]
+  familyMembers         FamilyMember[]
+  notifications         Notification[]
+  sessions              Session[]
+  tokenSessions         TokenSession[]
 
   @@map("users")
 }
@@ -55,39 +56,41 @@ model Admin {
 }
 
 model Family {
-  id            String         @id @default(uuid()) @db.Uuid
-  name          String
-  createdBy     String         @map("created_by") @db.Uuid
-  settings      Json           @default("{}")
-  createdAt     DateTime       @default(now()) @map("created_at")
-  updatedAt     DateTime       @updatedAt @map("updated_at")
-  childProfiles ChildProfile[]
-  creator       User           @relation(fields: [createdBy], references: [id], onDelete: Cascade)
-  familyMembers FamilyMember[]
+  id                   String                 @id @default(uuid()) @db.Uuid
+  name                 String
+  createdBy            String                 @map("created_by") @db.Uuid
+  settings             Json                   @default("{}")
+  createdAt            DateTime               @default(now()) @map("created_at")
+  updatedAt            DateTime               @updatedAt @map("updated_at")
+  childProfiles        ChildProfile[]
+  creator              User                   @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+  devicePairingRequest DevicePairingRequest[]
+  familyMembers        FamilyMember[]
 
   @@map("families")
 }
 
 model ChildProfile {
-  id                  String          @id @default(uuid()) @db.Uuid
-  familyId            String          @map("family_id") @db.Uuid
-  name                String
-  age                 Int?
-  avatarUrl           String?         @map("avatar_url")
-  qrCode              String?         @unique @map("qr_code")
-  qrCodeExpiresAt     DateTime?       @map("qr_code_expires_at")
-  isActive            Boolean         @default(true) @map("is_active")
-  contentRestrictions Json            @default("{}") @map("content_restrictions")
-  screenTimeLimits    Json            @default("{}") @map("screen_time_limits")
-  theme               String?         @default("default")
-  language            String?         @default("en")
-  createdAt           DateTime        @default(now()) @map("created_at")
-  updatedAt           DateTime        @updatedAt @map("updated_at")
-  family              Family          @relation(fields: [familyId], references: [id], onDelete: Cascade)
-  deviceSessions      DeviceSession[]
-  favorites           Favorite[]
-  screenTime          ScreenTime[]
-  watchHistory        WatchHistory[]
+  id                   String                 @id @default(uuid()) @db.Uuid
+  familyId             String                 @map("family_id") @db.Uuid
+  name                 String
+  age                  Int?
+  avatarUrl            String?                @map("avatar_url")
+  qrCode               String?                @unique @map("qr_code")
+  qrCodeExpiresAt      DateTime?              @map("qr_code_expires_at")
+  isActive             Boolean                @default(true) @map("is_active")
+  contentRestrictions  Json                   @default("{}") @map("content_restrictions")
+  screenTimeLimits     Json                   @default("{}") @map("screen_time_limits")
+  theme                String?                @default("default")
+  language             String?                @default("en")
+  createdAt            DateTime               @default(now()) @map("created_at")
+  updatedAt            DateTime               @updatedAt @map("updated_at")
+  family               Family                 @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  devicePairingRequest DevicePairingRequest[]
+  deviceSessions       DeviceSession[]
+  favorites            Favorite[]
+  screenTime           ScreenTime[]
+  watchHistory         WatchHistory[]
 
   @@map("child_profiles")
 }
@@ -242,6 +245,29 @@ model RemoteCommand {
   @@map("remote_commands")
 }
 
+/// Device pairing requests used for secure 6-digit code approval flow
+model DevicePairingRequest {
+  id             String        @id @default(uuid()) @db.Uuid
+  childProfileId String        @map("child_profile_id") @db.Uuid
+  familyId       String        @map("family_id") @db.Uuid
+  sixDigitCode   String        @unique @map("six_digit_code") @db.VarChar(6)
+  status         PairingStatus @default(PENDING)
+  expiresAt      DateTime      @map("expires_at")
+  approvedBy     String?       @map("approved_by") @db.Uuid
+  approvedAt     DateTime?     @map("approved_at")
+  createdAt      DateTime      @default(now()) @map("created_at")
+  updatedAt      DateTime      @updatedAt @map("updated_at")
+
+  childProfile ChildProfile @relation(fields: [childProfileId], references: [id], onDelete: Cascade)
+  family       Family       @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  approver     User?        @relation(fields: [approvedBy], references: [id])
+
+  @@index([sixDigitCode])
+  @@index([childProfileId])
+  @@index([status])
+  @@map("device_pairing_requests")
+}
+
 model Notification {
   id      String           @id @default(uuid()) @db.Uuid
   userId  String           @map("user_id") @db.Uuid
@@ -367,6 +393,16 @@ enum NotificationType {
   REMOTE_COMMAND_RECEIVED
 
   @@map("notification_type")
+}
+
+/// Status for secure device pairing requests
+enum PairingStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  EXPIRED
+
+  @@map("pairing_status")
 }
 
 enum FamilyRole {
