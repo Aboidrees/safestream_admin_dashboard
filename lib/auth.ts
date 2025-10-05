@@ -174,10 +174,15 @@ export const authOptions: NextAuthOptions = {
   },
   events: {
     async signIn({ user, account, profile, isNewUser }) {
+      console.log("🎉 Admin sign in: ", user)
+      console.log("🎉 Account: ", account)
+      console.log("🎉 Profile: ", profile)
+      console.log("🎉 Is new user: ", isNewUser)
       // Admin sign in event - can be used for logging if needed
     },
     async signOut({ session, token }) {
       // Admin sign out event - can be used for logging if needed
+      console.log("👋 Admin sign out: ", session, token)
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
