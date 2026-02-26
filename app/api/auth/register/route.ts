@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs"
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, password, name, role = 'user' } = await req.json()
+    const { email, password, name, role = 'ADMIN' } = await req.json()
 
     // Validate input
     if (!email || !password || !name) {
@@ -21,14 +21,14 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Check if user already exists
-    const existingUser = await prisma.user.findUnique({
+    // Check if admin already exists
+    const existingAdmin = await prisma.admin.findUnique({
       where: { email }
     })
 
-    if (existingUser) {
+    if (existingAdmin) {
       return NextResponse.json(
-        { error: "User with this email already exists" },
+        { error: "Admin with this email already exists" },
         { status: 400 }
       )
     }
@@ -36,35 +36,25 @@ export async function POST(req: NextRequest) {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 12)
 
-    // Create user
-    const user = await prisma.user.create({
+    // Create admin record directly (admin dashboard has no User table)
+    const admin = await prisma.admin.create({
       data: {
         email,
         name,
         password: hashedPassword,
-        emailVerified: new Date(), // Auto-verify for now
+        role: role === 'SUPER_ADMIN' ? 'SUPER_ADMIN' : 'ADMIN',
+        permissions: [],
+        isActive: true,
       }
     })
 
-    // If role is admin, create admin record
-    if (role === 'admin') {
-      await prisma.admin.create({
-        data: {
-          userId: user.id,
-          role: 'SUPER_ADMIN',
-          permissions: ['ALL'],
-          isActive: true,
-        }
-      })
-    }
-
     return NextResponse.json({
-      message: "User created successfully",
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        role: role
+      message: "Admin created successfully",
+      admin: {
+        id: admin.id,
+        email: admin.email,
+        name: admin.name,
+        role: admin.role
       }
     })
 

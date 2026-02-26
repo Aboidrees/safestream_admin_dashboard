@@ -20,8 +20,8 @@ export async function POST(
       )
     }
 
-    let moderationStatus: 'APPROVED' | 'REJECTED' | 'FLAGGED' | 'UNDER_REVIEW' | 'PENDING'
-    let isApproved: boolean
+    let moderationStatus: 'APPROVED' | 'REJECTED' | 'FLAGGED' | 'UNDER_REVIEW' | 'PENDING' = 'PENDING'
+    let isApproved: boolean = false
 
     switch (action) {
       case 'approve':
@@ -40,6 +40,9 @@ export async function POST(
         moderationStatus = 'UNDER_REVIEW'
         isApproved = false
         break
+      default:
+        moderationStatus = 'PENDING'
+        isApproved = false
     }
 
     const video = await prisma.video.update({

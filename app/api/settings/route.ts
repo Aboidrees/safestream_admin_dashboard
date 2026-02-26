@@ -37,16 +37,9 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET(req: NextRequest) {
+export async function GET(_req: NextRequest) {
   try {
-    const user = await getAuthenticatedUser(req)
-    
-    if (!user || !user.isAdmin) {
-      return NextResponse.json(
-        { error: "Admin access required" },
-        { status: 403 }
-      )
-    }
+    await requireAdmin()
 
     // Fetch settings from database
     // Note: In a real implementation, you'd fetch from a settings table

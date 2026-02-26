@@ -1,5 +1,3 @@
-import { PrismaPlugin } from '@prisma/nextjs-monorepo-workaround-plugin'
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   eslint: {
@@ -11,13 +9,10 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  // serverExternalPackages tells Next.js 15 to keep these out of the webpack bundle —
+  // this is sufficient for Prisma with pnpm; the monorepo-workaround-plugin is NOT
+  // needed here since the schema lives in this same package.
   serverExternalPackages: ['@prisma/client', 'prisma'],
-  webpack: (config, { isServer }) => {
-    if (isServer) {
-      config.plugins.push(new PrismaPlugin())
-    }
-    return config
-  },
 }
 
 export default nextConfig

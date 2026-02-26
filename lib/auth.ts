@@ -173,16 +173,14 @@ export const authOptions: NextAuthOptions = {
     error: "/login",
   },
   events: {
-    async signIn({ user, account, profile, isNewUser }) {
-      console.log("🎉 Admin sign in: ", user)
-      console.log("🎉 Account: ", account)
-      console.log("🎉 Profile: ", profile)
-      console.log("🎉 Is new user: ", isNewUser)
+    async signIn({ user }) {
       // Admin sign in event - can be used for logging if needed
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`[Auth] Admin sign in: ${user.email}`)
+      }
     },
-    async signOut({ session, token }) {
+    async signOut() {
       // Admin sign out event - can be used for logging if needed
-      console.log("👋 Admin sign out: ", session, token)
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
