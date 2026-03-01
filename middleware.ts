@@ -60,8 +60,10 @@ export async function middleware(request: NextRequest) {
   }
 
   try {
-    // Check for session token cookie
-    const sessionToken = request.cookies.get('next-auth.session-token')?.value
+    // Check for session token cookie (NextAuth uses __Secure- prefix over HTTPS, plain name over HTTP)
+    const sessionToken =
+      request.cookies.get('__Secure-next-auth.session-token')?.value ||
+      request.cookies.get('next-auth.session-token')?.value
     if (!sessionToken) {
       const loginUrl = new URL("/login", request.url)
       if (pathname !== "/login") {

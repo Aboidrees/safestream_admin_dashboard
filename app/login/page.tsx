@@ -38,15 +38,19 @@ function LoginForm() {
   // Show loading while checking session
   if (status === "loading") {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50">
+      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-50 to-purple-50">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
       </div>
     )
   }
 
-  // Don't render form if already authenticated
+  // Don't render form if already authenticated — show spinner instead of null (white screen)
   if (status === "authenticated" && session?.user?.isAdmin) {
-    return null
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-50 to-purple-50">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    )
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -83,11 +87,11 @@ function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-50 to-purple-50">
       <div className="max-w-md w-full space-y-8 p-8">
         {/* Logo and Header */}
         <div className="text-center">
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white text-4xl font-bold rounded-lg p-4 inline-block mb-4">
+          <div className="bg-linear-to-r from-blue-600 to-purple-600 text-white text-4xl font-bold rounded-lg p-4 inline-block mb-4">
             🛡️
           </div>
           <h2 className="text-3xl font-bold text-gray-900">Admin Login</h2>
@@ -143,7 +147,7 @@ function LoginForm() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium text-lg"
+              className="w-full px-4 py-3 bg-linear-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium text-lg"
             >
               {loading ? "Signing in..." : "Sign In"}
             </button>

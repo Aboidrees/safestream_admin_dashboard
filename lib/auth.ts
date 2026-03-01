@@ -2,7 +2,7 @@ import { NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { prisma } from "./prisma"
 import bcrypt from "bcryptjs"
-import type { AdminRole } from "@prisma/client"
+import type { AdminRole } from "../prisma/generated/prisma/client"
 
 
 // Extend NextAuth types for better type safety
@@ -44,7 +44,9 @@ declare module "next-auth/jwt" {
 
 export const authOptions: NextAuthOptions = {
   debug: process.env.NODE_ENV === 'development',
-  useSecureCookies: process.env.NODE_ENV === 'production',
+  // Let NextAuth auto-detect secure cookies based on NEXTAUTH_URL.
+  // Setting useSecureCookies: true in an HTTP environment (e.g. http://localhost)
+  // causes browsers to silently reject __Secure- prefixed cookies, breaking login.
   providers: [
     CredentialsProvider({
       id: "admin-credentials",

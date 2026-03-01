@@ -8,10 +8,16 @@ CREATE TYPE "command_type" AS ENUM ('PAUSE_CONTENT', 'RESUME_CONTENT', 'LOGOUT',
 CREATE TYPE "command_status" AS ENUM ('PENDING', 'EXECUTED', 'FAILED', 'EXPIRED');
 
 -- CreateEnum
-CREATE TYPE "notification_type" AS ENUM ('DEVICE_JOINED', 'TIME_LIMIT_EXCEEDED', 'CONTENT_COMPLETED', 'CONTENT_SKIPPED', 'SCREEN_TIME_WARNING', 'NEW_COLLECTION_ADDED', 'REMOTE_COMMAND_RECEIVED');
+CREATE TYPE "notification_type" AS ENUM ('DEVICE_JOINED', 'TIME_LIMIT_EXCEEDED', 'CONTENT_COMPLETED', 'CONTENT_SKIPPED', 'SCREEN_TIME_WARNING', 'NEW_COLLECTION_ADDED', 'REMOTE_COMMAND_RECEIVED', 'TIME_REQUEST');
+
+-- CreateEnum
+CREATE TYPE "pairing_status" AS ENUM ('PENDING', 'APPROVED', 'REJECTED', 'EXPIRED');
 
 -- CreateEnum
 CREATE TYPE "family_role" AS ENUM ('PARENT', 'GUARDIAN', 'READ_ONLY');
+
+-- CreateEnum
+CREATE TYPE "moderation_status" AS ENUM ('PENDING', 'APPROVED', 'REJECTED', 'FLAGGED', 'UNDER_REVIEW');
 
 -- CreateTable
 CREATE TABLE "users" (
@@ -23,8 +29,12 @@ CREATE TABLE "users" (
     "avatar" TEXT,
     "phone_number" TEXT,
     "preferences" JSONB NOT NULL DEFAULT '{}',
+    "reset_token" TEXT,
+    "reset_token_expiry" TIMESTAMP(3),
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
+    "is_active" BOOLEAN NOT NULL DEFAULT true,
+    "is_deleted" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
@@ -32,7 +42,6 @@ CREATE TABLE "users" (
 -- CreateTable
 CREATE TABLE "admins" (
     "id" UUID NOT NULL,
-    "user_id" UUID NOT NULL,
     "role" "admin_role" NOT NULL,
     "permissions" JSONB NOT NULL DEFAULT '{}',
     "is_active" BOOLEAN NOT NULL DEFAULT true,
@@ -40,6 +49,12 @@ CREATE TABLE "admins" (
     "last_login" TIMESTAMP(3),
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
+    "email" TEXT NOT NULL,
+    "failed_login_attempts" INTEGER NOT NULL DEFAULT 0,
+    "last_failed_attempt" TIMESTAMP(3),
+    "locked_until" TIMESTAMP(3),
+    "name" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
 
     CONSTRAINT "admins_pkey" PRIMARY KEY ("id")
 );
@@ -77,6 +92,20 @@ CREATE TABLE "child_profiles" (
 );
 
 -- CreateTable
+CREATE TABLE "categories" (
+    "id" UUID NOT NULL,
+    "name" TEXT NOT NULL,
+    "description" TEXT,
+    "color" TEXT,
+    "icon" TEXT,
+    "is_active" BOOLEAN NOT NULL DEFAULT true,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "categories_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "collections" (
     "id" UUID NOT NULL,
     "name" TEXT NOT NULL,
@@ -86,6 +115,10 @@ CREATE TABLE "collections" (
     "thumbnail_url" TEXT,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
+    "age_rating" INTEGER NOT NULL DEFAULT 0,
+    "is_mandatory" BOOLEAN NOT NULL DEFAULT false,
+    "is_platform" BOOLEAN NOT NULL DEFAULT false,
+    "category_id" UUID,
 
     CONSTRAINT "collections_pkey" PRIMARY KEY ("id")
 );
@@ -104,6 +137,11 @@ CREATE TABLE "videos" (
     "is_approved" BOOLEAN NOT NULL DEFAULT false,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
+    "moderated_at" TIMESTAMP(3),
+    "moderated_by" UUID,
+    "moderation_notes" TEXT,
+    "moderation_status" "moderation_status" NOT NULL DEFAULT 'PENDING',
+    "rejection_reason" TEXT,
 
     CONSTRAINT "videos_pkey" PRIMARY KEY ("id")
 );
@@ -192,6 +230,22 @@ CREATE TABLE "remote_commands" (
 );
 
 -- CreateTable
+CREATE TABLE "device_pairing_requests" (
+    "id" UUID NOT NULL,
+    "child_profile_id" UUID NOT NULL,
+    "family_id" UUID NOT NULL,
+    "six_digit_code" VARCHAR(6) NOT NULL,
+    "status" "pairing_status" NOT NULL DEFAULT 'PENDING',
+    "expires_at" TIMESTAMP(3) NOT NULL,
+    "approved_by" UUID,
+    "approved_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "device_pairing_requests_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "notifications" (
     "id" UUID NOT NULL,
     "user_id" UUID NOT NULL,
@@ -248,6 +302,20 @@ CREATE TABLE "sessions" (
 );
 
 -- CreateTable
+CREATE TABLE "token_sessions" (
+    "id" UUID NOT NULL,
+    "jti" TEXT NOT NULL,
+    "user_id" UUID NOT NULL,
+    "token_type" TEXT NOT NULL,
+    "expires_at" TIMESTAMP(3) NOT NULL,
+    "revoked" BOOLEAN NOT NULL DEFAULT false,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "token_sessions_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "verification_tokens" (
     "identifier" TEXT NOT NULL,
     "token" TEXT NOT NULL,
@@ -258,10 +326,13 @@ CREATE TABLE "verification_tokens" (
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "admins_user_id_key" ON "admins"("user_id");
+CREATE UNIQUE INDEX "admins_email_key" ON "admins"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "child_profiles_qr_code_key" ON "child_profiles"("qr_code");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "categories_name_key" ON "categories"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "videos_youtube_id_key" ON "videos"("youtube_id");
@@ -276,6 +347,18 @@ CREATE UNIQUE INDEX "favorites_child_profile_id_video_id_key" ON "favorites"("ch
 CREATE UNIQUE INDEX "screen_time_child_profile_id_date_key" ON "screen_time"("child_profile_id", "date");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "device_pairing_requests_six_digit_code_key" ON "device_pairing_requests"("six_digit_code");
+
+-- CreateIndex
+CREATE INDEX "device_pairing_requests_six_digit_code_idx" ON "device_pairing_requests"("six_digit_code");
+
+-- CreateIndex
+CREATE INDEX "device_pairing_requests_child_profile_id_idx" ON "device_pairing_requests"("child_profile_id");
+
+-- CreateIndex
+CREATE INDEX "device_pairing_requests_status_idx" ON "device_pairing_requests"("status");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "family_members_family_id_user_id_key" ON "family_members"("family_id", "user_id");
 
 -- CreateIndex
@@ -285,13 +368,22 @@ CREATE UNIQUE INDEX "accounts_provider_provider_account_id_key" ON "accounts"("p
 CREATE UNIQUE INDEX "sessions_session_token_key" ON "sessions"("session_token");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "token_sessions_jti_key" ON "token_sessions"("jti");
+
+-- CreateIndex
+CREATE INDEX "token_sessions_jti_idx" ON "token_sessions"("jti");
+
+-- CreateIndex
+CREATE INDEX "token_sessions_user_id_idx" ON "token_sessions"("user_id");
+
+-- CreateIndex
+CREATE INDEX "token_sessions_expires_at_idx" ON "token_sessions"("expires_at");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "verification_tokens_token_key" ON "verification_tokens"("token");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "verification_tokens_identifier_token_key" ON "verification_tokens"("identifier", "token");
-
--- AddForeignKey
-ALTER TABLE "admins" ADD CONSTRAINT "admins_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "families" ADD CONSTRAINT "families_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -300,7 +392,13 @@ ALTER TABLE "families" ADD CONSTRAINT "families_created_by_fkey" FOREIGN KEY ("c
 ALTER TABLE "child_profiles" ADD CONSTRAINT "child_profiles_family_id_fkey" FOREIGN KEY ("family_id") REFERENCES "families"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "collections" ADD CONSTRAINT "collections_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "collections" ADD CONSTRAINT "collections_category_id_fkey" FOREIGN KEY ("category_id") REFERENCES "categories"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "collections" ADD CONSTRAINT "collections_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "admins"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "videos" ADD CONSTRAINT "videos_moderated_by_fkey" FOREIGN KEY ("moderated_by") REFERENCES "admins"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "collection_videos" ADD CONSTRAINT "collection_videos_collection_id_fkey" FOREIGN KEY ("collection_id") REFERENCES "collections"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -330,6 +428,15 @@ ALTER TABLE "device_sessions" ADD CONSTRAINT "device_sessions_child_profile_id_f
 ALTER TABLE "remote_commands" ADD CONSTRAINT "remote_commands_device_session_id_fkey" FOREIGN KEY ("device_session_id") REFERENCES "device_sessions"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "device_pairing_requests" ADD CONSTRAINT "device_pairing_requests_child_profile_id_fkey" FOREIGN KEY ("child_profile_id") REFERENCES "child_profiles"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "device_pairing_requests" ADD CONSTRAINT "device_pairing_requests_family_id_fkey" FOREIGN KEY ("family_id") REFERENCES "families"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "device_pairing_requests" ADD CONSTRAINT "device_pairing_requests_approved_by_fkey" FOREIGN KEY ("approved_by") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "notifications" ADD CONSTRAINT "notifications_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -343,3 +450,6 @@ ALTER TABLE "accounts" ADD CONSTRAINT "accounts_user_id_fkey" FOREIGN KEY ("user
 
 -- AddForeignKey
 ALTER TABLE "sessions" ADD CONSTRAINT "sessions_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "token_sessions" ADD CONSTRAINT "token_sessions_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;

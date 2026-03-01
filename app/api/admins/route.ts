@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { requireAdmin } from "@/lib/auth-session"
+import { AdminRole } from "../../../prisma/generated/prisma/client"
 
 export const runtime = 'nodejs'
 
@@ -79,6 +80,15 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    // Normalize role: accept 'super_admin', 'SUPER_ADMIN', 'admin', 'ADMIN' etc.
+    const normalizedRole = (role as string).toUpperCase() as AdminRole
+    if (!Object.values(AdminRole).includes(normalizedRole)) {
+      return NextResponse.json(
+        { error: `Invalid role. Must be one of: ${Object.values(AdminRole).join(', ')}` },
+        { status: 400 }
+      )
+    }
+
     // Hash password
     const bcrypt = await import('bcryptjs')
     const hashedPassword = await bcrypt.hash(password, 12)
@@ -89,7 +99,7 @@ export async function POST(req: NextRequest) {
         name,
         email: email.toLowerCase().trim(),
         password: hashedPassword,
-        role: role as 'SUPER_ADMIN' | 'ADMIN' | 'MODERATOR',
+        role: normalizedRole,
         isActive: true
       },
       select: {

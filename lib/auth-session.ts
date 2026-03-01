@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
-import type { AdminRole } from "@prisma/client"
+import type { AdminRole } from "../prisma/generated/prisma/client"
 
 // Custom error classes for better error handling
 export class AuthenticationError extends Error {

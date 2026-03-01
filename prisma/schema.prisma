@@ -1,11 +1,11 @@
 generator client {
-  provider      = "prisma-client-js"
+  provider      = "prisma-client"
+  output        = "./generated/prisma"
   binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -391,6 +391,7 @@ enum NotificationType {
   SCREEN_TIME_WARNING
   NEW_COLLECTION_ADDED
   REMOTE_COMMAND_RECEIVED
+  TIME_REQUEST
 
   @@map("notification_type")
 }
