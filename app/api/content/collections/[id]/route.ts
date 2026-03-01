@@ -11,14 +11,14 @@ export async function PUT(
     const { id: collectionId } = await params
     const body = await req.json()
 
-    const { name, description, category, ageRating, isPublic, isPlatform, isMandatory } = body
+    const { name, description, categoryId, ageRating, isPublic, isPlatform, isMandatory } = body
 
     const collection = await prisma.collection.update({
       where: { id: collectionId },
       data: {
         name: name || undefined,
         description: description !== undefined ? description : undefined,
-        category: category !== undefined ? category : undefined,
+        categoryId: categoryId !== undefined ? categoryId : undefined,
         ageRating: ageRating !== undefined ? ageRating : undefined,
         isPublic: isPublic !== undefined ? isPublic : undefined,
         isPlatform: isPlatform !== undefined ? isPlatform : undefined,
