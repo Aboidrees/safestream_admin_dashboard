@@ -1,61 +1,34 @@
 import { NextRequest, NextResponse } from "next/server"
+import { prisma } from "@/lib/prisma"
 import { requireAdmin } from "@/lib/auth-session"
 import type { PlatformSettings } from "@/lib/types"
 
-// In a real implementation, these would be stored in a database
-// For now, we'll use environment variables or a config file
-export async function POST(req: NextRequest) {
-  try {
-    const user = await requireAdmin()
+const SETTINGS_KEY = 'platform'
 
-    const settings: PlatformSettings = await req.json()
-
-    // Validate settings
-    if (!settings.siteName || !settings.siteUrl || !settings.adminEmail) {
-      return NextResponse.json(
-        { error: "Missing required settings" },
-        { status: 400 }
-      )
-    }
-
-    // Save settings to database
-    // Note: In a real implementation, you'd create a settings table
-    // For now, we'll store in environment or a simple config file
-    console.log("Settings update requested by:", user.email)
-    console.log("New settings:", settings)
-
-    return NextResponse.json({ 
-      message: "Settings saved successfully",
-      settings 
-    })
-  } catch (error) {
-    console.error("Error saving settings:", error)
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    )
-  }
+const DEFAULT_SETTINGS: PlatformSettings = {
+  siteName: "SafeStream",
+  siteUrl: "https://safestream.app",
+  adminEmail: "admin@safestream.app",
+  maintenanceMode: false,
+  allowRegistration: true,
+  requireEmailVerification: true,
+  maxChildrenPerFamily: 5,
+  defaultScreenTimeLimit: 120,
+  enableNotifications: true,
+  enablePublicCollections: true,
 }
 
 export async function GET(_req: NextRequest) {
   try {
     await requireAdmin()
 
-    // Fetch settings from database
-    // Note: In a real implementation, you'd fetch from a settings table
-    // For now, return default settings
-    const settings: PlatformSettings = {
-      siteName: "SafeStream",
-      siteUrl: "https://safestream.app",
-      adminEmail: "admin@safestream.app",
-      maintenanceMode: false,
-      allowRegistration: true,
-      requireEmailVerification: true,
-      maxChildrenPerFamily: 5,
-      defaultScreenTimeLimit: 120,
-      enableNotifications: true,
-      enablePublicCollections: true,
-    }
+    const record = await prisma.systemSetting.findUnique({
+      where: { key: SETTINGS_KEY }
+    })
+
+    const settings: PlatformSettings = record
+      ? (record.value as PlatformSettings)
+      : DEFAULT_SETTINGS
 
     return NextResponse.json({ settings })
   } catch (error) {
@@ -67,3 +40,41 @@ export async function GET(_req: NextRequest) {
   }
 }
 
+export async function POST(req: NextRequest) {
+  try {
+    const admin = await requireAdmin()
+
+    const settings: PlatformSettings = await req.json()
+
+    if (!settings.siteName || !settings.siteUrl || !settings.adminEmail) {
+      return NextResponse.json(
+        { error: "Missing required settings: siteName, siteUrl, adminEmail" },
+        { status: 400 }
+      )
+    }
+
+    const record = await prisma.systemSetting.upsert({
+      where: { key: SETTINGS_KEY },
+      update: {
+        value: settings as object,
+        updatedBy: admin.email
+      },
+      create: {
+        key: SETTINGS_KEY,
+        value: settings as object,
+        updatedBy: admin.email
+      }
+    })
+
+    return NextResponse.json({
+      message: "Settings saved successfully",
+      settings: record.value
+    })
+  } catch (error) {
+    console.error("Error saving settings:", error)
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    )
+  }
+}

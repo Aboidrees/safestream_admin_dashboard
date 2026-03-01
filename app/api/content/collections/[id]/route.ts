@@ -2,6 +2,50 @@ import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { requireAdmin } from "@/lib/auth-session"
 
+export async function GET(
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    await requireAdmin()
+    const { id: collectionId } = await params
+
+    const collection = await prisma.collection.findUnique({
+      where: { id: collectionId },
+      include: {
+        creator: {
+          select: { id: true, name: true, email: true }
+        },
+        category: {
+          select: { id: true, name: true, color: true, icon: true }
+        },
+        collectionVideos: {
+          include: {
+            video: true
+          },
+          orderBy: { orderIndex: 'asc' }
+        },
+        _count: {
+          select: { collectionVideos: true }
+        }
+      }
+    })
+
+    if (!collection) {
+      return NextResponse.json({ error: "Collection not found" }, { status: 404 })
+    }
+
+    return NextResponse.json({ collection })
+  } catch (error: unknown) {
+    console.error("Error fetching collection:", error)
+    const errorMessage = error instanceof Error ? error.message : "Internal server error"
+    return NextResponse.json(
+      { error: errorMessage },
+      { status: errorMessage === "Admin access required" ? 403 : 500 }
+    )
+  }
+}
+
 export async function PUT(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }

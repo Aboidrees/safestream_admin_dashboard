@@ -2,6 +2,42 @@ import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { requireAdmin } from "@/lib/auth-session"
 
+export async function GET(
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    await requireAdmin()
+    const { id: videoId } = await params
+
+    const video = await prisma.video.findUnique({
+      where: { id: videoId },
+      include: {
+        collectionVideos: {
+          include: {
+            collection: {
+              select: { id: true, name: true }
+            }
+          }
+        }
+      }
+    })
+
+    if (!video) {
+      return NextResponse.json({ error: "Video not found" }, { status: 404 })
+    }
+
+    return NextResponse.json({ video })
+  } catch (error: unknown) {
+    console.error("Error fetching video:", error)
+    const errorMessage = error instanceof Error ? error.message : "Internal server error"
+    return NextResponse.json(
+      { error: errorMessage },
+      { status: errorMessage === "Admin access required" ? 403 : 500 }
+    )
+  }
+}
+
 export async function PUT(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
