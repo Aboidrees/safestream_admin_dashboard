@@ -22,7 +22,7 @@ export function AdminShell({ children }: AdminShellProps) {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Admin Header */}
-      <header className="bg-gradient-to-r from-blue-600 to-purple-600 shadow-lg">
+      <header className="bg-[#ef4e50] shadow-lg">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center h-16">
             <Link href="/" className="text-2xl font-bold text-white">
@@ -37,7 +37,7 @@ export function AdminShell({ children }: AdminShellProps) {
               </Link>
               <button 
                 onClick={handleSignOut}
-                className="bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors font-medium"
+                className="bg-white text-[#ef4e50] px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors font-medium"
               >
                 Logout
               </button>
@@ -58,7 +58,7 @@ export function AdminShell({ children }: AdminShellProps) {
                 <li>
                   <Link 
                     href="/" 
-                    className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors"
+                    className="block px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-[#ef4e50] rounded-lg transition-colors"
                   >
                     📊 Overview
                   </Link>
@@ -66,7 +66,7 @@ export function AdminShell({ children }: AdminShellProps) {
                 <li>
                   <Link 
                     href="/stats" 
-                    className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors"
+                    className="block px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-[#ef4e50] rounded-lg transition-colors"
                   >
                     📈 Statistics
                   </Link>
@@ -82,7 +82,7 @@ export function AdminShell({ children }: AdminShellProps) {
                 <li>
                   <Link 
                     href="/users" 
-                    className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors"
+                    className="block px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-[#ef4e50] rounded-lg transition-colors"
                   >
                     👥 All Users
                   </Link>
@@ -90,7 +90,7 @@ export function AdminShell({ children }: AdminShellProps) {
                 <li>
                   <Link 
                     href="/families" 
-                    className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors"
+                    className="block px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-[#ef4e50] rounded-lg transition-colors"
                   >
                     👨‍👩‍👧‍👦 Family Management
                   </Link>
@@ -106,7 +106,7 @@ export function AdminShell({ children }: AdminShellProps) {
                 <li>
                   <Link 
                     href="/admins" 
-                    className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors"
+                    className="block px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-[#ef4e50] rounded-lg transition-colors"
                   >
                     🛡️ Admin Accounts
                   </Link>
@@ -122,7 +122,7 @@ export function AdminShell({ children }: AdminShellProps) {
                 <li>
                   <Link 
                     href="/content/collections" 
-                    className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors"
+                    className="block px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-[#ef4e50] rounded-lg transition-colors"
                   >
                     📚 Collections
                   </Link>
@@ -130,7 +130,7 @@ export function AdminShell({ children }: AdminShellProps) {
                 <li>
                   <Link 
                     href="/content/videos" 
-                    className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors"
+                    className="block px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-[#ef4e50] rounded-lg transition-colors"
                   >
                     🎬 Videos
                   </Link>
@@ -138,7 +138,7 @@ export function AdminShell({ children }: AdminShellProps) {
                 <li>
                   <Link 
                     href="/content/moderation" 
-                    className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors"
+                    className="block px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-[#ef4e50] rounded-lg transition-colors"
                   >
                     ⚠️ Moderation
                   </Link>
@@ -154,7 +154,7 @@ export function AdminShell({ children }: AdminShellProps) {
                 <li>
                   <Link 
                     href="/reports" 
-                    className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors"
+                    className="block px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-[#ef4e50] rounded-lg transition-colors"
                   >
                     📋 Reports
                   </Link>
@@ -162,7 +162,7 @@ export function AdminShell({ children }: AdminShellProps) {
                 <li>
                   <Link 
                     href="/settings" 
-                    className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors"
+                    className="block px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-[#ef4e50] rounded-lg transition-colors"
                   >
                     ⚙️ Settings
                   </Link>

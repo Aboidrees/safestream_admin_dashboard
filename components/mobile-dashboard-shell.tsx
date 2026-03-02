@@ -87,14 +87,14 @@ export function MobileDashboardShell({ children }: MobileDashboardShellProps) {
                           group flex items-center px-3 py-3 text-sm font-medium rounded-md touch-target
                           ${
                             isActive
-                              ? "bg-blue-50 text-blue-700 border-r-2 border-blue-700"
+                              ? "bg-red-50 text-[#ef4e50] border-r-2 border-[#ef4e50]"
                               : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
                           }
                         `}
                       >
                         <item.icon
                           className={`mr-3 h-5 w-5 flex-shrink-0 ${
-                            isActive ? "text-blue-500" : "text-gray-400 group-hover:text-gray-500"
+                            isActive ? "text-[#ef4e50]" : "text-gray-400 group-hover:text-gray-500"
                           }`}
                         />
                         {item.name}
@@ -156,14 +156,14 @@ export function MobileDashboardShell({ children }: MobileDashboardShellProps) {
                     group flex items-center px-3 py-2 text-sm font-medium rounded-md
                     ${
                       isActive
-                        ? "bg-blue-50 text-blue-700 border-r-2 border-blue-700"
+                        ? "bg-red-50 text-[#ef4e50] border-r-2 border-[#ef4e50]"
                         : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
                     }
                   `}
                 >
                   <item.icon
                     className={`mr-3 h-5 w-5 flex-shrink-0 ${
-                      isActive ? "text-blue-500" : "text-gray-400 group-hover:text-gray-500"
+                      isActive ? "text-[#ef4e50]" : "text-gray-400 group-hover:text-gray-500"
                     }`}
                   />
                   {item.name}

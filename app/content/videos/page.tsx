@@ -117,7 +117,7 @@ export default function VideosPage() {
       case 'PENDING':
         return <Clock className="h-5 w-5 text-yellow-600" />
       case 'UNDER_REVIEW':
-        return <Eye className="h-5 w-5 text-blue-600" />
+        return <Eye className="h-5 w-5 text-[#ef4e50]" />
       default:
         return <Clock className="h-5 w-5 text-gray-600" />
     }
@@ -132,7 +132,7 @@ export default function VideosPage() {
       case 'PENDING':
         return 'bg-yellow-100 text-yellow-800'
       case 'UNDER_REVIEW':
-        return 'bg-blue-100 text-blue-800'
+        return 'bg-red-100 text-red-800'
       case 'FLAGGED':
         return 'bg-orange-100 text-orange-800'
       default:
@@ -143,7 +143,7 @@ export default function VideosPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#ef4e50]"></div>
       </div>
     )
   }
@@ -157,7 +157,7 @@ export default function VideosPage() {
         </div>
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+          className="flex items-center gap-2 bg-[#ef4e50] text-white px-4 py-2 rounded-lg hover:bg-[#c03233]"
         >
           <Plus className="h-5 w-5" />
           Add Video
@@ -168,7 +168,7 @@ export default function VideosPage() {
       <div className="grid gap-4 md:grid-cols-5">
         <div className="bg-white rounded-lg shadow p-6">
           <div className="text-sm text-gray-600">Total Videos</div>
-          <div className="text-2xl font-bold text-blue-600">{videos.length}</div>
+          <div className="text-2xl font-bold text-[#ef4e50]">{videos.length}</div>
         </div>
         <div className="bg-white rounded-lg shadow p-6">
           <div className="text-sm text-gray-600">Approved</div>
@@ -184,7 +184,7 @@ export default function VideosPage() {
         </div>
         <div className="bg-white rounded-lg shadow p-6">
           <div className="text-sm text-gray-600">Under Review</div>
-          <div className="text-2xl font-bold text-blue-600">
+          <div className="text-2xl font-bold text-[#ef4e50]">
             {videos.filter(v => v.moderationStatus === 'UNDER_REVIEW').length}
           </div>
         </div>
@@ -227,7 +227,7 @@ export default function VideosPage() {
               </div>
               <div className="flex flex-wrap gap-1 mb-3">
                 {video.tags.slice(0, 3).map((tag, index) => (
-                  <span key={index} className="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded">
+                  <span key={index} className="text-xs bg-red-50 text-[#ef4e50] px-2 py-1 rounded">
                     {tag}
                   </span>
                 ))}
@@ -239,7 +239,7 @@ export default function VideosPage() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => handleEdit(video)}
-                    className="text-blue-600 hover:text-blue-900"
+                    className="text-[#ef4e50] hover:text-[#c03233]"
                   >
                     <Edit className="h-4 w-4" />
                   </button>
@@ -276,7 +276,7 @@ export default function VideosPage() {
                   required
                   value={formData.youtubeId}
                   onChange={(e) => setFormData({ ...formData, youtubeId: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ef4e50]"
                   placeholder="e.g., dQw4w9WgXcQ"
                 />
               </div>
@@ -287,7 +287,7 @@ export default function VideosPage() {
                   required
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ef4e50]"
                 />
               </div>
               <div>
@@ -295,7 +295,7 @@ export default function VideosPage() {
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ef4e50]"
                   rows={3}
                 />
               </div>
@@ -305,7 +305,7 @@ export default function VideosPage() {
                   type="text"
                   value={formData.channelName}
                   onChange={(e) => setFormData({ ...formData, channelName: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ef4e50]"
                 />
               </div>
               <div>
@@ -314,7 +314,7 @@ export default function VideosPage() {
                   type="text"
                   value={formData.ageRating}
                   onChange={(e) => setFormData({ ...formData, ageRating: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ef4e50]"
                   placeholder="e.g., G, PG, PG-13"
                 />
               </div>
@@ -324,7 +324,7 @@ export default function VideosPage() {
                   type="text"
                   value={formData.tags}
                   onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ef4e50]"
                   placeholder="e.g., educational, fun, kids"
                 />
               </div>
@@ -338,7 +338,7 @@ export default function VideosPage() {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  className="px-4 py-2 bg-[#ef4e50] text-white rounded-lg hover:bg-[#c03233]"
                 >
                   {editingVideo ? 'Update' : 'Add'}
                 </button>

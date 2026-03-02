@@ -188,7 +188,7 @@ export default async function AdminStatsPage() {
     <div>
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-          <BarChart className="h-8 w-8 text-blue-600" />
+            <BarChart className="h-8 w-8 text-[#ef4e50]" />
           Platform Statistics
         </h1>
         <p className="text-gray-600 mt-2">
@@ -203,14 +203,14 @@ export default async function AdminStatsPage() {
           value={stats.totalUsers}
           growth={String(calcGrowth(stats.newUsersLast30, stats.prevPeriodUsers))}
           icon={() => <span>👥</span>}
-          color="#3b82f6"
+          color="#ef4e50"
         />
         <StatCard
           title="Child Profiles"
           value={stats.totalProfiles}
           growth={String(calcGrowth(stats.newProfilesLast30, stats.prevPeriodProfiles))}
           icon={() => <span>👶</span>}
-          color="#9333ea"
+          color="#ef4e50"
         />
         <StatCard
           title="Collections"
@@ -232,7 +232,7 @@ export default async function AdminStatsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <div className="bg-white rounded-lg shadow-sm p-6">
           <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <Activity className="h-5 w-5 text-blue-600" />
+            <Activity className="h-5 w-5 text-[#ef4e50]" />
             Platform Health
           </h2>
           <div className="space-y-4">
@@ -292,12 +292,12 @@ export default async function AdminStatsPage() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div>
             <p className="text-sm text-gray-600 mb-2">Most Popular Category</p>
-            <p className="text-2xl font-bold text-blue-600">{stats.mostPopularCategory}</p>
+            <p className="text-2xl font-bold text-[#ef4e50]">{stats.mostPopularCategory}</p>
             <p className="text-sm text-gray-500">{stats.mostPopularCategoryCount} collections</p>
           </div>
           <div>
             <p className="text-sm text-gray-600 mb-2">Avg. Collection Size</p>
-            <p className="text-2xl font-bold text-purple-600">
+            <p className="text-2xl font-bold text-[#ef4e50]">
               {stats.totalCollections > 0 ? Math.round(stats.totalVideos / stats.totalCollections) : 0}
             </p>
             <p className="text-sm text-gray-500">videos per collection</p>

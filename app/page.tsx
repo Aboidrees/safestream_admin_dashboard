@@ -50,21 +50,21 @@ export default async function AdminHomePage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow-sm p-6 border-l-4 border-blue-500">
+        <div className="bg-white rounded-lg shadow-sm p-6 border-l-4 border-[#ef4e50]">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 mb-1">Total Users</p>
-              <p className="text-3xl font-bold text-blue-600">{stats.totalUsers}</p>
+              <p className="text-3xl font-bold text-[#ef4e50]">{stats.totalUsers}</p>
             </div>
             <div className="text-4xl">👥</div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm p-6 border-l-4 border-purple-500">
+        <div className="bg-white rounded-lg shadow-sm p-6 border-l-4 border-[#ef4e50]">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 mb-1">Child Profiles</p>
-              <p className="text-3xl font-bold text-purple-600">{stats.totalProfiles}</p>
+              <p className="text-3xl font-bold text-[#ef4e50]">{stats.totalProfiles}</p>
             </div>
             <div className="text-4xl">👶</div>
           </div>
@@ -97,7 +97,7 @@ export default async function AdminHomePage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <a
             href="/users"
-            className="p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all"
+            className="p-4 border border-gray-200 rounded-lg hover:border-[#ef4e50] hover:bg-red-50 transition-all"
           >
             <div className="text-2xl mb-2">👥</div>
             <h3 className="font-semibold text-gray-900 mb-1">Manage Users</h3>
@@ -106,7 +106,7 @@ export default async function AdminHomePage() {
 
           <a
             href="/content-moderation"
-            className="p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all"
+            className="p-4 border border-gray-200 rounded-lg hover:border-[#ef4e50] hover:bg-red-50 transition-all"
           >
             <div className="text-2xl mb-2">⚠️</div>
             <h3 className="font-semibold text-gray-900 mb-1">Content Moderation</h3>
@@ -115,7 +115,7 @@ export default async function AdminHomePage() {
 
           <a
             href="/reports"
-            className="p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all"
+            className="p-4 border border-gray-200 rounded-lg hover:border-[#ef4e50] hover:bg-red-50 transition-all"
           >
             <div className="text-2xl mb-2">📋</div>
             <h3 className="font-semibold text-gray-900 mb-1">View Reports</h3>

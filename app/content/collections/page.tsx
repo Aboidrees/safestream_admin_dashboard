@@ -124,7 +124,7 @@ export default function CollectionsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#ef4e50]"></div>
       </div>
     )
   }
@@ -138,7 +138,7 @@ export default function CollectionsPage() {
         </div>
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+          className="flex items-center gap-2 bg-[#ef4e50] text-white px-4 py-2 rounded-lg hover:bg-[#c03233]"
         >
           <Plus className="h-5 w-5" />
           New Collection
@@ -149,7 +149,7 @@ export default function CollectionsPage() {
       <div className="grid gap-4 md:grid-cols-4">
         <div className="bg-white rounded-lg shadow p-6">
           <div className="text-sm text-gray-600">Total Collections</div>
-          <div className="text-2xl font-bold text-blue-600">{collections.length}</div>
+          <div className="text-2xl font-bold text-[#ef4e50]">{collections.length}</div>
         </div>
         <div className="bg-white rounded-lg shadow p-6">
           <div className="text-sm text-gray-600">Platform Collections</div>
@@ -159,7 +159,7 @@ export default function CollectionsPage() {
         </div>
         <div className="bg-white rounded-lg shadow p-6">
           <div className="text-sm text-gray-600">Public Collections</div>
-          <div className="text-2xl font-bold text-purple-600">
+          <div className="text-2xl font-bold text-[#ef4e50]">
             {collections.filter(c => c.isPublic).length}
           </div>
         </div>
@@ -189,7 +189,7 @@ export default function CollectionsPage() {
               <tr key={collection.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4">
                   <div className="flex items-center">
-                    <div className="h-10 w-10 bg-blue-500 rounded-lg flex items-center justify-center text-white">
+                    <div className="h-10 w-10 bg-[#ef4e50] rounded-lg flex items-center justify-center text-white">
                       📚
                     </div>
                     <div className="ml-4">
@@ -218,14 +218,14 @@ export default function CollectionsPage() {
                 <td className="px-6 py-4 text-sm text-gray-900">{collection.ageRating}+</td>
                 <td className="px-6 py-4 text-sm text-gray-900">
                   <div className="flex items-center gap-1">
-                    <Video className="h-4 w-4 text-blue-600" />
+                    <Video className="h-4 w-4 text-[#ef4e50]" />
                     {collection.videoCount}
                   </div>
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex flex-wrap gap-1">
                     {collection.isPlatform && (
-                      <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded">Platform</span>
+                      <span className="px-2 py-1 text-xs bg-red-100 text-red-800 rounded">Platform</span>
                     )}
                     {collection.isPublic && (
                       <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded">Public</span>
@@ -239,7 +239,7 @@ export default function CollectionsPage() {
                   <div className="flex items-center justify-end gap-2">
                     <button
                       onClick={() => handleEdit(collection)}
-                      className="text-blue-600 hover:text-blue-900"
+                      className="text-[#ef4e50] hover:text-[#c03233]"
                     >
                       <Edit className="h-4 w-4" />
                     </button>
@@ -277,7 +277,7 @@ export default function CollectionsPage() {
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ef4e50]"
                 />
               </div>
               <div>
@@ -285,7 +285,7 @@ export default function CollectionsPage() {
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ef4e50]"
                   rows={3}
                 />
               </div>
@@ -294,7 +294,7 @@ export default function CollectionsPage() {
                 <select
                   value={formData.categoryId}
                   onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ef4e50]"
                 >
                   <option value="">Select a category</option>
                   {categories.map((category) => (
@@ -312,7 +312,7 @@ export default function CollectionsPage() {
                   max="18"
                   value={formData.ageRating}
                   onChange={(e) => setFormData({ ...formData, ageRating: parseInt(e.target.value) })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ef4e50]"
                 />
               </div>
               <div className="space-y-2">
@@ -354,7 +354,7 @@ export default function CollectionsPage() {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  className="px-4 py-2 bg-[#ef4e50] text-white rounded-lg hover:bg-[#c03233]"
                 >
                   {editingCollection ? 'Update' : 'Create'}
                 </button>

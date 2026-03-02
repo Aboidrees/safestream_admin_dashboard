@@ -47,7 +47,7 @@ export default function AdminSettingsPage() {
       <div className="mb-8 flex justify-between items-start">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-            <Settings className="h-8 w-8 text-blue-600" />
+            <Settings className="h-8 w-8 text-[#ef4e50]" />
             System Settings
           </h1>
           <p className="text-gray-600 mt-2">
@@ -57,7 +57,7 @@ export default function AdminSettingsPage() {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium flex items-center gap-2"
+          className="px-6 py-3 bg-[#ef4e50] text-white rounded-lg hover:bg-[#c03233] transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium flex items-center gap-2"
         >
           <Save className="h-4 w-4" />
           {saving ? "Saving..." : "Save Changes"}
@@ -68,7 +68,7 @@ export default function AdminSettingsPage() {
         {/* General Settings */}
         <div className="bg-white rounded-lg shadow-sm p-6">
           <div className="flex items-center gap-2 mb-6">
-            <Globe className="h-6 w-6 text-blue-600" />
+            <Globe className="h-6 w-6 text-[#ef4e50]" />
             <h2 className="text-xl font-semibold text-gray-900">General Settings</h2>
           </div>
           <div className="space-y-4">
@@ -81,7 +81,7 @@ export default function AdminSettingsPage() {
                 type="text"
                 value={settings.siteName}
                 onChange={(e) => setSettings({ ...settings, siteName: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ef4e50] focus:border-transparent"
               />
             </div>
             <div>
@@ -93,7 +93,7 @@ export default function AdminSettingsPage() {
                 type="url"
                 value={settings.siteUrl}
                 onChange={(e) => setSettings({ ...settings, siteUrl: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ef4e50] focus:border-transparent"
               />
             </div>
             <div>
@@ -105,7 +105,7 @@ export default function AdminSettingsPage() {
                 type="email"
                 value={settings.adminEmail}
                 onChange={(e) => setSettings({ ...settings, adminEmail: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ef4e50] focus:border-transparent"
               />
             </div>
           </div>
@@ -114,7 +114,7 @@ export default function AdminSettingsPage() {
         {/* User Management */}
         <div className="bg-white rounded-lg shadow-sm p-6">
           <div className="flex items-center gap-2 mb-6">
-            <Shield className="h-6 w-6 text-purple-600" />
+            <Shield className="h-6 w-6 text-[#ef4e50]" />
             <h2 className="text-xl font-semibold text-gray-900">User Management</h2>
           </div>
           <div className="space-y-4">
@@ -130,7 +130,7 @@ export default function AdminSettingsPage() {
                 type="checkbox"
                 checked={settings.allowRegistration}
                 onChange={(e) => setSettings({ ...settings, allowRegistration: e.target.checked })}
-                className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                className="h-5 w-5 text-[#ef4e50] focus:ring-[#ef4e50] border-gray-300 rounded"
               />
             </div>
             <div className="flex items-center justify-between">
@@ -145,7 +145,7 @@ export default function AdminSettingsPage() {
                 type="checkbox"
                 checked={settings.requireEmailVerification}
                 onChange={(e) => setSettings({ ...settings, requireEmailVerification: e.target.checked })}
-                className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                className="h-5 w-5 text-[#ef4e50] focus:ring-[#ef4e50] border-gray-300 rounded"
               />
             </div>
             <div>
@@ -159,7 +159,7 @@ export default function AdminSettingsPage() {
                 max="20"
                 value={settings.maxChildrenPerFamily}
                 onChange={(e) => setSettings({ ...settings, maxChildrenPerFamily: parseInt(e.target.value) })}
-                className="w-full md:w-1/3 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full md:w-1/3 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ef4e50] focus:border-transparent"
               />
             </div>
           </div>
@@ -184,7 +184,7 @@ export default function AdminSettingsPage() {
                 step="30"
                 value={settings.defaultScreenTimeLimit}
                 onChange={(e) => setSettings({ ...settings, defaultScreenTimeLimit: parseInt(e.target.value) })}
-                className="w-full md:w-1/3 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full md:w-1/3 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ef4e50] focus:border-transparent"
               />
               <p className="text-sm text-gray-500 mt-1">Applied to new child profiles</p>
             </div>
@@ -200,7 +200,7 @@ export default function AdminSettingsPage() {
                 type="checkbox"
                 checked={settings.enablePublicCollections}
                 onChange={(e) => setSettings({ ...settings, enablePublicCollections: e.target.checked })}
-                className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                className="h-5 w-5 text-[#ef4e50] focus:ring-[#ef4e50] border-gray-300 rounded"
               />
             </div>
           </div>
@@ -225,7 +225,7 @@ export default function AdminSettingsPage() {
                 type="checkbox"
                 checked={settings.enableNotifications}
                 onChange={(e) => setSettings({ ...settings, enableNotifications: e.target.checked })}
-                className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                className="h-5 w-5 text-[#ef4e50] focus:ring-[#ef4e50] border-gray-300 rounded"
               />
             </div>
           </div>

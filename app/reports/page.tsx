@@ -86,14 +86,14 @@ export default async function AdminReportsPage() {
       <div className="mb-8 flex justify-between items-start">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-            <BarChart3 className="h-8 w-8 text-blue-600" />
+            <BarChart3 className="h-8 w-8 text-[#ef4e50]" />
             Platform Reports
           </h1>
           <p className="text-gray-600 mt-2">
             Comprehensive platform analytics for the last 30 days
           </p>
         </div>
-        <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
+        <button className="px-4 py-2 bg-[#ef4e50] text-white rounded-lg hover:bg-[#c03233] transition-colors flex items-center gap-2">
           <Download className="h-4 w-4" />
           Export Reports
         </button>
@@ -105,8 +105,8 @@ export default async function AdminReportsPage() {
         {/* User Activity */}
         <div className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow">
           <div className="flex items-start justify-between mb-4">
-            <div className="p-3 bg-blue-100 rounded-lg">
-              <Users className="h-6 w-6 text-blue-600" />
+            <div className="p-3 bg-red-100 rounded-lg">
+              <Users className="h-6 w-6 text-[#ef4e50]" />
             </div>
             <span className="text-xs text-gray-500">Last 30 days</span>
           </div>
@@ -118,7 +118,7 @@ export default async function AdminReportsPage() {
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">New This Period</span>
-              <span className="font-semibold text-blue-600">+{newUsersThisPeriod}</span>
+              <span className="font-semibold text-[#ef4e50]">+{newUsersThisPeriod}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Active Sessions (24h)</span>
@@ -131,8 +131,8 @@ export default async function AdminReportsPage() {
         {/* Content Performance */}
         <div className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow">
           <div className="flex items-start justify-between mb-4">
-            <div className="p-3 bg-purple-100 rounded-lg">
-              <Film className="h-6 w-6 text-purple-600" />
+            <div className="p-3 bg-red-100 rounded-lg">
+              <Film className="h-6 w-6 text-[#ef4e50]" />
             </div>
             <span className="text-xs text-gray-500">Last 30 days</span>
           </div>
@@ -268,7 +268,7 @@ export default async function AdminReportsPage() {
                   <tr key={col.id} className="border-b last:border-0">
                     <td className="py-3 text-gray-500">{i + 1}</td>
                     <td className="py-3 font-medium text-gray-900">{col.name}</td>
-                    <td className="py-3 text-right font-semibold text-purple-600">{col._count.collectionVideos}</td>
+                    <td className="py-3 text-right font-semibold text-[#ef4e50]">{col._count.collectionVideos}</td>
                   </tr>
                 ))}
               </tbody>
@@ -284,7 +284,7 @@ export default async function AdminReportsPage() {
         <p className="text-gray-600 mb-4">
           Create custom reports with specific metrics, date ranges, and filters
         </p>
-        <button className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-colors font-medium">
+        <button className="px-6 py-3 bg-[#ef4e50] text-white rounded-lg hover:bg-[#c03233] transition-colors font-medium">
           Build Custom Report
         </button>
       </div>

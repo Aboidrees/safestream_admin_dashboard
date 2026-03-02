@@ -68,7 +68,7 @@ export default function AdminsPage() {
       case 'SUPER_ADMIN':
         return <Crown className="h-4 w-4 text-yellow-500" />
       case 'ADMIN':
-        return <Shield className="h-4 w-4 text-blue-500" />
+        return <Shield className="h-4 w-4 text-[#ef4e50]" />
       case 'MODERATOR':
         return <UserCheck className="h-4 w-4 text-green-500" />
       default:
@@ -81,7 +81,7 @@ export default function AdminsPage() {
       case 'SUPER_ADMIN':
         return 'bg-yellow-100 text-yellow-800'
       case 'ADMIN':
-        return 'bg-blue-100 text-blue-800'
+        return 'bg-red-100 text-red-800'
       case 'MODERATOR':
         return 'bg-green-100 text-green-800'
       default:
@@ -93,7 +93,7 @@ export default function AdminsPage() {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#ef4e50] mx-auto"></div>
           <p className="mt-2 text-gray-600">Loading admins...</p>
         </div>
       </div>
@@ -106,7 +106,7 @@ export default function AdminsPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-              <Shield className="h-8 w-8 text-blue-600" />
+              <Shield className="h-8 w-8 text-[#ef4e50]" />
               Admin Management
             </h1>
             <p className="text-gray-600 mt-2">
@@ -115,7 +115,7 @@ export default function AdminsPage() {
           </div>
           <button
             onClick={() => setShowCreateForm(true)}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2"
+            className="bg-[#ef4e50] text-white px-4 py-2 rounded-lg hover:bg-[#c03233] flex items-center gap-2"
           >
             <Plus className="h-4 w-4" />
             Add Admin
@@ -144,7 +144,7 @@ export default function AdminsPage() {
                     type="text"
                     value={newAdmin.name}
                     onChange={(e) => setNewAdmin({ ...newAdmin, name: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ef4e50] focus:border-transparent"
                     required
                   />
                 </div>
@@ -156,7 +156,7 @@ export default function AdminsPage() {
                     type="email"
                     value={newAdmin.email}
                     onChange={(e) => setNewAdmin({ ...newAdmin, email: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ef4e50] focus:border-transparent"
                     required
                   />
                 </div>
@@ -168,7 +168,7 @@ export default function AdminsPage() {
                     type="password"
                     value={newAdmin.password}
                     onChange={(e) => setNewAdmin({ ...newAdmin, password: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ef4e50] focus:border-transparent"
                     required
                   />
                 </div>
@@ -179,7 +179,7 @@ export default function AdminsPage() {
                   <select
                     value={newAdmin.role}
                     onChange={(e) => setNewAdmin({ ...newAdmin, role: e.target.value as AdminRole })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ef4e50] focus:border-transparent"
                   >
                     <option value="moderator">Moderator</option>
                     <option value="admin">Admin</option>
@@ -190,7 +190,7 @@ export default function AdminsPage() {
               <div className="flex gap-3 mt-6">
                 <button
                   type="submit"
-                  className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+                  className="flex-1 bg-[#ef4e50] text-white py-2 px-4 rounded-lg hover:bg-[#c03233]"
                 >
                   Create Admin
                 </button>
@@ -247,8 +247,8 @@ export default function AdminsPage() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="flex-shrink-0 h-10 w-10">
-                          <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                            <Shield className="h-5 w-5 text-blue-600" />
+                          <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center">
+                            <Shield className="h-5 w-5 text-[#ef4e50]" />
                           </div>
                         </div>
                         <div className="ml-4">

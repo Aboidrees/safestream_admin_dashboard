@@ -95,7 +95,7 @@ export default function FamilyDetailPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#ef4e50]"></div>
       </div>
     )
   }
@@ -124,7 +124,7 @@ export default function FamilyDetailPage() {
             </p>
           </div>
           <div className="text-right">
-            <div className="text-2xl font-bold text-blue-600">{family.childrenCount}</div>
+            <div className="text-2xl font-bold text-[#ef4e50]">{family.childrenCount}</div>
             <div className="text-sm text-gray-600">Children</div>
           </div>
         </div>
@@ -143,7 +143,7 @@ export default function FamilyDetailPage() {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as TabType)}
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === tab.id
-                    ? 'border-blue-500 text-blue-600'
+                    ? 'border-[#ef4e50] text-[#ef4e50]'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                   }`}
               >
@@ -165,7 +165,7 @@ export default function FamilyDetailPage() {
                   {users.map((user) => (
                     <div key={user.id} className="bg-gray-50 rounded-lg p-4">
                       <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold">
+                        <div className="w-10 h-10 bg-[#ef4e50] rounded-full flex items-center justify-center text-white font-semibold">
                           {user.name.charAt(0).toUpperCase()}
                         </div>
                         <div>
@@ -199,7 +199,7 @@ export default function FamilyDetailPage() {
                           <h4 className="font-medium text-gray-900">{child.name}</h4>
                           <p className="text-sm text-gray-600">Age: {child.age}</p>
                           <p className="text-xs text-gray-500">QR: {child.qrCode}</p>
-                          <p className="text-xs text-blue-600">Screen Time: {child.screenTimeLimit} min</p>
+                          <p className="text-xs text-[#ef4e50]">Screen Time: {child.screenTimeLimit} min</p>
                         </div>
                       </div>
                     </div>
@@ -226,7 +226,7 @@ export default function FamilyDetailPage() {
                       <h4 className="font-medium text-gray-900">{collection.name}</h4>
                       <p className="text-sm text-gray-600 mt-1">{collection.category?.name}</p>
                       <div className="flex items-center justify-between mt-2">
-                        <span className="text-xs text-blue-600">{collection.videoCount} videos</span>
+                        <span className="text-xs text-[#ef4e50]">{collection.videoCount} videos</span>
                         <span className="text-xs text-gray-500">
                           {collection.isPublic ? 'Public' : 'Private'}
                         </span>
@@ -274,7 +274,7 @@ export default function FamilyDetailPage() {
                           </p>
                           <div className="flex flex-wrap gap-1 mt-2">
                             {video.tags.slice(0, 3).map((tag, index) => (
-                              <span key={index} className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                              <span key={index} className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">
                                 {tag}
                               </span>
                             ))}

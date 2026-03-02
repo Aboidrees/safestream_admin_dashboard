@@ -52,7 +52,7 @@ export default function AdminFamiliesPage() {
     <div>
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-          <Users className="h-8 w-8 text-blue-600" />
+          <Users className="h-8 w-8 text-[#ef4e50]" />
           Family Management
         </h1>
         <p className="text-gray-600 mt-2">
@@ -73,7 +73,7 @@ export default function AdminFamiliesPage() {
             placeholder="Search by family name, parent name, or email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ef4e50] focus:border-transparent"
           />
         </div>
       </div>
@@ -84,20 +84,20 @@ export default function AdminFamiliesPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 mb-1">Total Families</p>
-              <p className="text-3xl font-bold text-blue-600">{families.length}</p>
+              <p className="text-3xl font-bold text-[#ef4e50]">{families.length}</p>
             </div>
-            <Users className="h-10 w-10 text-blue-600" />
+            <Users className="h-10 w-10 text-[#ef4e50]" />
           </div>
         </div>
         <div className="bg-white rounded-lg shadow-sm p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 mb-1">Total Children</p>
-              <p className="text-3xl font-bold text-purple-600">
+              <p className="text-3xl font-bold text-[#ef4e50]">
                 {families.reduce((sum, f) => sum + f.childrenCount, 0)}
               </p>
             </div>
-            <Baby className="h-10 w-10 text-purple-600" />
+            <Baby className="h-10 w-10 text-[#ef4e50]" />
           </div>
         </div>
         <div className="bg-white rounded-lg shadow-sm p-6">
@@ -157,7 +157,7 @@ export default function AdminFamiliesPage() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <Link href={`/families/${family.id}`} className="flex items-center">
                         <div className="h-10 w-10 flex-shrink-0">
-                          <div className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-400 to-cyan-400 flex items-center justify-center text-white font-bold text-lg">
+                          <div className="h-10 w-10 rounded-full bg-gradient-to-r from-[#ef4e50] to-[#c03233] flex items-center justify-center text-white font-bold text-lg">
                             👨‍👩‍👧‍👦
                           </div>
                         </div>
@@ -174,7 +174,7 @@ export default function AdminFamiliesPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <Link href={`/families/${family.id}`} className="flex items-center gap-1">
-                        <Baby className="h-4 w-4 text-purple-600" />
+                        <Baby className="h-4 w-4 text-[#ef4e50]" />
                         <span className="text-sm font-medium text-gray-900">{family.childrenCount}</span>
                       </Link>
                     </td>
@@ -191,7 +191,7 @@ export default function AdminFamiliesPage() {
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <Link
                         href={`/families/${family.id}`}
-                        className="text-blue-600 hover:text-blue-900 inline-flex items-center gap-1"
+                        className="text-[#ef4e50] hover:text-[#c03233] inline-flex items-center gap-1"
                         title="View Details"
                       >
                         <Eye className="h-4 w-4" />

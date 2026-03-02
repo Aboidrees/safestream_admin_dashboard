@@ -49,11 +49,11 @@ export default function ConfirmationModal({
       case 'warning':
         return 'bg-orange-100 text-orange-600'
       case 'info':
-        return 'bg-blue-100 text-blue-600'
+        return 'bg-red-100 text-[#ef4e50]'
       case 'success':
         return 'bg-green-100 text-green-600'
       default:
-        return 'bg-blue-100 text-blue-600'
+        return 'bg-red-100 text-[#ef4e50]'
     }
   }
 
@@ -64,11 +64,11 @@ export default function ConfirmationModal({
       case 'warning':
         return 'bg-orange-600 hover:bg-orange-700 focus:ring-orange-500'
       case 'info':
-        return 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500'
+        return 'bg-[#ef4e50] hover:bg-[#c03233] focus:ring-[#ef4e50]'
       case 'success':
         return 'bg-green-600 hover:bg-green-700 focus:ring-green-500'
       default:
-        return 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500'
+        return 'bg-[#ef4e50] hover:bg-[#c03233] focus:ring-[#ef4e50]'
     }
   }
 

@@ -38,8 +38,8 @@ function LoginForm() {
   // Show loading while checking session
   if (status === "loading") {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-50 to-purple-50">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-red-50 to-red-50">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#ef4e50]"></div>
       </div>
     )
   }
@@ -47,8 +47,8 @@ function LoginForm() {
   // Don't render form if already authenticated — show spinner instead of null (white screen)
   if (status === "authenticated" && session?.user?.isAdmin) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-50 to-purple-50">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-red-50 to-red-50">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#ef4e50]"></div>
       </div>
     )
   }
@@ -87,11 +87,11 @@ function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-50 to-purple-50">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-red-50 to-red-50">
       <div className="max-w-md w-full space-y-8 p-8">
         {/* Logo and Header */}
         <div className="text-center">
-          <div className="bg-linear-to-r from-blue-600 to-purple-600 text-white text-4xl font-bold rounded-lg p-4 inline-block mb-4">
+          <div className="bg-[#ef4e50] text-white text-4xl font-bold rounded-lg p-4 inline-block mb-4">
             🛡️
           </div>
           <h2 className="text-3xl font-bold text-gray-900">Admin Login</h2>
@@ -122,7 +122,7 @@ function LoginForm() {
                 autoComplete="email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ef4e50] focus:border-transparent"
                 placeholder="admin@safestream.app"
               />
             </div>
@@ -139,7 +139,7 @@ function LoginForm() {
                 autoComplete="current-password"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ef4e50] focus:border-transparent"
                 placeholder="Enter your password"
               />
             </div>
@@ -147,7 +147,7 @@ function LoginForm() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full px-4 py-3 bg-linear-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium text-lg"
+              className="w-full px-4 py-3 bg-[#ef4e50] text-white rounded-lg hover:bg-[#c03233] transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium text-lg"
             >
               {loading ? "Signing in..." : "Sign In"}
             </button>
@@ -156,10 +156,10 @@ function LoginForm() {
         </div>
 
         {/* Security Notice */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
           <div className="flex items-start gap-2">
-            <span className="text-blue-600 text-xl">🔒</span>
-            <div className="text-sm text-blue-800">
+            <span className="text-[#ef4e50] text-xl">🔒</span>
+            <div className="text-sm text-red-800">
               <p className="font-medium mb-1">Security Notice</p>
               <p>This is a restricted area. All login attempts are logged and monitored.</p>
             </div>
@@ -183,7 +183,7 @@ export default function AdminLoginPage() {
   return (
     <Suspense fallback={
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#ef4e50]"></div>
       </div>
     }>
       <LoginForm />

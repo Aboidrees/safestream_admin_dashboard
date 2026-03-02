@@ -173,7 +173,7 @@ export default function AdminUsersPage() {
     <div>
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-          <Shield className="h-8 w-8 text-blue-600" />
+          <Shield className="h-8 w-8 text-[#ef4e50]" />
           User Management
         </h1>
         <p className="text-gray-600 mt-2">
@@ -187,7 +187,7 @@ export default function AdminUsersPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 mb-1">Total Users</p>
-              <p className="text-3xl font-bold text-blue-600">{users.length}</p>
+              <p className="text-3xl font-bold text-[#ef4e50]">{users.length}</p>
             </div>
             <div className="text-4xl">👥</div>
           </div>
@@ -207,12 +207,12 @@ export default function AdminUsersPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 mb-1">Subscribers</p>
-              <p className="text-3xl font-bold text-purple-600">
+              <p className="text-3xl font-bold text-[#ef4e50]">
                 {/* {users.filter(u => u.isSubscribed).length} */}
                 0
               </p>
             </div>
-            <Wallet className="h-10 w-10 text-purple-600" />
+            <Wallet className="h-10 w-10 text-[#ef4e50]" />
           </div>
         </div>
       </div>
@@ -232,7 +232,7 @@ export default function AdminUsersPage() {
                 placeholder="Search by name or email..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ef4e50] focus:border-transparent"
               />
             </div>
           </div>
@@ -244,7 +244,7 @@ export default function AdminUsersPage() {
               id="isActive"
               value={isActiveFilter}
               onChange={(e) => setIsActiveFilter(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ef4e50] focus:border-transparent"
             >
               <option value="all">All</option>
               <option value="active">Active</option>
@@ -297,7 +297,7 @@ export default function AdminUsersPage() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="h-10 w-10 flex-shrink-0">
-                          <div className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-400 to-purple-400 flex items-center justify-center text-white font-bold">
+                          <div className="h-10 w-10 rounded-full bg-gradient-to-r from-[#ef4e50] to-[#c03233] flex items-center justify-center text-white font-bold">
                             {user.name.charAt(0).toUpperCase()}
                           </div>
                         </div>
@@ -365,7 +365,7 @@ export default function AdminUsersPage() {
           <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-6 border-b border-gray-200">
               <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                <UserIcon className="h-6 w-6 text-blue-600" />
+                <UserIcon className="h-6 w-6 text-[#ef4e50]" />
                 User Details
               </h2>
               <button
@@ -380,7 +380,7 @@ export default function AdminUsersPage() {
               {/* User Avatar and Basic Info */}
               <div className="flex items-start gap-4">
                 <div className="h-20 w-20 flex-shrink-0">
-                  <div className="h-20 w-20 rounded-full bg-gradient-to-r from-blue-400 to-purple-400 flex items-center justify-center text-white font-bold text-2xl">
+                  <div className="h-20 w-20 rounded-full bg-gradient-to-r from-[#ef4e50] to-[#c03233] flex items-center justify-center text-white font-bold text-2xl">
                     {selectedUser.name.charAt(0).toUpperCase()}
                   </div>
                 </div>
@@ -425,7 +425,7 @@ export default function AdminUsersPage() {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
                     <div className="text-sm text-gray-900 flex items-center gap-2">
-                      <Shield className="h-4 w-4 text-blue-600" />
+                      <Shield className="h-4 w-4 text-[#ef4e50]" />
                       {selectedUser.role}
                     </div>
                   </div>
@@ -443,7 +443,7 @@ export default function AdminUsersPage() {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Created At</label>
                     <div className="text-sm text-gray-900 flex items-center gap-2">
-                      <Calendar className="h-4 w-4 text-blue-600" />
+                      <Calendar className="h-4 w-4 text-[#ef4e50]" />
                       {new Date(selectedUser.createdAt).toLocaleString()}
                     </div>
                   </div>
@@ -551,7 +551,7 @@ export default function AdminUsersPage() {
               ? 'bg-green-500 text-white' 
               : toast.type === 'error' 
               ? 'bg-red-500 text-white' 
-              : 'bg-blue-500 text-white'
+              : 'bg-[#ef4e50] text-white'
           }`}>
             {toast.type === 'success' && <CheckCircle className="h-5 w-5" />}
             {toast.type === 'error' && <XCircle className="h-5 w-5" />}
