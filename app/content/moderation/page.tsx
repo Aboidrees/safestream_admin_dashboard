@@ -193,7 +193,7 @@ export default function ModerationPage() {
           </div>
         )}
 
-        {/* Under Review Videos */}}
+        {/* Under Review Videos */}
         {underReviewVideos.length > 0 && (
           <div>
             <h2 className="text-xl font-semibold text-gray-900 mb-4">Under Review ({underReviewVideos.length})</h2>
@@ -236,7 +236,7 @@ export default function ModerationPage() {
           </div>
         )}
 
-        {/* Flagged Videos */}}
+        {/* Flagged Videos */}
         {flaggedVideos.length > 0 && (
           <div>
             <h2 className="text-xl font-semibold text-gray-900 mb-4">Flagged Content ({flaggedVideos.length})</h2>

@@ -238,13 +238,17 @@ export default function CollectionsPage() {
                 <td className="px-6 py-4 text-right text-sm font-medium">
                   <div className="flex items-center justify-end gap-2">
                     <button
+                      type="button"
                       onClick={() => handleEdit(collection)}
+                      aria-label="Edit collection"
                       className="text-[#ef4e50] hover:text-[#c03233]"
                     >
                       <Edit className="h-4 w-4" />
                     </button>
                     <button
+                      type="button"
                       onClick={() => handleDelete(collection.id)}
+                      aria-label="Delete collection"
                       className="text-red-600 hover:text-red-900"
                     >
                       <Trash className="h-4 w-4" />
@@ -276,6 +280,7 @@ export default function CollectionsPage() {
                   type="text"
                   required
                   value={formData.name}
+                  placeholder='Enter collection name'
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ef4e50]"
                 />
@@ -285,6 +290,7 @@ export default function CollectionsPage() {
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  placeholder="Enter collection description"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ef4e50]"
                   rows={3}
                 />
@@ -295,6 +301,8 @@ export default function CollectionsPage() {
                   value={formData.categoryId}
                   onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ef4e50]"
+                  title="Select a category"
+                  aria-label="Select a category"
                 >
                   <option value="">Select a category</option>
                   {categories.map((category) => (
@@ -305,11 +313,13 @@ export default function CollectionsPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Age Rating</label>
+                <label htmlFor="ageRating" className="block text-sm font-medium text-gray-700 mb-2">Age Rating</label>
                 <input
+                  id="ageRating"
                   type="number"
                   min="0"
                   max="18"
+                  placeholder="Enter age rating"
                   value={formData.ageRating}
                   onChange={(e) => setFormData({ ...formData, ageRating: parseInt(e.target.value) })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ef4e50]"
@@ -322,6 +332,8 @@ export default function CollectionsPage() {
                     checked={formData.isPublic}
                     onChange={(e) => setFormData({ ...formData, isPublic: e.target.checked })}
                     className="rounded border-gray-300"
+                    title="Public (visible to all families)"
+                    aria-label="Public (visible to all families)"
                   />
                   <span className="text-sm text-gray-700">Public (visible to all families)</span>
                 </label>
@@ -331,6 +343,8 @@ export default function CollectionsPage() {
                     checked={formData.isPlatform}
                     onChange={(e) => setFormData({ ...formData, isPlatform: e.target.checked })}
                     className="rounded border-gray-300"
+                    title="Platform Collection (managed by admin)"
+                    aria-label="Platform Collection (managed by admin)"
                   />
                   <span className="text-sm text-gray-700">Platform Collection (managed by admin)</span>
                 </label>
@@ -340,6 +354,8 @@ export default function CollectionsPage() {
                     checked={formData.isMandatory}
                     onChange={(e) => setFormData({ ...formData, isMandatory: e.target.checked })}
                     className="rounded border-gray-300"
+                    title="Mandatory (auto-added to all families)"
+                    aria-label="Mandatory (auto-added to all families)"
                   />
                   <span className="text-sm text-gray-700">Mandatory (auto-added to all families)</span>
                 </label>

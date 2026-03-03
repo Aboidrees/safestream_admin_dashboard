@@ -296,8 +296,8 @@ export default function AdminUsersPage() {
                   >
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <div className="h-10 w-10 flex-shrink-0">
-                          <div className="h-10 w-10 rounded-full bg-gradient-to-r from-[#ef4e50] to-[#c03233] flex items-center justify-center text-white font-bold">
+                        <div className="h-10 w-10 shrink-0">
+                          <div className="h-10 w-10 rounded-full bg-linear-to-r from-[#ef4e50] to-[#c03233] flex items-center justify-center text-white font-bold">
                             {user.name.charAt(0).toUpperCase()}
                           </div>
                         </div>
@@ -371,6 +371,7 @@ export default function AdminUsersPage() {
               <button
                 onClick={closeUserModal}
                 className="text-gray-400 hover:text-gray-600 transition-colors"
+                title="Close modal"
               >
                 <X className="h-6 w-6" />
               </button>
@@ -379,8 +380,8 @@ export default function AdminUsersPage() {
             <div className="p-6 space-y-6">
               {/* User Avatar and Basic Info */}
               <div className="flex items-start gap-4">
-                <div className="h-20 w-20 flex-shrink-0">
-                  <div className="h-20 w-20 rounded-full bg-gradient-to-r from-[#ef4e50] to-[#c03233] flex items-center justify-center text-white font-bold text-2xl">
+                <div className="h-20 w-20 shrink-0">
+                  <div className="h-20 w-20 rounded-full bg-linear-to-r from-[#ef4e50] to-[#c03233] flex items-center justify-center text-white font-bold text-2xl">
                     {selectedUser.name.charAt(0).toUpperCase()}
                   </div>
                 </div>
@@ -558,8 +559,10 @@ export default function AdminUsersPage() {
             {toast.type === 'info' && <Shield className="h-5 w-5" />}
             <span className="font-medium">{toast.message}</span>
             <button
+              type="button"
               onClick={() => setToast(null)}
               className="ml-2 hover:opacity-75"
+              title="Close notification"
             >
               <X className="h-4 w-4" />
             </button>

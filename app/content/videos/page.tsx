@@ -238,14 +238,18 @@ export default function VideosPage() {
                 </span>
                 <div className="flex gap-2">
                   <button
+                    type="button"
                     onClick={() => handleEdit(video)}
                     className="text-[#ef4e50] hover:text-[#c03233]"
+                    aria-label="Edit video"
                   >
                     <Edit className="h-4 w-4" />
                   </button>
                   <button
+                    type="button"
                     onClick={() => handleDelete(video.id)}
                     className="text-red-600 hover:text-red-900"
+                    aria-label="Delete video"
                   >
                     <Trash className="h-4 w-4" />
                   </button>
@@ -264,7 +268,7 @@ export default function VideosPage() {
               <h3 className="text-lg font-semibold">
                 {editingVideo ? 'Edit Video' : 'Add Video'}
               </h3>
-              <button onClick={handleCloseModal} className="text-gray-400 hover:text-gray-600">
+              <button onClick={handleCloseModal} className="text-gray-400 hover:text-gray-600" title="Close modal" aria-label="Close modal">
                 ✕
               </button>
             </div>
@@ -288,6 +292,7 @@ export default function VideosPage() {
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ef4e50]"
+                  placeholder="Enter video title"
                 />
               </div>
               <div>
@@ -297,6 +302,7 @@ export default function VideosPage() {
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ef4e50]"
                   rows={3}
+                  placeholder="Enter video description"
                 />
               </div>
               <div>
@@ -306,6 +312,7 @@ export default function VideosPage() {
                   value={formData.channelName}
                   onChange={(e) => setFormData({ ...formData, channelName: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ef4e50]"
+                  placeholder="Enter channel name"
                 />
               </div>
               <div>
@@ -316,6 +323,7 @@ export default function VideosPage() {
                   onChange={(e) => setFormData({ ...formData, ageRating: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ef4e50]"
                   placeholder="e.g., G, PG, PG-13"
+                  title="Age Rating"
                 />
               </div>
               <div>

@@ -91,7 +91,7 @@ export default function AdminsPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
+      <div className="flex items-center justify-center min-h-100">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#ef4e50] mx-auto"></div>
           <p className="mt-2 text-gray-600">Loading admins...</p>
@@ -142,6 +142,7 @@ export default function AdminsPage() {
                   </label>
                   <input
                     type="text"
+                    placeholder="Enter admin name"
                     value={newAdmin.name}
                     onChange={(e) => setNewAdmin({ ...newAdmin, name: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ef4e50] focus:border-transparent"
@@ -154,6 +155,7 @@ export default function AdminsPage() {
                   </label>
                   <input
                     type="email"
+                    placeholder="Enter admin email"
                     value={newAdmin.email}
                     onChange={(e) => setNewAdmin({ ...newAdmin, email: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ef4e50] focus:border-transparent"
@@ -166,6 +168,7 @@ export default function AdminsPage() {
                   </label>
                   <input
                     type="password"
+                    placeholder="Enter admin password"
                     value={newAdmin.password}
                     onChange={(e) => setNewAdmin({ ...newAdmin, password: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ef4e50] focus:border-transparent"
@@ -180,6 +183,7 @@ export default function AdminsPage() {
                     value={newAdmin.role}
                     onChange={(e) => setNewAdmin({ ...newAdmin, role: e.target.value as AdminRole })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ef4e50] focus:border-transparent"
+                    title="Select admin role"
                   >
                     <option value="moderator">Moderator</option>
                     <option value="admin">Admin</option>
@@ -246,7 +250,7 @@ export default function AdminsPage() {
                   <tr key={admin.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <div className="flex-shrink-0 h-10 w-10">
+                        <div className="shrink-0 h-10 w-10">
                           <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center">
                             <Shield className="h-5 w-5 text-[#ef4e50]" />
                           </div>
