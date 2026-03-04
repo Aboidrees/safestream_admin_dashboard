@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
-import { requireAdmin } from "@/lib/auth-session"
+import { requireRole, getAuthStatusCode } from "@/lib/auth-session"
 import { AdminRole } from "../../../../prisma/generated/prisma/client"
 
 export const runtime = 'nodejs'
@@ -10,19 +10,11 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const currentAdmin = await requireAdmin()
+    const currentAdmin = await requireRole('SUPER_ADMIN') // only SUPER_ADMINs can update admin accounts
     const { id: adminId } = await params
     const body = await req.json()
 
     const { name, role, isActive, password } = body
-
-    // Only SUPER_ADMINs can change roles or deactivate other admins
-    if ((role !== undefined || isActive !== undefined) && currentAdmin.role !== 'SUPER_ADMIN') {
-      return NextResponse.json(
-        { error: "Only super admins can change roles or active status" },
-        { status: 403 }
-      )
-    }
 
     // Validate role if provided
     if (role !== undefined) {
@@ -77,7 +69,7 @@ export async function PUT(
     const errorMessage = error instanceof Error ? error.message : "Internal server error"
     return NextResponse.json(
       { error: errorMessage },
-      { status: errorMessage === "Admin access required" ? 403 : 500 }
+      { status: getAuthStatusCode(error) }
     )
   }
 }
@@ -87,16 +79,8 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const currentAdmin = await requireAdmin()
+    const currentAdmin = await requireRole('SUPER_ADMIN') // only SUPER_ADMINs can deactivate admins
     const { id: adminId } = await params
-
-    // Only SUPER_ADMINs can deactivate admins
-    if (currentAdmin.role !== 'SUPER_ADMIN') {
-      return NextResponse.json(
-        { error: "Only super admins can deactivate admin accounts" },
-        { status: 403 }
-      )
-    }
 
     // Prevent self-deactivation
     if (currentAdmin.id === adminId) {
@@ -118,7 +102,7 @@ export async function DELETE(
     const errorMessage = error instanceof Error ? error.message : "Internal server error"
     return NextResponse.json(
       { error: errorMessage },
-      { status: errorMessage === "Admin access required" ? 403 : 500 }
+      { status: getAuthStatusCode(error) }
     )
   }
 }

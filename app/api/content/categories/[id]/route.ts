@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
-import { requireAdmin } from "@/lib/auth-session"
+import { requireAdmin, requireRole, getAuthStatusCode } from "@/lib/auth-session"
 
 export async function PUT(
   req: NextRequest,
@@ -47,7 +47,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireAdmin()
+    await requireRole('ADMIN') // ADMIN or SUPER_ADMIN can deactivate categories
     const { id: categoryId } = await params
 
     // Soft-delete: set isActive = false so existing collections keep their category reference
@@ -62,7 +62,7 @@ export async function DELETE(
     const errorMessage = error instanceof Error ? error.message : "Internal server error"
     return NextResponse.json(
       { error: errorMessage },
-      { status: errorMessage === "Admin access required" ? 403 : 500 }
+      { status: getAuthStatusCode(error) }
     )
   }
 }

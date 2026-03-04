@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
-import { requireAdmin } from "@/lib/auth-session"
+import { requireAdmin, requireRole } from "@/lib/auth-session"
 import { AdminRole } from "../../../prisma/generated/prisma/client"
 
 export const runtime = 'nodejs'
@@ -56,7 +56,7 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
-    await requireAdmin()
+    await requireRole('SUPER_ADMIN') // only SUPER_ADMINs can create new admin accounts
 
     const body = await req.json()
     const { name, email, password, role = 'admin' } = body

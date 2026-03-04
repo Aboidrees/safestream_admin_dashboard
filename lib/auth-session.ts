@@ -69,20 +69,29 @@ export async function requireAdmin(): Promise<AuthenticatedAdmin> {
  */
 export async function requireRole(requiredRole: AdminRole): Promise<AuthenticatedAdmin> {
   const admin = await requireAdmin()
-  
+
   // Define role hierarchy (higher number = more permissions)
   const roleHierarchy: Record<AdminRole, number> = {
     MODERATOR: 1,
     ADMIN: 2,
     SUPER_ADMIN: 3
   }
-  
+
   if (roleHierarchy[admin.role] < roleHierarchy[requiredRole]) {
     throw new AuthorizationError(
       `Insufficient permissions. Required: ${requiredRole}, Current: ${admin.role}`,
       "INSUFFICIENT_PERMISSIONS"
     )
   }
-  
+
   return admin
+}
+
+/**
+ * Map auth errors to HTTP status codes
+ */
+export function getAuthStatusCode(error: unknown): number {
+  if (error instanceof AuthenticationError) return 401
+  if (error instanceof AuthorizationError) return 403
+  return 500
 }

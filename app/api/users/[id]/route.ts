@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
-import { requireAdmin } from "@/lib/auth-session"
+import { requireRole, getAuthStatusCode } from "@/lib/auth-session"
 
 export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireAdmin()
+    await requireRole('ADMIN') // ADMIN or SUPER_ADMIN can delete users
 
     const { id: userId } = await params
 
@@ -47,9 +47,10 @@ export async function DELETE(
     })
   } catch (error) {
     console.error("Error deleting user:", error)
+    const errorMessage = error instanceof Error ? error.message : "Internal server error"
     return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
+      { error: errorMessage },
+      { status: getAuthStatusCode(error) }
     )
   }
 }

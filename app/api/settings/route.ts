@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
-import { requireAdmin } from "@/lib/auth-session"
+import { requireAdmin, requireRole, getAuthStatusCode } from "@/lib/auth-session"
 import type { PlatformSettings } from "@/lib/types"
 
 const SETTINGS_KEY = 'platform'
@@ -20,7 +20,7 @@ const DEFAULT_SETTINGS: PlatformSettings = {
 
 export async function GET(_req: NextRequest) {
   try {
-    await requireAdmin()
+    await requireAdmin() // any admin can read settings
 
     const record = await prisma.systemSetting.findUnique({
       where: { key: SETTINGS_KEY }
@@ -42,7 +42,7 @@ export async function GET(_req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const admin = await requireAdmin()
+    const admin = await requireRole('ADMIN') // ADMIN or SUPER_ADMIN can change settings
 
     const settings: PlatformSettings = await req.json()
 
@@ -72,9 +72,10 @@ export async function POST(req: NextRequest) {
     })
   } catch (error) {
     console.error("Error saving settings:", error)
+    const errorMessage = error instanceof Error ? error.message : "Internal server error"
     return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
+      { error: errorMessage },
+      { status: getAuthStatusCode(error) === 500 ? 500 : getAuthStatusCode(error) }
     )
   }
 }
