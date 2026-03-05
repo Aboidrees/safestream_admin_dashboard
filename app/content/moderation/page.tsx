@@ -225,6 +225,7 @@ export default function ModerationPage() {
         <label className="absolute top-2 left-2 cursor-pointer bg-white rounded p-0.5 shadow">
           <input
             type="checkbox"
+            aria-label={`Select video ${video.title}`}
             checked={selectedIds.has(video.id)}
             onChange={() => toggleSelect(video.id)}
             className="h-4 w-4 rounded border-gray-300 text-[#ef4e50]"
@@ -467,6 +468,7 @@ export default function ModerationPage() {
                   Assign to Moderator
                 </label>
                 <select
+                  aria-label="Assign to Moderator"
                   value={assignTo}
                   onChange={e => setAssignTo(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#ef4e50]"

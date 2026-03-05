@@ -30,6 +30,7 @@ model User {
   notifications         Notification[]
   sessions              Session[]
   tokenSessions         TokenSession[]
+  createdCollections    Collection[]           @relation("CollectionUserCreator")
 
   @@map("users")
 }
@@ -49,7 +50,7 @@ model Admin {
   lockedUntil         DateTime?    @map("locked_until")
   name                String
   password            String
-  createdCollections  Collection[]
+  createdCollections  Collection[] @relation("CollectionAdminCreator")
   moderatedVideos     Video[]
 
   @@map("admins")
@@ -113,7 +114,8 @@ model Collection {
   id               String            @id @default(uuid()) @db.Uuid
   name             String
   description      String?
-  createdBy        String            @map("created_by") @db.Uuid
+  createdByAdminId String?           @map("created_by_admin_id") @db.Uuid
+  createdByUserId  String?           @map("created_by_user_id") @db.Uuid
   isPublic         Boolean           @default(false) @map("is_public")
   thumbnailUrl     String?           @map("thumbnail_url")
   createdAt        DateTime          @default(now()) @map("created_at")
@@ -122,10 +124,16 @@ model Collection {
   isMandatory      Boolean           @default(false) @map("is_mandatory")
   isPlatform       Boolean           @default(false) @map("is_platform")
   categoryId       String?           @map("category_id") @db.Uuid
+  isFree           Boolean           @default(true) @map("is_free")
+  price            Decimal?          @db.Decimal(10, 2)
+  currency         String?           @default("USD")
   collectionVideos CollectionVideo[]
   category         Category?         @relation(fields: [categoryId], references: [id])
-  creator          Admin             @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+  creatorAdmin     Admin?            @relation("CollectionAdminCreator", fields: [createdByAdminId], references: [id], onDelete: Cascade)
+  creatorUser      User?             @relation("CollectionUserCreator", fields: [createdByUserId], references: [id], onDelete: Cascade)
 
+  @@index([createdByAdminId])
+  @@index([createdByUserId])
   @@map("collections")
 }
 
@@ -222,6 +230,8 @@ model DeviceSession {
   deviceId       String          @map("device_id")
   deviceName     String?         @map("device_name")
   platform       String
+  version        String?         @map("version")
+  model          String?         @map("model")
   isActive       Boolean         @default(true) @map("is_active")
   lastSeenAt     DateTime        @default(now()) @map("last_seen_at")
   createdAt      DateTime        @default(now()) @map("created_at")
@@ -248,8 +258,9 @@ model RemoteCommand {
 /// Device pairing requests used for secure 6-digit code approval flow
 model DevicePairingRequest {
   id             String        @id @default(uuid()) @db.Uuid
-  childProfileId String        @map("child_profile_id") @db.Uuid
-  familyId       String        @map("family_id") @db.Uuid
+  deviceId       String        @map("device_id") @db.VarChar(255)
+  childProfileId String?       @map("child_profile_id") @db.Uuid
+  familyId       String?       @map("family_id") @db.Uuid
   sixDigitCode   String        @unique @map("six_digit_code") @db.VarChar(6)
   status         PairingStatus @default(PENDING)
   expiresAt      DateTime      @map("expires_at")
@@ -257,12 +268,12 @@ model DevicePairingRequest {
   approvedAt     DateTime?     @map("approved_at")
   createdAt      DateTime      @default(now()) @map("created_at")
   updatedAt      DateTime      @updatedAt @map("updated_at")
-
-  childProfile ChildProfile @relation(fields: [childProfileId], references: [id], onDelete: Cascade)
-  family       Family       @relation(fields: [familyId], references: [id], onDelete: Cascade)
-  approver     User?        @relation(fields: [approvedBy], references: [id])
+  childProfile   ChildProfile? @relation(fields: [childProfileId], references: [id], onDelete: Cascade)
+  family         Family?       @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  approver       User?         @relation(fields: [approvedBy], references: [id])
 
   @@index([sixDigitCode])
+  @@index([deviceId])
   @@index([childProfileId])
   @@index([status])
   @@map("device_pairing_requests")
@@ -353,6 +364,19 @@ model VerificationToken {
   @@map("verification_tokens")
 }
 
+model SystemSetting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedBy String?  @map("updated_by")
+
+  @@map("system_settings")
+}
+
+// ──────────────────────────────────────────────
+// Enums
+// ──────────────────────────────────────────────
+
 enum AdminRole {
   SUPER_ADMIN
   ADMIN
@@ -422,13 +446,4 @@ enum ModerationStatus {
   UNDER_REVIEW
 
   @@map("moderation_status")
-}
-
-model SystemSetting {
-  key       String   @id
-  value     Json
-  updatedAt DateTime @updatedAt @map("updated_at")
-  updatedBy String?  @map("updated_by")
-
-  @@map("system_settings")
 }

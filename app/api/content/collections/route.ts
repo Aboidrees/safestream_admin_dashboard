@@ -1,67 +1,53 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
-import { requireAdmin } from "@/lib/auth-session"
+import { requireAdmin, getAuthStatusCode } from "@/lib/auth-session"
 
 export async function GET() {
   try {
     await requireAdmin()
-    // Get all platform collections
     const collections = await prisma.collection.findMany({
-      where: {
-        isPlatform: true
-      },
+      where: { isPlatform: true },
       include: {
-        creator: {
-          select: {
-            name: true,
-            email: true
-          }
+        creatorAdmin: {
+          select: { name: true, email: true }
+        },
+        creatorUser: {
+          select: { name: true, email: true }
         },
         category: {
-          select: {
-            id: true,
-            name: true,
-            color: true,
-            icon: true
-          }
+          select: { id: true, name: true, color: true, icon: true }
         },
         _count: {
-          select: {
-            collectionVideos: true
-          }
+          select: { collectionVideos: true }
         }
       },
-      orderBy: {
-        createdAt: 'desc'
-      }
+      orderBy: { createdAt: 'desc' }
     })
 
     const formattedCollections = collections.map((c) => ({
       id: c.id,
       name: c.name,
       description: c.description || '',
-      category: c.category ? {
-        id: c.category.id,
-        name: c.category.name,
-        color: c.category.color,
-        icon: c.category.icon
-      } : null,
+      category: c.category
+        ? { id: c.category.id, name: c.category.name, color: c.category.color, icon: c.category.icon }
+        : null,
       ageRating: c.ageRating,
       videoCount: c._count.collectionVideos,
       isPublic: c.isPublic,
       isPlatform: c.isPlatform,
       isMandatory: c.isMandatory,
-      creatorName: c.creator.name || 'Unknown',
+      isFree: c.isFree,
+      price: c.price,
+      currency: c.currency,
+      creatorName: c.creatorAdmin?.name ?? c.creatorUser?.name ?? 'Unknown',
       createdAt: c.createdAt.toISOString()
     }))
 
     return NextResponse.json({ collections: formattedCollections })
   } catch (error: unknown) {
-    console.error("Error fetching collections:", error)
-    const errorMessage = error instanceof Error ? error.message : "Internal server error"
     return NextResponse.json(
-      { error: errorMessage },
-      { status: errorMessage === "Admin access required" ? 403 : 500 }
+      { error: error instanceof Error ? error.message : "Internal server error" },
+      { status: getAuthStatusCode(error) }
     )
   }
 }
@@ -71,13 +57,10 @@ export async function POST(req: NextRequest) {
     const user = await requireAdmin()
     const body = await req.json()
 
-    const { name, description, categoryId, ageRating, isPublic, isPlatform, isMandatory } = body
+    const { name, description, categoryId, ageRating, isPublic, isPlatform, isMandatory, isFree, price, currency } = body
 
     if (!name) {
-      return NextResponse.json(
-        { error: "Collection name is required" },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: "Collection name is required" }, { status: 400 })
     }
 
     const collection = await prisma.collection.create({
@@ -89,17 +72,18 @@ export async function POST(req: NextRequest) {
         isPublic: isPublic !== undefined ? isPublic : true,
         isPlatform: isPlatform !== undefined ? isPlatform : true,
         isMandatory: isMandatory !== undefined ? isMandatory : false,
-        createdBy: user.id
+        isFree: isFree !== undefined ? isFree : true,
+        price: price || null,
+        currency: currency || 'USD',
+        createdByAdminId: user.id
       }
     })
 
     return NextResponse.json({ collection }, { status: 201 })
   } catch (error: unknown) {
-    console.error("Error creating collection:", error)
-    const errorMessage = error instanceof Error ? error.message : "Internal server error"
     return NextResponse.json(
-      { error: errorMessage },
-      { status: errorMessage === "Admin access required" ? 403 : 500 }
+      { error: error instanceof Error ? error.message : "Internal server error" },
+      { status: getAuthStatusCode(error) }
     )
   }
 }

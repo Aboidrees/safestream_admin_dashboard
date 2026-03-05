@@ -486,6 +486,7 @@ export default function VideosPage() {
                     value={formData.ageRating}
                     onChange={(e) => setFormData({ ...formData, ageRating: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ef4e50]"
+                    aria-label="Age Rating"
                   >
                     <option value="">Select rating</option>
                     <option value="G">G (All ages)</option>
@@ -511,7 +512,7 @@ export default function VideosPage() {
               {/* Collections Assignment */}
               {collections.length > 0 && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                  <label className="flex text-sm font-medium text-gray-700 mb-2 items-center gap-2">
                     <BookOpen className="h-4 w-4 text-[#ef4e50]" />
                     Assign to Collections
                   </label>

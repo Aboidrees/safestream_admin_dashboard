@@ -13,16 +13,17 @@ export async function GET(
     const collection = await prisma.collection.findUnique({
       where: { id: collectionId },
       include: {
-        creator: {
+        creatorAdmin: {
+          select: { id: true, name: true, email: true }
+        },
+        creatorUser: {
           select: { id: true, name: true, email: true }
         },
         category: {
           select: { id: true, name: true, color: true, icon: true }
         },
         collectionVideos: {
-          include: {
-            video: true
-          },
+          include: { video: true },
           orderBy: { orderIndex: 'asc' }
         },
         _count: {
@@ -37,11 +38,9 @@ export async function GET(
 
     return NextResponse.json({ collection })
   } catch (error: unknown) {
-    console.error("Error fetching collection:", error)
-    const errorMessage = error instanceof Error ? error.message : "Internal server error"
     return NextResponse.json(
-      { error: errorMessage },
-      { status: errorMessage === "Admin access required" ? 403 : 500 }
+      { error: error instanceof Error ? error.message : "Internal server error" },
+      { status: getAuthStatusCode(error) }
     )
   }
 }
@@ -55,7 +54,7 @@ export async function PUT(
     const { id: collectionId } = await params
     const body = await req.json()
 
-    const { name, description, categoryId, ageRating, isPublic, isPlatform, isMandatory } = body
+    const { name, description, categoryId, ageRating, isPublic, isPlatform, isMandatory, isFree, price, currency } = body
 
     const collection = await prisma.collection.update({
       where: { id: collectionId },
@@ -67,38 +66,35 @@ export async function PUT(
         isPublic: isPublic !== undefined ? isPublic : undefined,
         isPlatform: isPlatform !== undefined ? isPlatform : undefined,
         isMandatory: isMandatory !== undefined ? isMandatory : undefined,
+        isFree: isFree !== undefined ? isFree : undefined,
+        price: price !== undefined ? price : undefined,
+        currency: currency !== undefined ? currency : undefined,
       }
     })
 
     return NextResponse.json({ collection })
   } catch (error: unknown) {
-    console.error("Error updating collection:", error)
-    const errorMessage = error instanceof Error ? error.message : "Internal server error"
     return NextResponse.json(
-      { error: errorMessage },
-      { status: errorMessage === "Admin access required" ? 403 : 500 }
+      { error: error instanceof Error ? error.message : "Internal server error" },
+      { status: getAuthStatusCode(error) }
     )
   }
 }
 
 export async function DELETE(
-  req: NextRequest,
+  _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireRole('ADMIN') // ADMIN or SUPER_ADMIN can delete collections
+    await requireRole('ADMIN')
     const { id: collectionId } = await params
 
-    await prisma.collection.delete({
-      where: { id: collectionId }
-    })
+    await prisma.collection.delete({ where: { id: collectionId } })
 
     return NextResponse.json({ message: "Collection deleted successfully" })
   } catch (error: unknown) {
-    console.error("Error deleting collection:", error)
-    const errorMessage = error instanceof Error ? error.message : "Internal server error"
     return NextResponse.json(
-      { error: errorMessage },
+      { error: error instanceof Error ? error.message : "Internal server error" },
       { status: getAuthStatusCode(error) }
     )
   }
