@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
-import { requireAdmin } from "@/lib/auth-session"
+import { requireAdmin, getAuthStatusCode } from "@/lib/auth-session"
+
+const VALID_ACTIONS = ['approve', 'reject', 'flag', 'review', 'pending'] as const
+type ModerationAction = typeof VALID_ACTIONS[number]
 
 export async function POST(
   req: NextRequest,
@@ -11,62 +14,47 @@ export async function POST(
     const { id: videoId } = await params
     const body = await req.json()
 
-    const { action, notes, rejectionReason } = body
+    const { action, notes, rejectionReason, assignTo } = body
 
-    if (!action || !['approve', 'reject', 'flag', 'review'].includes(action)) {
+    if (!action || !VALID_ACTIONS.includes(action as ModerationAction)) {
       return NextResponse.json(
-        { error: "Invalid action. Must be 'approve', 'reject', 'flag', or 'review'" },
+        { error: `Invalid action. Must be one of: ${VALID_ACTIONS.join(', ')}` },
         { status: 400 }
       )
     }
 
-    let moderationStatus: 'APPROVED' | 'REJECTED' | 'FLAGGED' | 'UNDER_REVIEW' | 'PENDING' = 'PENDING'
-    let isApproved: boolean = false
-
-    switch (action) {
-      case 'approve':
-        moderationStatus = 'APPROVED'
-        isApproved = true
-        break
-      case 'reject':
-        moderationStatus = 'REJECTED'
-        isApproved = false
-        break
-      case 'flag':
-        moderationStatus = 'FLAGGED'
-        isApproved = false
-        break
-      case 'review':
-        moderationStatus = 'UNDER_REVIEW'
-        isApproved = false
-        break
-      default:
-        moderationStatus = 'PENDING'
-        isApproved = false
+    const statusMap: Record<ModerationAction, 'APPROVED' | 'REJECTED' | 'FLAGGED' | 'UNDER_REVIEW' | 'PENDING'> = {
+      approve: 'APPROVED',
+      reject:  'REJECTED',
+      flag:    'FLAGGED',
+      review:  'UNDER_REVIEW',
+      pending: 'PENDING',
     }
+
+    const moderationStatus = statusMap[action as ModerationAction]
+    const isApproved = action === 'approve'
 
     const video = await prisma.video.update({
       where: { id: videoId },
       data: {
         moderationStatus,
         isApproved,
-        moderatedBy: user.id,
+        moderatedBy: assignTo ?? user.id,
         moderatedAt: new Date(),
         moderationNotes: notes || null,
-        rejectionReason: action === 'reject' ? rejectionReason : null
+        rejectionReason: action === 'reject' ? (rejectionReason || null) : null,
       }
     })
 
-    return NextResponse.json({ 
-      message: `Video ${action}d successfully`,
-      video 
+    return NextResponse.json({
+      message: `Video ${action === 'pending' ? 'sent back to queue' : action + 'd'} successfully`,
+      video
     })
   } catch (error: unknown) {
     console.error("Error moderating video:", error)
-    const errorMessage = error instanceof Error ? error.message : "Internal server error"
     return NextResponse.json(
-      { error: errorMessage },
-      { status: errorMessage === "Admin access required" ? 403 : 500 }
+      { error: error instanceof Error ? error.message : "Internal server error" },
+      { status: getAuthStatusCode(error) }
     )
   }
 }

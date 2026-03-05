@@ -30,10 +30,9 @@ export async function GET(
     return NextResponse.json({ video })
   } catch (error: unknown) {
     console.error("Error fetching video:", error)
-    const errorMessage = error instanceof Error ? error.message : "Internal server error"
     return NextResponse.json(
-      { error: errorMessage },
-      { status: errorMessage === "Admin access required" ? 403 : 500 }
+      { error: error instanceof Error ? error.message : "Internal server error" },
+      { status: getAuthStatusCode(error) }
     )
   }
 }
@@ -47,13 +46,14 @@ export async function PUT(
     const { id: videoId } = await params
     const body = await req.json()
 
-    const { title, description, channelName, ageRating, tags } = body
+    const { title, description, thumbnailUrl, channelName, ageRating, tags } = body
 
     const video = await prisma.video.update({
       where: { id: videoId },
       data: {
         title: title || undefined,
         description: description !== undefined ? description : undefined,
+        thumbnailUrl: thumbnailUrl !== undefined ? thumbnailUrl : undefined,
         channelName: channelName !== undefined ? channelName : undefined,
         ageRating: ageRating !== undefined ? ageRating : undefined,
         tags: tags !== undefined ? tags : undefined,
@@ -63,10 +63,9 @@ export async function PUT(
     return NextResponse.json({ video })
   } catch (error: unknown) {
     console.error("Error updating video:", error)
-    const errorMessage = error instanceof Error ? error.message : "Internal server error"
     return NextResponse.json(
-      { error: errorMessage },
-      { status: errorMessage === "Admin access required" ? 403 : 500 }
+      { error: error instanceof Error ? error.message : "Internal server error" },
+      { status: getAuthStatusCode(error) }
     )
   }
 }

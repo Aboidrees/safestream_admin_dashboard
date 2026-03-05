@@ -1,29 +1,23 @@
-import {  NextResponse } from "next/server"
+import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
-import { requireAdmin } from "@/lib/auth-session"
+import { requireAdmin, getAuthStatusCode } from "@/lib/auth-session"
 
 export async function GET() {
   try {
     await requireAdmin()
 
-    // Get videos that need moderation (not approved)
     const videos = await prisma.video.findMany({
       where: {
-        moderationStatus: {
-          in: ['PENDING', 'UNDER_REVIEW', 'FLAGGED']
-        }
+        moderationStatus: { in: ['PENDING', 'UNDER_REVIEW', 'FLAGGED'] }
       },
       include: {
         moderator: {
-          select: {
-            name: true,
-            email: true
-          }
+          select: { id: true, name: true, email: true }
         }
       },
       orderBy: [
-        { moderationStatus: 'asc' }, // PENDING first, then UNDER_REVIEW, then FLAGGED
-        { createdAt: 'asc' } // Oldest first within each status
+        { moderationStatus: 'asc' },
+        { createdAt: 'asc' }
       ]
     })
 
@@ -38,7 +32,8 @@ export async function GET() {
       ageRating: v.ageRating || '',
       tags: v.tags,
       moderationStatus: v.moderationStatus,
-      moderatedBy: v.moderator?.name || null,
+      moderatedById: v.moderator?.id || null,
+      moderatedByName: v.moderator?.name || null,
       moderatedAt: v.moderatedAt?.toISOString() || null,
       moderationNotes: v.moderationNotes || null,
       rejectionReason: v.rejectionReason || null,
@@ -48,10 +43,9 @@ export async function GET() {
     return NextResponse.json({ videos: formattedVideos })
   } catch (error: unknown) {
     console.error("Error fetching videos for moderation:", error)
-    const errorMessage = error instanceof Error ? error.message : "Internal server error"
     return NextResponse.json(
-      { error: errorMessage },
-      { status: errorMessage === "Admin access required" ? 403 : 500 }
+      { error: error instanceof Error ? error.message : "Internal server error" },
+      { status: getAuthStatusCode(error) }
     )
   }
 }
