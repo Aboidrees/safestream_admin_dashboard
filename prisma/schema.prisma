@@ -1,6 +1,6 @@
 generator client {
   provider      = "prisma-client"
-  output        = "./generated/prisma"
+  output        = "./generated"
   binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
@@ -339,6 +339,7 @@ model DeviceSession {
   platform       String
   version        String?         @map("version")
   model          String?         @map("model")
+  fcmToken       String?         @map("fcm_token")
   isActive       Boolean         @default(true) @map("is_active")
   lastSeenAt     DateTime        @default(now()) @map("last_seen_at")
   createdAt      DateTime        @default(now()) @map("created_at")
@@ -373,6 +374,7 @@ model DevicePairingRequest {
   childProfileId String?       @map("child_profile_id") @db.Uuid
   familyId       String?       @map("family_id") @db.Uuid
   sixDigitCode   String        @unique @map("six_digit_code") @db.VarChar(6)
+  fcmToken       String?       @map("fcm_token")
   status         PairingStatus @default(PENDING)
   expiresAt      DateTime      @map("expires_at")
   approvedBy     String?       @map("approved_by") @db.Uuid
