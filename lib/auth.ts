@@ -2,7 +2,7 @@ import { NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { prisma } from "./prisma"
 import bcrypt from "bcryptjs"
-import type { AdminRole } from "../prisma/generated/prisma/client"
+import type { AdminRole } from "@safestream/database"
 
 
 // Extend NextAuth types for better type safety

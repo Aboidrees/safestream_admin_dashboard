@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { requireAdmin, requireRole } from "@/lib/auth-session"
-import { AdminRole } from "../../../prisma/generated/prisma/client"
+import { AdminRole } from "@safestream/database"
 
 export const runtime = 'nodejs'
 
