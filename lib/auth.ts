@@ -67,10 +67,14 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Email and password are required")
         }
 
+        // Brute-force lockout: 5 failed attempts → 15 minutes locked.
+        // PRD §4.4.1 advertised this; this is the actual implementation (2026-04-23).
+        const LOCKOUT_THRESHOLD = 5
+        const LOCKOUT_WINDOW_MS = 15 * 60 * 1000
+
         try {
-          // Only authenticate admins - NO USER TABLE USED
           const admin = await prisma.admin.findUnique({
-            where: { 
+            where: {
               email: credentials.email.toLowerCase().trim()
             }
           })
@@ -83,15 +87,42 @@ export const authOptions: NextAuthOptions = {
             throw new Error("Account is not active")
           }
 
-          // Verify password with timing attack protection
+          // Lockout gate — checked BEFORE bcrypt so locked accounts don't leak
+          // password-hash compute time as a signal.
+          if (admin.lockedUntil && admin.lockedUntil > new Date()) {
+            throw new Error("Account temporarily locked due to repeated failed logins. Try again later.")
+          }
+
           const isPasswordValid = await bcrypt.compare(
             credentials.password,
             admin.password
           )
 
           if (!isPasswordValid) {
+            const nextCount = admin.failedLoginAttempts + 1
+            const now = new Date()
+            const shouldLock = nextCount >= LOCKOUT_THRESHOLD
+            await prisma.admin.update({
+              where: { id: admin.id },
+              data: {
+                failedLoginAttempts: nextCount,
+                lastFailedAttempt: now,
+                ...(shouldLock ? { lockedUntil: new Date(now.getTime() + LOCKOUT_WINDOW_MS) } : {}),
+              },
+            })
             throw new Error("Invalid credentials")
           }
+
+          // Success — clear any accumulated failure state and stamp last login.
+          await prisma.admin.update({
+            where: { id: admin.id },
+            data: {
+              failedLoginAttempts: 0,
+              lastFailedAttempt: null,
+              lockedUntil: null,
+              lastLogin: new Date(),
+            },
+          })
 
           const adminUser = {
             id: admin.id,
