@@ -1,4 +1,4 @@
-import type { AdminRole } from "@safestream/database"
+import type { AdminRole } from "@aboidrees/safestream-database"
 
 // Define permissions for each admin role
 export const ROLE_PERMISSIONS = {

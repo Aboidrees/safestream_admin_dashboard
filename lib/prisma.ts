@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient } from "@safestream/database";
+import { PrismaClient } from "@aboidrees/safestream-database";
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient | undefined };
 

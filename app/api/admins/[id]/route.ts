@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { requireRole, getAuthStatusCode } from "@/lib/auth-session"
-import { AdminRole } from "@safestream/database"
+import { AdminRole } from "@aboidrees/safestream-database"
 
 export const runtime = 'nodejs'
 
